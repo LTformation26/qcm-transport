@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Capacité de Transport +3,5t</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1A5C38;--green-mid:#2E7D52;--green-light:#E8F5EE;--green-pale:#F2FAF5;--red:#E24B4A;--red-light:#FCEBEB;--text:#1a1a1a;--muted:#6b7280;--border:#e5e7eb;--bg:#F7F8F7;--white:#fff}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem}
+.container{max-width:700px;margin:0 auto}
+.header{background:var(--green);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header h1{color:#fff;font-size:16px;font-weight:600;line-height:1.3}
+.header p{color:#A8D5BC;font-size:12px;margin-top:3px}
+.score-box{text-align:right;flex-shrink:0}
+.score-box .pts{color:#fff;font-size:28px;font-weight:600;line-height:1;font-family:'DM Mono',monospace}
+.score-box .lbl{color:#A8D5BC;font-size:11px;margin-top:2px}
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:6px}
+.progress-info span{font-size:12px;color:var(--muted)}
+.progress-bar{height:5px;background:#d1d5db;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s ease}
+.qcard{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.qcard-head{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.qnum{background:var(--green-light);color:var(--green);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.qmulti{background:#FFF8E1;color:#7B4F00;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px}
+.qtext{font-size:15px;font-weight:500;line-height:1.6;color:var(--text);margin-bottom:1rem}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:var(--white)}
+.opt:hover:not(.locked){background:var(--green-pale);border-color:#a7d3b8}
+.opt.selected{border-color:var(--green);background:var(--green-light)}
+.opt.correct{border-color:var(--green);background:var(--green-light)}
+.opt.wrong{border-color:var(--red);background:var(--red-light)}
+.opt-letter{width:24px;height:24px;min-width:24px;border-radius:50%;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--muted);margin-top:1px;transition:all .15s}
+.opt.selected .opt-letter,.opt.correct .opt-letter{background:var(--green);color:#fff}
+.opt.wrong .opt-letter{background:var(--red);color:#fff}
+.opt-text{font-size:13.5px;color:var(--text);line-height:1.5}
+.expl{margin-top:.875rem;padding:.75rem 1rem;background:var(--green-light);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13px;color:#1A5C38;line-height:1.6}
+.expl strong{font-weight:600}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:.5rem}
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text);transition:all .15s}
+.btn:hover{background:#f3f4f6}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.primary:hover{background:var(--green-mid)}
+.btn:disabled{opacity:.35;cursor:default}
+.qcount{font-size:13px;color:var(--muted);font-weight:500}
+.result-card{display:none;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:2rem 1.5rem;text-align:center}
+.result-pct{font-size:52px;font-weight:700;color:var(--green);line-height:1;font-family:'DM Mono',monospace}
+.result-msg{font-size:15px;color:var(--muted);margin:.5rem 0 1.5rem}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+.rstat{background:#f9fafb;border-radius:10px;padding:1rem}
+.rstat .rv{font-size:24px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
+.rstat .rl{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
+.rstat.ok .rv{color:var(--green)}.rstat.ko .rv{color:var(--red)}
+.breakdown{margin-bottom:1.5rem;text-align:left}
+.breakdown h3{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem}
+.th-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.th-name{font-size:12px;color:var(--text);width:180px;flex-shrink:0}
+.th-bar-wrap{flex:1;height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden}
+.th-bar{height:100%;border-radius:4px;transition:width .5s ease}
+.th-score{font-size:12px;font-weight:600;color:var(--muted);width:36px;text-align:right;flex-shrink:0}
+@media(max-width:480px){.header{flex-direction:column;align-items:flex-start}.result-grid{grid-template-columns:repeat(2,1fr)}.th-name{width:120px;font-size:11px}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <div>
+    <h1>QCM — Capacité de Transport Marchandises +3,5t</h1>
+    <p>50 questions · 100 points · 2 pts / question</p>
+  </div>
+  <div class="score-box">
+    <div class="pts" id="score">0</div>
+    <div class="lbl">pts / 100</div>
+  </div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="qtop">Question 1 sur 50</span>
+    <span id="answered">0 répondues</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:2%"></div></div>
+</div>
+<div id="qzone"></div>
+<div class="result-card" id="result"></div>
+<div class="nav" id="nav">
+  <button class="btn" id="bprev" onclick="go(-1)" disabled>← Précédent</button>
+  <span class="qcount" id="qcount">1 / 50</span>
+  <button class="btn primary" id="bnext" onclick="go(1)">Suivant →</button>
+</div>
+</div>
+<script>
+const Q=[
+{t:"Droit des affaires",q:"La lettre de change est un effet de commerce :",o:["Dont le paiement est garanti à la date d'échéance","Rédigé par le tiré et adressé au tireur pour acceptation","Toujours à échéance indéterminée et escomptable","Rédigé par le tireur et adressé au tiré pour acceptation"],a:[3],e:"La lettre de change est rédigée par le <strong>tireur (créancier)</strong> et adressée au <strong>tiré (débiteur)</strong> pour qu'il l'accepte. C'est l'inverse du billet à ordre (rédigé par le souscripteur/débiteur)."},
+{t:"Réglementation transport",q:"Une entreprise de transport routier pour compte d'autrui a l'obligation légale de s'assurer pour :",o:["Les marchandises transportées pour tout type de dommages","Les marchandises pour dommages consécutifs aux cas de force majeure","Sa responsabilité civile dans le cadre de la circulation automobile","Ses véhicules pour les cas de vol"],a:[2],e:"L'obligation légale d'assurance porte uniquement sur la <strong>responsabilité civile automobile</strong>. L'assurance marchandises transportées est facultative."},
+{t:"Droit des affaires",q:"Dans une SARL, le gérant :",o:["N'a pas obligatoirement la qualité de commerçant","Doit obligatoirement être associé","Ne peut être salarié qu'à condition d'être actionnaire majoritaire","Devient automatiquement commerçant"],a:[0],e:"Le gérant de SARL <strong>n'est pas commerçant</strong> — c'est la société qui l'est. Il n'est pas obligatoirement associé non plus."},
+{t:"Transport national",q:"En transport routier intérieur, le délai pour intenter une action récursoire :",o:["Est d'un mois à dater de la livraison","Est d'un mois à dater de l'action principale","S'ajoute au délai de prescription","Annule le délai de prescription"],a:[1,2],e:"<strong>Double réponse (B et C) :</strong> L'action récursoire doit être intentée dans un mois à dater de l'action principale <strong>ET</strong> ce délai s'ajoute au délai de prescription de droit commun."},
+{t:"Droit des affaires",q:"L'injonction de payer pour une créance liée à un contrat de transport doit être faite devant le tribunal du domicile du :",o:["Débiteur ou de l'un des débiteurs s'ils sont plusieurs","Requérant","Destinataire","Transporteur obligatoirement"],a:[0],e:"L'injonction de payer se fait devant le tribunal du <strong>domicile du débiteur</strong>. C'est une règle de compétence territoriale impérative."},
+{t:"Droit des affaires",q:"Dans une SARL, les associés doivent répondre des dettes de la société :",o:["Dans leur totalité, y compris sur leurs biens personnels","Dans la limite de la moitié de leurs apports","Sauf en cas de liquidation judiciaire","Dans la limite de leurs apports"],a:[3],e:"La responsabilité des associés d'une SARL est <strong>limitée à leurs apports</strong>. Leur patrimoine personnel est protégé."},
+{t:"Droit des affaires",q:"La cessation de paiement d'une société commerciale est :",o:["L'impossibilité de faire face au passif exigible avec son actif disponible","La perte de la moitié de son capital social","Une infraction imputable aux dirigeants","La tenue d'une comptabilité irrégulière"],a:[0],e:"La cessation de paiement = <strong>impossibilité de faire face au passif exigible avec l'actif disponible</strong> (art. L631-1 Code de commerce)."},
+{t:"Responsabilité",q:"La responsabilité du transporteur routier peut être recherchée par son donneur d'ordre :",o:["Toujours, que ce soit du fait du transporteur ou d'un tiers","Seulement pour les fautes lourdes du préposé","Seulement pour les dommages résultant de la conduite et du chargement","Seulement si les clauses exonératoires le permettent"],a:[0],e:"Le transporteur est soumis à une <strong>présomption de responsabilité</strong> pour tout dommage survenu pendant le transport, quel qu'en soit l'auteur."},
+{t:"Droit des affaires",q:"Les commissaires aux comptes ont pour mission :",o:["De dresser la comptabilité","D'apprécier la gestion de la société","D'informer les salariés sur la comptabilité","De certifier la régularité et la sincérité des comptes"],a:[3],e:"La mission du CAC est de <strong>certifier que les comptes sont réguliers, sincères et donnent une image fidèle</strong> de la situation de l'entreprise. Il ne tient pas la comptabilité."},
+{t:"Droit des affaires",q:"Parmi ces mentions, laquelle doit figurer obligatoirement dans les statuts d'une société ?",o:["L'objet social de la société","Le régime fiscal adopté","Le nombre de salariés","Le nom du ou des gérants"],a:[0],e:"L'<strong>objet social</strong> est une mention obligatoire pour toute société (art. L210-2 Code de commerce). Il définit les activités que la société peut exercer."},
+{t:"Droit des affaires",q:"Le président d'une SAS :",o:["Est toujours une personne morale","Est obligatoirement un associé","Est toujours désigné par un conseil d'administration","Peut être une personne physique ou morale"],a:[3],e:"Le président d'une SAS peut être <strong>une personne physique ou morale, associée ou non</strong>. Grande liberté statutaire de la SAS."},
+{t:"Transport national",q:"En transport routier intérieur, la prescription d'un an est interrompue par :",o:["Une lettre de réclamation adressée au transporteur","Une action en justice","Une transmission du dossier à son assureur","Une facturation du litige au transporteur"],a:[1],e:"La prescription est interrompue par une <strong>action en justice</strong> (art. 2240 Code civil). Une simple lettre de réclamation ne suffit pas."},
+{t:"Droit des affaires",q:"La faillite personnelle est :",o:["Une condamnation d'une personne physique","La mise en liquidation de l'entreprise personnelle","Le dépôt de bilan de l'entreprise personnelle","L'impossibilité de rembourser les créanciers après liquidation"],a:[0],e:"La faillite personnelle est une <strong>sanction prononcée contre une personne physique</strong> (dirigeant) pour faute grave. Elle emporte interdiction de gérer une entreprise."},
+{t:"Gestion financière",q:"Le mécanisme de la TVA a une incidence sur :",o:["Les résultats de l'entreprise","Les coûts de revient","La trésorerie de l'entreprise","Les produits d'exploitation"],a:[2],e:"La TVA est neutre sur le résultat mais impacte la <strong>trésorerie</strong> : l'entreprise avance la TVA sur ses achats avant de la récupérer, et collecte la TVA client avant de la reverser."},
+{t:"Gestion financière",q:"Les disponibilités représentent :",o:["Les sommes encaissées tout au long de l'exercice","L'apport financier de l'entreprise ou des associés","Les liquidités dont dispose l'entreprise à la date du bilan","Le bénéfice net de l'entreprise"],a:[2],e:"Les disponibilités sont les <strong>liquidités immédiatement mobilisables</strong> (caisse, comptes bancaires) figurant à l'actif du bilan à la date de clôture."},
+{t:"Gestion financière",q:"Le seuil de rentabilité est atteint lorsque :",o:["L'entreprise dégage sa marge bénéficiaire prévisionnelle","Le CA permet de couvrir les coûts fixes","Le CA permet de couvrir tous les coûts","Le CA permet de couvrir les coûts des charges sociales"],a:[2],e:"Le seuil de rentabilité est atteint quand le CA couvre <strong>la totalité des charges</strong> (fixes + variables). Au-delà, l'entreprise dégage un bénéfice."},
+{t:"Droit social",q:"Un examen médical de reprise doit être organisé après un arrêt de travail pour maladie non professionnelle d'au moins :",o:["3 jours","21 jours","25 jours","30 jours"],a:[3],e:"Selon le corrigé officiel 2020 : <strong>D (30 jours)</strong>. La visite de reprise est obligatoire après un arrêt de maladie non professionnelle d'au moins 30 jours."},
+{t:"Droit social",q:"En cas de licenciement individuel pour motif économique, l'employeur doit informer l'administration :",o:["Après l'entretien préalable","Avant l'envoi de la lettre de licenciement","Dans les 8 jours suivant l'envoi de la lettre de licenciement","Avant la fin du délai congé"],a:[2],e:"L'employeur doit notifier la DREETS <strong>dans les 8 jours suivant l'envoi de la lettre de licenciement</strong> (art. L1233-19 Code du travail)."},
+{t:"RSE / Temps de conduite",q:"Selon le règlement (CE) n° 561/2006, un conducteur doit observer une pause d'au moins 45 minutes après un temps de conduite de :",o:["4 heures","4 heures 30 minutes","4 heures 45 minutes","5 heures"],a:[1],e:"Après <strong>4h30 de conduite continue</strong>, le conducteur doit prendre une pause d'au moins 45 minutes (art. 7 règlement 561/2006)."},
+{t:"RSE / Temps de conduite",q:"Selon la RSE, la pause de conduite peut être :",o:["Considérée comme un repos journalier quelle que soit sa durée","Fractionnée en deux périodes : 15 minutes puis 30 minutes","Fractionnée en quatre périodes de 10 minutes","Fractionnée en deux périodes : 30 minutes puis 15 minutes"],a:[1],e:"La pause peut être fractionnée en <strong>15 minutes d'abord, puis 30 minutes ensuite</strong> (ordre impératif). L'ordre inverse n'est pas conforme."},
+{t:"Droit social",q:"Un conducteur ayant effectué 4 heures de travail le dimanche doit être rémunéré suivant :",o:["Une majoration de 25% des heures du dimanche","Un paiement double des heures du dimanche","Une récupération des heures du dimanche","Une indemnité forfaitaire conventionnelle en plus du paiement des heures"],a:[3],e:"La CCNTR prévoit une <strong>indemnité forfaitaire conventionnelle</strong> en plus du paiement normal des heures effectuées le dimanche."},
+{t:"Droit social",q:"Un CDD peut être conclu pour :",o:["Remplacer un salarié temporairement absent","Remplacer un salarié dont le contrat est suspendu suite à un conflit collectif de travail","Embaucher un salarié pour vérifier ses aptitudes dans l'attente de son embauche définitive","Réembaucher sur un poste permanent un salarié licencié pour motif économique un mois auparavant"],a:[0],e:"Le CDD peut être conclu pour <strong>remplacer un salarié temporairement absent</strong>. Il est interdit pour remplacer un gréviste, vérifier des aptitudes, ou pourvoir un emploi permanent."},
+{t:"RSE / Temps de conduite",q:"En cas de fractionnement du repos journalier, la durée minimale de la première fraction doit être d'au moins :",o:["30 minutes","1 heure","2 heures","3 heures"],a:[3],e:"Le repos journalier fractionné : <strong>première fraction d'au moins 3 heures</strong>, puis seconde fraction d'au moins 9 heures (12h au total minimum)."},
+{t:"Droit social",q:"Sauf danger immédiat, une inaptitude définitive au poste est reconnue :",o:["Par le médecin traitant après un examen","Par le médecin du travail après au moins un examen médical et une étude du poste","Par le salarié lui-même","Par l'employeur après avis du médecin du travail et du CSE"],a:[1],e:"L'inaptitude est prononcée par le <strong>médecin du travail</strong>, après au moins un examen médical et une étude du poste."},
+{t:"Droit social",q:"Lors d'un licenciement notifié par LRAR, le préavis débute :",o:["Lors de la remise effective de la lettre au salarié","Lors de la présentation de la lettre au domicile du salarié, même si absent","Lors du retrait de la lettre à la poste","À la date d'expédition de la lettre"],a:[1],e:"Le préavis court à compter de la <strong>première présentation de la LRAR au domicile du salarié</strong>, même s'il est absent et ne la retire pas."},
+{t:"RSE / Temps de conduite",q:"Le temps de service d'un conducteur grand routier conduisant des véhicules de plus de 3,5 tonnes est de :",o:["13 heures par jour maximum","11 heures maximum par jour avec possibilité de 12h30","56 heures maximum sur une semaine isolée","48 heures hebdomadaires en moyenne sur 12 semaines"],a:[2],e:"Le temps de service d'un grand routier est limité à <strong>56 heures maximum sur une semaine isolée</strong>."},
+{t:"RSE / Temps de conduite",q:"Selon le règlement (CE) n° 561/2006, la durée de conduite journalière ne doit pas dépasser :",o:["4 heures 30","8 heures","10 heures, pouvant être portée à 12 heures deux fois par semaine","9 heures ; prolongeable à 10 heures maximum, pas plus de deux fois par semaine"],a:[3],e:"La conduite journalière est limitée à <strong>9 heures</strong>, prolongeable à <strong>10 heures maximum deux fois par semaine</strong>."},
+{t:"Droit social",q:"Selon la CCNTR, la durée maximale de la période d'essai non renouvelable d'un conducteur en CDI est de :",o:["Une semaine","Quinze jours","Un mois","Deux mois"],a:[2],e:"La période d'essai d'un conducteur embauché en CDI est d'<strong>1 mois maximum, non renouvelable</strong> selon la CCNTR."},
+{t:"Droit social",q:"Le dépôt du règlement intérieur est effectué :",o:["Au greffe du conseil de prud'hommes et auprès de l'inspecteur du travail","Au service des transports de la DREAL","Au greffe du tribunal de commerce","Au greffe du tribunal judiciaire"],a:[0],e:"Le règlement intérieur est déposé au <strong>greffe du conseil de prud'hommes</strong> et transmis à l'<strong>inspecteur du travail</strong>."},
+{t:"Contrats de transport",q:"Selon le contrat type 'général', le coût de la pesée du véhicule est supporté par :",o:["Le transporteur","L'expéditeur","Le destinataire","Le demandeur"],a:[3],e:"Les frais de pesée sont supportés par <strong>le demandeur</strong>. Si la surcharge est confirmée, les frais sont à la charge de l'expéditeur."},
+{t:"Contrats de transport",q:"Selon le contrat type 'général', en cas de dommages à la livraison, le transporteur est tenu :",o:["D'indemniser uniquement sur la valeur d'achat","De faire procéder au remplacement ou à la remise en état","D'indemniser tous les dommages justifiés dont il est responsable, dans la limite des plafonds","De vendre la marchandise pour indemniser le destinataire"],a:[2],e:"Le transporteur indemnise <strong>tous les dommages justifiés dont il est légalement responsable</strong>, dans la <strong>limite des plafonds prévus par les contrats types</strong>."},
+{t:"Réglementation transport",q:"Un transporteur non inscrit au registre des commissionnaires peut sous-traiter sans dépasser :",o:["10% du CA annuel","15% du CA annuel","20% du CA annuel","25% du CA annuel"],a:[1],e:"La limite de sous-traitance pour un transporteur non inscrit comme commissionnaire est de <strong>15% du chiffre d'affaires annuel</strong> de transport routier."},
+{t:"Transport international",q:"L'attestation de conducteur est exigée pour un ressortissant d'un État tiers à l'EEE quand le véhicule effectue un transport international sous couvert d'une :",o:["Copie conforme de licence de transport intérieur","Copie conforme de licence communautaire","Autorisation multilatérale FIT (ex CEMT)","Autorisation bilatérale"],a:[1],e:"L'attestation de conducteur est requise pour les ressortissants de pays tiers sous couvert d'une <strong>licence communautaire</strong>."},
+{t:"Réglementation transport",q:"Lors d'un contrôle routier avec un véhicule de PTAC supérieur à 6 tonnes, vous devez présenter :",o:["Une copie conforme de la licence de transport intérieur","Une copie certifiée conforme de la licence communautaire","Une lettre de voiture nationale","Un extrait de votre K-bis"],a:[1],e:"Le titre administratif obligatoire est la <strong>copie certifiée conforme de la licence communautaire</strong>."},
+{t:"Contrats de transport",q:"Une lettre de voiture en transport national est :",o:["Utilisée quels que soient les trafics, le poids et la distance","Rédigée obligatoirement en 4 exemplaires","Enregistrée sur un répertoire chez le transporteur","Un document dont la forme et le fond sont libres"],a:[0],e:"La lettre de voiture est utilisée pour <strong>tous les transports nationaux</strong>, sans exception de poids, distance ou type de trafic."},
+{t:"Contrats de transport",q:"En application de l'art. L3222-5 du Code des transports, toute prestation annexe non prévue au contrat :",o:["Autorise le transporteur à renégocier son contrat","N'ouvre aucun droit à un complément de rémunération","Ouvre droit pour le transporteur à mettre fin au contrat","Ouvre droit pour le transporteur à un complément de rémunération"],a:[3],e:"Toute prestation annexe non contractuelle <strong>ouvre droit à un complément de rémunération</strong> pour le transporteur."},
+{t:"Réglementation transport",q:"La lettre de voiture doit être conservée par l'entreprise de transport pendant :",o:["1 an","2 ans","3 ans","5 ans"],a:[2],e:"Selon le corrigé officiel 2020 : <strong>C (3 ans)</strong>. La lettre de voiture doit être présentable à toute réquisition des agents de l'État pendant ce délai."},
+{t:"Contrats de transport",q:"Selon le contrat type 'général', les opérations de chargement et de déchargement incombent respectivement :",o:["À l'expéditeur ou au destinataire, sauf pour les envois inférieurs à 3 tonnes","Au commissionnaire ou au destinataire pour les envois inférieurs à 3 tonnes","À l'expéditeur ou au transporteur, sauf pour les envois inférieurs à 3 tonnes","Au transporteur et au destinataire pour les envois inférieurs à 3 tonnes"],a:[0],e:"Pour les envois ≥ 3 tonnes : <strong>expéditeur charge, destinataire décharge</strong>. Pour les envois < 3 tonnes : le transporteur prend en charge ces opérations."},
+{t:"Contrats de transport",q:"Les contrats types pour les transports routiers de marchandises s'appliquent :",o:["Obligatoirement","Uniquement aux transports internationaux","Quand les parties n'ont pas fixé les modalités dans une convention écrite","Quand les parties se sont accordées"],a:[2],e:"Les contrats types s'appliquent <strong>à défaut de convention écrite</strong> entre les parties."},
+{t:"Contrats de transport",q:"L'art. L3221-3 du Code des transports s'applique au contrat conclu entre :",o:["Un transporteur public routier et un chargeur","Un commissionnaire de transport et un chargeur","Un loueur de véhicules sans conducteur et son locataire","Un transporteur public routier et un commissionnaire de transport"],a:[3],e:"L'art. L3221-3 encadre les relations de sous-traitance entre <strong>un transporteur et un commissionnaire de transport</strong>."},
+{t:"Transport national",q:"En transport national, en cas de dommage, le destinataire confirme ses réserves :",o:["Au transporteur qui a effectué la livraison","Au commissionnaire qui a affrété le transporteur","À l'expéditeur qui a conclu le contrat","À son assureur"],a:[0],e:"Les réserves doivent être adressées <strong>au transporteur</strong> par lettre recommandée dans les 3 jours (hors jours fériés)."},
+{t:"Réglementation transport",q:"La carte 'entreprise' associée au tachygraphe numérique permet :",o:["La conduite d'un véhicule équipé d'un tachygraphe numérique","La conduite et le téléchargement des données","Le téléchargement des données enregistrées dans la mémoire des tachygraphes","L'étalonnage du tachygraphe numérique"],a:[2],e:"La <strong>carte entreprise</strong> permet uniquement le <strong>téléchargement des données</strong> enregistrées dans les tachygraphes de la flotte."},
+{t:"Sécurité / Véhicules",q:"La longueur maximale d'un train routier ne doit pas excéder :",o:["16,50 m","18 m","18,75 m","20 m"],a:[2],e:"La longueur maximale d'un <strong>train routier</strong> est de <strong>18,75 m</strong> (art. R312-5 Code de la route)."},
+{t:"Sécurité / Véhicules",q:"Le PTAC d'un véhicule moteur à 3 essieux ne doit pas excéder :",o:["12 T","19 T","26 T","32 T"],a:[2],e:"Le PTAC d'un véhicule moteur à <strong>3 essieux</strong> est limité à <strong>26 tonnes</strong>."},
+{t:"Marchandises dangereuses",q:"La circulation des poids lourds transportant des marchandises dangereuses soumis à signalisation est interdite en fin de semaine :",o:["De 22h00 le samedi à 22h00 le dimanche","De 22h00 le samedi à 24h00 le dimanche","De 12h00 le samedi à 24h00 le dimanche","De 12h00 le samedi à 12h00 le dimanche"],a:[0],e:"La restriction s'applique <strong>du samedi 22h00 au dimanche 22h00</strong>."},
+{t:"Sécurité / Véhicules",q:"Un véhicule isolé de plus de 12 T de PTAC, transportant des matières non dangereuses, ne doit pas dépasser sur autoroute :",o:["80 km/h","90 km/h","100 km/h","110 km/h"],a:[1],e:"Les poids lourds (PTAC > 3,5 t) sont limités à <strong>90 km/h sur autoroute</strong>."},
+{t:"Sécurité / Véhicules",q:"Lequel de ces appareils n'est PAS soumis à vérification obligatoire tous les 6 mois ?",o:["Hayon élévateur","Appareil de démontage des pneus","Grue auxiliaire sur camion","Chariot élévateur"],a:[1],e:"L'<strong>appareil de démontage des pneus</strong> n'est pas soumis à vérification semestrielle obligatoire. Les autres (hayon, grue, chariot élévateur) le sont."},
+{t:"Transport international",q:"Un transporteur français transportant de France en Pologne en transit par l'Allemagne doit détenir à bord :",o:["Une copie conforme de la licence communautaire et une lettre de voiture","Uniquement une autorisation bilatérale polonaise","Une copie conforme de la licence communautaire et une autorisation bilatérale polonaise","Un certificat d'inscription et une lettre de voiture"],a:[0],e:"Pour un transport entre deux États membres de l'UE, la <strong>copie certifiée conforme de la licence communautaire</strong> suffit, accompagnée de la lettre de voiture. Pas d'autorisation bilatérale nécessaire."},
+{t:"Transport international",q:"Suite à un transport France-Allemagne, un trafic intérieur allemand vous est proposé. Vous pouvez l'effectuer à l'aide d'une :",o:["Autorisation de cabotage délivrée par la France","Autorisation de cabotage délivrée par l'Allemagne","Autorisation multilatérale FIT (ex CEMT)","Copie certifiée conforme de votre licence communautaire"],a:[3],e:"Le cabotage dans l'UE s'effectue sur présentation de la <strong>copie certifiée conforme de la licence communautaire</strong>."},
+{t:"Transport international (CMR)",q:"En transport international, l'indemnité pour retard à la livraison ne peut pas dépasser :",o:["La valeur de la marchandise","La valeur de la marchandise plus le prix du transport","Le prix du transport","Deux fois le prix du transport"],a:[2],e:"Selon l'art. 23§5 CMR, l'indemnité pour retard est limitée au <strong>prix du transport</strong>."}
+];
+
+const ANSWERS=[[3],[2],[0],[1,2],[0],[3],[0],[0],[3],[0],[3],[1],[0],[2],[2],[2],[3],[2],[1],[1],[3],[0],[3],[1],[1],[2],[3],[2],[0],[3],[2],[1],[1],[1],[0],[3],[2],[0],[2],[3],[0],[2],[2],[2],[0],[1],[1],[0],[3],[2]];
+
+let cur=0,ans=new Array(50).fill(null).map(()=>[]),locked=new Array(50).fill(false);
+
+function isCorrect(i){
+  const correct=ANSWERS[i],given=ans[i];
+  if(correct.length===1)return given.length===1&&given[0]===correct[0];
+  return correct.length===given.length&&correct.every(c=>given.includes(c));
+}
+
+function render(){
+  const q=Q[cur];
+  const isMulti=ANSWERS[cur].length>1;
+  document.getElementById("pfill").style.width=Math.round((cur+1)/50*100)+"%";
+  document.getElementById("qtop").textContent="Question "+(cur+1)+" sur 50";
+  document.getElementById("answered").textContent=locked.filter(Boolean).length+" répondues";
+  document.getElementById("qcount").textContent=(cur+1)+" / 50";
+  document.getElementById("bprev").disabled=cur===0;
+  const nb=document.getElementById("bnext");
+  if(locked[cur]){
+    nb.textContent=cur===49?"Voir les résultats":"Suivant →";
+    nb.onclick=cur===49?showResult:()=>go(1);
+    nb.disabled=false;
+  }else if(isMulti){
+    nb.textContent="Valider ✓";
+    nb.onclick=validate;
+    nb.disabled=ans[cur].length===0;
+  }else{
+    nb.textContent="Suivant →";
+    nb.onclick=()=>go(1);
+    nb.disabled=true;
+  }
+  const L=["a","b","c","d"];
+  let h=`<div class="qcard"><div class="qcard-head"><span class="qnum">Q${cur+1}</span>${isMulti?'<span class="qmulti">2 bonnes réponses</span>':''}</div><div class="qtext">${q.q}</div><div class="options">`;
+  q.o.forEach((o,i)=>{
+    let c="opt";
+    if(locked[cur]){
+      c+=" locked";
+      if(ANSWERS[cur].includes(i))c+=" correct";
+      else if(ans[cur].includes(i))c+=" wrong";
+    }else if(ans[cur].includes(i))c+=" selected";
+    h+=`<div class="${c}" onclick="pick(${i})"><div class="opt-letter">${L[i]}</div><div class="opt-text">${o}</div></div>`;
+  });
+  h+=`</div>`;
+  if(locked[cur])h+=`<div class="expl">${q.e}</div>`;
+  h+=`</div>`;
+  document.getElementById("qzone").innerHTML=h;
+  updateScore();
+}
+
+function pick(i){
+  if(locked[cur])return;
+  const isMulti=ANSWERS[cur].length>1;
+  if(isMulti){
+    const a=[...ans[cur]],idx=a.indexOf(i);
+    if(idx>=0)a.splice(idx,1);else a.push(i);
+    ans[cur]=a;
+    document.getElementById("bnext").disabled=a.length===0;
+    render();
+  }else{
+    ans[cur]=[i];locked[cur]=true;render();
+  }
+}
+
+function validate(){
+  if(locked[cur])return;
+  locked[cur]=true;render();
+}
+
+function go(d){if(cur+d<0||cur+d>=50)return;cur+=d;render();}
+
+function updateScore(){
+  let ok=0;for(let i=0;i<50;i++)if(locked[i]&&isCorrect(i))ok++;
+  document.getElementById("score").textContent=ok*2;
+}
+
+function showResult(){
+  let ok=0;for(let i=0;i<50;i++)if(isCorrect(i))ok++;
+  const ko=50-ok,pts=ok*2,pct=Math.round(ok/50*100);
+  const themes=[...new Set(Q.map(q=>q.t))];
+  let tS={};themes.forEach(t=>{tS[t]={ok:0,total:0}});
+  Q.forEach((q,i)=>{tS[q.t].total++;if(isCorrect(i))tS[q.t].ok++;});
+  let bHTML=themes.map(t=>{
+    const s=tS[t],p=Math.round(s.ok/s.total*100);
+    const c=p>=70?"#1A5C38":p>=50?"#F0B429":"#E24B4A";
+    return `<div class="th-row"><div class="th-name">${t}</div><div class="th-bar-wrap"><div class="th-bar" style="width:${p}%;background:${c}"></div></div><div class="th-score">${s.ok}/${s.total}</div></div>`;
+  }).join("");
+  const msg=pts>=60?"Bonne préparation, continue !":pts>=40?"Des points à consolider.":"À retravailler — revois les chapitres en rouge.";
+  document.getElementById("qzone").innerHTML="";
+  document.getElementById("result").innerHTML=`
+    <div class="result-pct">${pct}%</div>
+    <div class="result-msg">${msg}</div>
+    <div class="result-grid">
+      <div class="rstat ok"><div class="rv">${ok}</div><div class="rl">Correctes</div></div>
+      <div class="rstat ko"><div class="rv">${ko}</div><div class="rl">Incorrectes</div></div>
+      <div class="rstat"><div class="rv">${pts}/100</div><div class="rl">Score</div></div>
+    </div>
+    <div class="breakdown"><h3>Résultats par thème</h3>${bHTML}</div>
+    <button class="btn primary" onclick="restart()" style="width:100%">Recommencer</button>`;
+  document.getElementById("result").style.display="block";
+  document.getElementById("nav").style.display="none";
+  document.querySelector(".progress-wrap").style.display="none";
+}
+
+function restart(){
+  cur=0;ans=new Array(50).fill(null).map(()=>[]);locked=new Array(50).fill(false);
+  document.getElementById("result").style.display="none";
+  document.getElementById("nav").style.display="flex";
+  document.querySelector(".progress-wrap").style.display="block";
+  document.getElementById("score").textContent="0";
+  render();
+}
+render();
+</script>
+</body>
+</html>
