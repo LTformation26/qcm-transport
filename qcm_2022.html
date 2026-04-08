@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Capacité de Transport +3,5t</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1A5C38;--green-mid:#2E7D52;--green-light:#E8F5EE;--green-pale:#F2FAF5;--red:#E24B4A;--red-light:#FCEBEB;--text:#1a1a1a;--muted:#6b7280;--border:#e5e7eb;--bg:#F7F8F7;--white:#fff}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem}
+.container{max-width:700px;margin:0 auto}
+.header{background:var(--green);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header h1{color:#fff;font-size:16px;font-weight:600;line-height:1.3}
+.header p{color:#A8D5BC;font-size:12px;margin-top:3px}
+.score-box{text-align:right;flex-shrink:0}
+.score-box .pts{color:#fff;font-size:28px;font-weight:600;line-height:1;font-family:'DM Mono',monospace}
+.score-box .lbl{color:#A8D5BC;font-size:11px;margin-top:2px}
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:6px}
+.progress-info span{font-size:12px;color:var(--muted)}
+.progress-bar{height:5px;background:#d1d5db;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s ease}
+.qcard{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.qcard-head{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.qnum{background:var(--green-light);color:var(--green);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.qtext{font-size:15px;font-weight:500;line-height:1.6;color:var(--text);margin-bottom:1rem}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:var(--white)}
+.opt:hover:not(.locked){background:var(--green-pale);border-color:#a7d3b8}
+.opt.selected{border-color:var(--green);background:var(--green-light)}
+.opt.correct{border-color:var(--green);background:var(--green-light)}
+.opt.wrong{border-color:var(--red);background:var(--red-light)}
+.opt-letter{width:24px;height:24px;min-width:24px;border-radius:50%;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--muted);margin-top:1px;transition:all .15s}
+.opt.selected .opt-letter,.opt.correct .opt-letter{background:var(--green);color:#fff}
+.opt.wrong .opt-letter{background:var(--red);color:#fff}
+.opt-text{font-size:13.5px;color:var(--text);line-height:1.5}
+.expl{margin-top:.875rem;padding:.75rem 1rem;background:var(--green-light);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13px;color:#1A5C38;line-height:1.6}
+.expl strong{font-weight:600}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:.5rem}
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text);transition:all .15s}
+.btn:hover{background:#f3f4f6}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.primary:hover{background:var(--green-mid)}
+.btn:disabled{opacity:.35;cursor:default}
+.qcount{font-size:13px;color:var(--muted);font-weight:500}
+.result-card{display:none;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:2rem 1.5rem;text-align:center}
+.result-pct{font-size:52px;font-weight:700;color:var(--green);line-height:1;font-family:'DM Mono',monospace}
+.result-msg{font-size:15px;color:var(--muted);margin:.5rem 0 1.5rem}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+.rstat{background:#f9fafb;border-radius:10px;padding:1rem}
+.rstat .rv{font-size:24px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
+.rstat .rl{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
+.rstat.ok .rv{color:var(--green)}.rstat.ko .rv{color:var(--red)}
+.breakdown{margin-bottom:1.5rem;text-align:left}
+.breakdown h3{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem}
+.th-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.th-name{font-size:12px;color:var(--text);width:180px;flex-shrink:0}
+.th-bar-wrap{flex:1;height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden}
+.th-bar{height:100%;border-radius:4px;transition:width .5s ease}
+.th-score{font-size:12px;font-weight:600;color:var(--muted);width:36px;text-align:right;flex-shrink:0}
+@media(max-width:480px){.header{flex-direction:column;align-items:flex-start}.result-grid{grid-template-columns:repeat(2,1fr)}.th-name{width:120px;font-size:11px}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <div>
+    <h1>QCM — Capacité de Transport Marchandises +3,5t</h1>
+    <p>50 questions · 100 points · 2 pts / question</p>
+  </div>
+  <div class="score-box">
+    <div class="pts" id="score">0</div>
+    <div class="lbl">pts / 100</div>
+  </div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="qtop">Question 1 sur 50</span>
+    <span id="answered">0 répondues</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:2%"></div></div>
+</div>
+<div id="qzone"></div>
+<div class="result-card" id="result"></div>
+<div class="nav" id="nav">
+  <button class="btn" id="bprev" onclick="go(-1)" disabled>← Précédent</button>
+  <span class="qcount" id="qcount">1 / 50</span>
+  <button class="btn primary" id="bnext" onclick="go(1)">Suivant →</button>
+</div>
+</div>
+<script>
+const Q=[
+{t:"Droit des affaires",q:"En principe, le délai de prescription en matière commerciale est de :",o:["2 ans","5 ans","10 ans","30 ans"],a:1,e:"Depuis la loi du 17 juin 2008, la prescription de droit commun en matière commerciale est de <strong>5 ans</strong> (art. L110-4 Code de commerce)."},
+{t:"Droit des affaires",q:"Une machine-outil de 4 tonnes fixée au sol est un bien :",o:["Corporel et mobilier","Incorporel et immobilier","Corporel et immobilier","Incorporel et mobilier"],a:0,e:"Une machine-outil est un bien <strong>corporel</strong> (matériel, tangible). Elle est fixée au sol mais reste <strong>mobilière</strong> par nature — la fixation au sol ne suffit pas à en faire un immeuble par destination si elle peut être déplacée sans dommage."},
+{t:"Droit des affaires",q:"Le patrimoine d'une société est l'ensemble :",o:["Des biens, droits et obligations s'y rapportant","De ses seuls biens corporels et droits qui y sont liés","Des droits conférés par ses biens et immeubles","De ses biens fongibles et non fongibles"],a:0,e:"Le patrimoine d'une société comprend l'ensemble de ses <strong>biens, droits et obligations</strong> (actif et passif). C'est la définition classique du patrimoine en droit civil."},
+{t:"Responsabilité",q:"Les trois causes d'exonération de la responsabilité civile du chef d'entreprise sont :",o:["La force majeure, le fait du prince, la faute de la victime","La faute de la victime, le fait de guerre, la force majeure","Le fait du prince, le fait d'un tiers, la force majeure","Le fait d'un tiers, la faute de la victime, la force majeure"],a:3,e:"Les trois causes classiques d'exonération de responsabilité civile sont : <strong>le fait d'un tiers, la faute de la victime et la force majeure</strong>. Ces causes rompent le lien de causalité entre le fait générateur et le dommage."},
+{t:"Droit des affaires",q:"En cas de cessation de paiement, sont payables immédiatement :",o:["Les créances fiscales et sociales antérieures au jugement d'ouverture","Les dettes nées après le jugement d'ouverture de la procédure de redressement","Les dettes nées avant le dépôt de bilan","Les créances bancaires dûment produites à la date du jugement d'ouverture"],a:1,e:"Lors d'un redressement judiciaire, les <strong>dettes nées après le jugement d'ouverture</strong> (dites dettes postérieures) sont privilégiées et payables à leur échéance, car elles permettent à l'entreprise de continuer son activité."},
+{t:"Gestion financière",q:"Une entreprise est tenue de conserver les livres comptables et pièces justificatives durant au moins :",o:["3 ans","5 ans","8 ans","10 ans"],a:3,e:"Les livres comptables (livre journal, grand livre) et les pièces justificatives doivent être conservés pendant <strong>10 ans</strong> (art. L123-22 Code de commerce)."},
+{t:"Droit des affaires",q:"Le contrat d'assurance est un contrat :",o:["Aléatoire","Unilatéral","Solennel","Type"],a:0,e:"Le contrat d'assurance est un contrat <strong>aléatoire</strong> car son exécution dépend d'un événement incertain (le sinistre). Il est aussi synallagmatique (obligations réciproques) et consensuel."},
+{t:"Droit des affaires",q:"Dans une SARL, le gérant est élu à la majorité des associés :",o:["Représentant le tiers des parts sociales","Représentant un quart des parts sociales","Représentant plus des trois quarts des parts sociales","Représentant plus de la moitié des parts sociales"],a:3,e:"Sauf disposition statutaire contraire, le gérant de SARL est nommé à la <strong>majorité absolue des parts sociales</strong> (plus de la moitié) — art. L223-29 Code de commerce."},
+{t:"Droit des affaires",q:"Le souscripteur d'un billet à ordre est :",o:["L'acheteur","Le vendeur","Le banquier du client","Le banquier du vendeur"],a:0,e:"Dans un billet à ordre, le <strong>souscripteur</strong> est le débiteur (l'acheteur) qui s'engage à payer une somme au bénéficiaire (le vendeur) à une date déterminée. C'est l'inverse de la lettre de change."},
+{t:"Gestion financière",q:"Lors de la création d'une société de capitaux, l'argent constituant le capital social libéré :",o:["Reste bloqué pendant toute la durée de vie de la société","Reste bloqué pendant les formalités de création puis disponible pour rembourser les associés","Reste bloqué pendant les formalités de création puis disponible pour les besoins de la société","Est fictif et n'est jamais disponible"],a:2,e:"Le capital social libéré est bloqué sur un compte séquestre le temps des <strong>formalités de création</strong>. Dès l'immatriculation au RCS, il est débloqué et mis à <strong>disposition de la société</strong> pour financer son activité."},
+{t:"Droit des affaires",q:"Dans le cas d'un chèque certifié, la banque du tireur :",o:["S'engage à bloquer la provision pendant la durée légale du délai de présentation","Ne fait que constater la provision au moment de l'établissement du chèque","Paye tout de suite la somme due au bénéficiaire","S'engage à bloquer la provision pendant un délai de 30 jours"],a:0,e:"Le chèque certifié garantit l'existence de la provision : la banque <strong>bloque les fonds pendant la durée légale de présentation du chèque</strong> (8 jours en France). Elle ne paye pas immédiatement mais garantit le paiement."},
+{t:"Droit des affaires",q:"Dans une SAS, les associés doivent répondre des dettes de la société :",o:["Dans leur totalité","À concurrence de la moitié de leurs apports uniquement","Dans la limite de leurs apports","Sauf en cas de liquidation judiciaire"],a:2,e:"Comme dans la SARL, les associés d'une SAS ont une <strong>responsabilité limitée à leurs apports</strong>. Ils ne peuvent pas être tenus personnellement des dettes sociales au-delà de ce qu'ils ont apporté."},
+{t:"Droit des affaires",q:"La procédure d'injonction de payer permet :",o:["De demander par voie de justice le recouvrement de créances","De retarder juridiquement le paiement des créanciers","D'obtenir la liquidation judiciaire immédiate d'une entreprise","De se faire payer sans passer par une voie judiciaire"],a:0,e:"L'injonction de payer est une procédure judiciaire simplifiée permettant à un créancier de <strong>recouvrer rapidement une créance certaine, liquide et exigible</strong>, sans audience contradictoire préalable."},
+{t:"Réglementation transport",q:"La condition de capacité financière exigible pour une entreprise de transport correspond :",o:["À un impôt payé par le transporteur à la fin de chaque exercice","Au montant des capitaux permanents","À un rapport entre les immobilisations et les capitaux permanents","À un montant minimum de capitaux propres déterminé en fonction du parc de véhicules"],a:3,e:"La capacité financière est définie par le règlement 1071/2009 comme un <strong>montant minimum de capitaux propres</strong>, calculé en fonction du nombre de véhicules : 9 000 € pour le 1er véhicule, 5 000 € par véhicule supplémentaire."},
+{t:"Gestion financière",q:"Les loyers des véhicules pris en location sont enregistrés :",o:["À l'actif du bilan","Dans les charges exceptionnelles","Dans les charges d'exploitation","Dans les charges financières"],a:2,e:"Les loyers de location de véhicules constituent des <strong>charges d'exploitation</strong> (compte 6122 — locations mobilières du PCG). Ils figurent dans le compte de résultat, pas au bilan."},
+{t:"Gestion financière",q:"La variation de stock est calculée en fin d'exercice comptable pour déterminer :",o:["Le montant du stock final reporté au compte de résultat","Les plus-values ou moins-values sur les stocks","La partie des stocks égarée ou volée","Le montant réel des consommations de matières premières pendant l'exercice"],a:3,e:"La variation de stock (stock initial - stock final) permet de calculer les <strong>consommations réelles de l'exercice</strong> : Consommation = Achats + Stock initial - Stock final."},
+{t:"Droit social",q:"Dans les entreprises d'au moins 50 salariés, le règlement intérieur doit :",o:["Concerner les qualifications et rémunérations des salariés","Concerner les règles d'hygiène et de sécurité applicables dans l'entreprise","Être transmis aux chambres syndicales","Être soumis pour avis à la CPRI avant sa mise en application"],a:1,e:"Le règlement intérieur est obligatoire dans les entreprises de 50 salariés et plus. Il doit traiter des <strong>règles d'hygiène, de sécurité et de discipline</strong> (art. L1321-1 Code du travail). Les rémunérations et qualifications n'en font pas partie."},
+{t:"Droit social",q:"Un salarié déclaré inapte à son poste par le médecin du travail doit :",o:["Être considéré comme démissionnaire","Être licencié pour cas de force majeure","Être déclaré invalide","Être licencié pour inaptitude en cas d'impossibilité de reclassement"],a:3,e:"L'employeur doit d'abord chercher à <strong>reclasser</strong> le salarié inapte. Ce n'est qu'en cas d'impossibilité de reclassement qu'il peut procéder à un <strong>licenciement pour inaptitude</strong> (art. L1226-2 Code du travail)."},
+{t:"Droit social",q:"Un licenciement économique individuel ne peut avoir lieu sans :",o:["La consultation préalable des représentants du personnel","Un plan social","Un entretien préalable","Une autorisation administrative"],a:2,e:"Tout licenciement, y compris économique individuel, nécessite obligatoirement un <strong>entretien préalable</strong> avec le salarié (art. L1232-2 Code du travail). Le plan social (PSE) n'est requis qu'à partir de 10 licenciements sur 30 jours."},
+{t:"Droit social",q:"Un CDD est requalifié en CDI lorsque :",o:["Le contrat ne précise pas de période d'essai","Le motif pour lequel il est conclu n'est pas indiqué","Le contrat est rompu avant le terme","Il est conclu pour remplacer un salarié absent"],a:1,e:"L'absence de mention du <strong>motif de recours au CDD</strong> dans le contrat écrit est une cause obligatoire de requalification en CDI (art. L1242-12 Code du travail)."},
+{t:"Droit social",q:"Le comité social et économique (CSE) doit être constitué à partir de :",o:["11 salariés pendant 12 mois consécutifs","25 salariés pendant 12 mois consécutifs","50 salariés pendant 12 mois consécutifs","100 salariés pendant 12 mois consécutifs"],a:0,e:"Le CSE est obligatoire dans toutes les entreprises atteignant <strong>11 salariés pendant 12 mois consécutifs</strong> (art. L2311-2 Code du travail). Il remplace depuis 2020 les délégués du personnel, le CE et le CHSCT."},
+{t:"Droit social",q:"En cas d'absence de candidature syndicale pour les élections de représentants du personnel, le chef d'entreprise doit :",o:["Renoncer aux élections","Organiser un second tour dans un délai d'1 mois","Prévenir l'inspecteur du travail","Organiser un second tour dans un délai de 15 jours"],a:3,e:"Si le premier tour est infructueux faute de candidats syndicaux, l'employeur doit organiser un <strong>second tour dans un délai de 15 jours</strong>, ouvert à tous les salariés (art. L2314-30 Code du travail)."},
+{t:"Droit social",q:"En cas de licenciement économique d'un conducteur, le délai minimal entre l'entretien préalable et la notification de la lettre de licenciement est de :",o:["1 jour","4 jours","7 jours","15 jours"],a:2,e:"Pour un licenciement économique individuel, le délai de réflexion entre l'entretien préalable et la notification est de <strong>7 jours ouvrables minimum</strong> (art. L1233-15 Code du travail)."},
+{t:"Droit social",q:"Lors d'un licenciement pour faute lourde, l'employeur doit obligatoirement remettre au salarié :",o:["Une attestation Pôle Emploi pour faire valoir ses droits aux allocations chômage","Une indemnité compensatrice correspondant à l'ensemble des congés payés acquis","Une indemnité compensatrice de préavis","Un document d'information sur ses droits CPF"],a:0,e:"Même en cas de faute lourde, l'employeur doit obligatoirement remettre au salarié l'<strong>attestation France Travail (ex Pôle Emploi)</strong> pour lui permettre de faire valoir ses droits. En revanche, il n'a droit ni à l'indemnité de licenciement ni à l'indemnité de préavis."},
+{t:"Droit social",q:"La période d'essai pour un conducteur embauché en CDD de 12 mois est de :",o:["1 mois renouvelable","1 mois non renouvelable","2 mois renouvelables","2 mois non renouvelables"],a:1,e:"Pour un CDD de 6 à 12 mois, la période d'essai est de <strong>1 mois maximum, non renouvelable</strong> (art. L1242-10 Code du travail). Pour un CDD de plus de 12 mois, elle peut aller jusqu'à 2 mois."},
+{t:"Réglementation transport",q:"La durée de la FCO (formation continue obligatoire) des conducteurs est de :",o:["3 jours","5 jours","1 jour","2 jours"],a:1,e:"La FCO est une formation de <strong>35 heures (5 jours) tous les 5 ans</strong>, obligatoire pour maintenir la qualification CQC du conducteur. Elle peut être suivie en 1 bloc ou en plusieurs modules."},
+{t:"Réglementation transport",q:"Avant d'affecter un conducteur à un camion isolé récent de plus de 7,5 tonnes de PTAC, l'entreprise doit vérifier qu'il est titulaire :",o:["Des permis C et CE, et de la carte de conducteur pour tachygraphe","Du permis C, de la carte CQC et de la carte de conducteur pour tachygraphe","Du permis C et de l'attestation de capacité professionnelle","Du permis D et de la carte de conducteur pour tachygraphe"],a:1,e:"Pour conduire un camion de plus de 7,5 t, le conducteur doit obligatoirement posséder : <strong>le permis C</strong> (camion isolé), la <strong>carte CQC</strong> (qualification conducteur) et la <strong>carte de conducteur</strong> pour le tachygraphe numérique."},
+{t:"RSE / Temps de conduite",q:"Selon la RSE, au sein d'une période de 24 heures, le repos journalier peut être fractionné à condition :",o:["Que ce repos soit d'une durée totale d'au moins 11 heures","De le fractionner en 4 périodes maximum","Qu'après 10 heures de conduite, la durée du repos soit d'au moins 8 heures consécutives","Que ce repos soit d'une durée totale d'au moins 12 heures"],a:3,e:"Selon l'art. 8§1 du règlement 561/2006, le repos journalier normal peut être fractionné en <strong>2 périodes</strong> : la première d'au moins 3 heures, la seconde d'au moins 9 heures, soit <strong>12 heures au total minimum</strong>."},
+{t:"Droit social",q:"Avant toute embauche, il y a lieu de :",o:["Prévenir l'inspecteur du travail","Faire une déclaration préalable à l'embauche (DPAE) auprès de l'URSSAF","Établir un contrat de travail","Adresser copie du contrat à l'inspection du travail"],a:1,e:"La <strong>DPAE (Déclaration Préalable À l'Embauche)</strong> est obligatoire avant toute embauche et doit être effectuée auprès de l'URSSAF (art. L1221-10 Code du travail). Elle permet l'immatriculation du salarié et ouvre ses droits sociaux."},
+{t:"Réglementation transport",q:"Tout changement modifiant la situation de l'entreprise inscrite aux registres des professions réglementées du transport doit être porté à la connaissance du préfet de région dans un délai maximum de :",o:["8 jours","15 jours","28 jours","31 jours"],a:2,e:"Selon la réglementation, tout changement affectant les conditions d'inscription au registre des transporteurs doit être déclaré au préfet de région dans un délai de <strong>28 jours</strong> (art. R3113-3 Code des transports)."},
+{t:"Réglementation transport",q:"Lors d'un contrôle sur route en Belgique d'un ensemble routier français de 40 tonnes, le document suivant doit obligatoirement être présenté :",o:["L'autorisation d'exercer la profession délivrée par la DREAL","L'extrait K-bis justifiant l'inscription au RCS","La copie certifiée conforme de la licence communautaire de transport","Le contrat de travail du conducteur salarié"],a:2,e:"Lors d'un contrôle dans un État membre de l'UE, le document obligatoire à bord est la <strong>copie certifiée conforme de la licence communautaire</strong>. C'est le titre de transport pour les véhicules de plus de 3,5 t en transport international."},
+{t:"Réglementation transport",q:"Les coopératives d'entreprises de transport :",o:["Sont obligatoirement inscrites au registre des commissionnaires de transport","Ne sont pas inscrites au registre des entreprises de transport","Sont inscrites au registre des entreprises de transport","Ne sont pas inscrites au registre du commerce et des sociétés"],a:2,e:"Les coopératives d'entreprises de transport effectuant du transport public routier sont <strong>inscrites au registre des entreprises de transport</strong>, comme toute entreprise de transport public routier de marchandises."},
+{t:"Réglementation transport",q:"La rubrique de la liasse fiscale au regard de laquelle s'apprécie la capacité financière est celle :",o:["Du chiffre d'affaires hors taxes","Du résultat d'exploitation","Des capitaux propres de l'entreprise","De l'actif immobilisé"],a:2,e:"La capacité financière s'apprécie sur la base des <strong>capitaux propres</strong> figurant au bilan (liasse fiscale). C'est la rubrique qui reflète la solidité financière réelle de l'entreprise."},
+{t:"Réglementation transport",q:"La licence de transport intérieur a une durée de validité maximale de :",o:["3 ans","5 ans","7 ans","10 ans"],a:3,e:"La licence de transport intérieur est délivrée pour une durée de <strong>10 ans renouvelable</strong> (art. R3113-14 Code des transports). Elle est nominative et incessible."},
+{t:"Réglementation transport",q:"Le document de suivi :",o:["Récapitule toutes les opérations effectuées par le conducteur pendant le contrat","Est destiné à suivre en temps réel le trajet en cas de sous-traitance multiple","Est destiné à suivre le temps de conduite et d'autres travaux du conducteur","Est destiné à suivre un envoi en cas de fractionnement d'un lot"],a:0,e:"Le document de suivi est établi par le transporteur et <strong>récapitule les opérations prévues et réalisées</strong> lors de l'exécution du contrat de transport. Il permet le contrôle de la réglementation sur route."},
+{t:"Transport national",q:"Si les réserves du destinataire ne sont pas acceptées le jour de la livraison, cette personne doit les :",o:["Confirmer à l'expéditeur dans les 3 jours suivants hors jours fériés","Signaler à son assureur dans les 3 jours suivants hors jours fériés","Confirmer au transporteur dans les 3 jours suivants hors jours fériés","Confirmer à l'assureur du transporteur dans les 3 jours suivants"],a:2,e:"Selon l'art. L133-3 du Code de commerce, les réserves non acceptées à la livraison doivent être <strong>confirmées au transporteur par lettre recommandée dans les 3 jours suivants</strong> (jours fériés non compris)."},
+{t:"Contrats de transport",q:"Un transporteur arrive à l'heure convenue pour un envoi de 20 tonnes. Selon le contrat type 'général', son véhicule devra être chargé dans un délai de :",o:["1 heure","1h30","2h","3h"],a:0,e:"Selon le contrat type général, pour un envoi avec rendez-vous respecté, le délai de chargement est de <strong>1 heure</strong> pour les envois ≥ 3 tonnes (avec plage horaire respectée)."},
+{t:"Contrats de transport",q:"Dans le contrat type 'général', pour les envois ≥ 3 tonnes, le chargement, le calage et l'arrimage sont à la charge :",o:["Du destinataire","Du conducteur","Du transporteur","De l'expéditeur"],a:3,e:"Selon le contrat type général, pour les envois <strong>égaux ou supérieurs à 3 tonnes</strong>, le chargement, le calage et l'arrimage sont à la charge de <strong>l'expéditeur</strong> (donneur d'ordre)."},
+{t:"Transport national",q:"Le délai de forclusion (art. L133-3 Code de commerce) est de :",o:["2 jours hors jours fériés suivant la réception","3 jours hors jours fériés suivant la réception","7 jours hors jours fériés suivant la réception","21 jours hors jours fériés suivant la réception"],a:1,e:"Le délai de forclusion est de <strong>3 jours (non compris les jours fériés)</strong> suivant le jour de la réception de la marchandise (art. L133-3 Code de commerce). Passé ce délai, toute action contre le transporteur est irrecevable."},
+{t:"Réglementation transport",q:"Pour être inscrite au registre des entreprises de transport, une SARL doit justifier de l'honorabilité professionnelle des :",o:["Gérants et de la personne physique qui assure la direction des transports","Gérants obligatoirement majoritaires et de la personne physique qui assure la direction des transports","Gérants uniquement","Gérants obligatoirement minoritaires et de la personne physique qui assure la direction des transports"],a:0,e:"La condition d'honorabilité doit être satisfaite par les <strong>gérants</strong> de la société ET par la <strong>personne physique désignée comme gestionnaire de transport</strong>, quelle que soit leur part dans le capital."},
+{t:"Contrats de transport",q:"Le contrat type sous-traitance s'applique entre :",o:["Un transporteur et le transporteur public qu'il a affrété","Le groupeur et le dégroupeur","L'organisateur de transport et l'expéditeur","Le transporteur et le destinataire"],a:0,e:"Le contrat type sous-traitance régit les relations entre <strong>un donneur d'ordre (transporteur ou commissionnaire) et le transporteur sous-traitant</strong> qu'il a affrété pour réaliser tout ou partie du transport."},
+{t:"Transport national",q:"Selon l'art. L132-8 du Code de commerce, sont garants du paiement du prix du transport :",o:["Le donneur d'ordre et le transitaire","L'expéditeur et le destinataire","Le transporteur principal et le transitaire","Le voiturier et le destinataire"],a:1,e:"L'art. L132-8 du Code de commerce institue une action directe du transporteur contre <strong>l'expéditeur et le destinataire</strong>, qui sont solidairement garants du paiement du prix du transport."},
+{t:"Sécurité / Véhicules",q:"Un chargement de grumes ou pièces de grande longueur ne doit pas dépasser de plus de :",o:["0,50 m à l'avant, 1 m à l'arrière","1 m à l'avant, 2 m à l'arrière","1 m à l'avant, 3 m à l'arrière","3 m à l'arrière, aucun dépassement à l'avant"],a:3,e:"Selon le Code de la route, les chargements de grande longueur peuvent dépasser de <strong>3 m à l'arrière uniquement</strong>. Aucun dépassement n'est toléré à l'avant (art. R312-19 Code de la route)."},
+{t:"Sécurité / Véhicules",q:"Un véhicule peut être équipé de pneumatiques de structure et de sculpture différentes lorsqu'ils sont montés sur :",o:["Un même essieu","Un jumelage","Des essieux différents","L'essieu directeur"],a:2,e:"Il est interdit de monter des pneumatiques de structure ou de sculpture différentes sur <strong>un même essieu</strong>. En revanche, des pneus différents peuvent équiper <strong>des essieux différents</strong> (art. R317-24 Code de la route)."},
+{t:"Sécurité / Véhicules",q:"La remorque d'un train routier dont le PMA est de 40 tonnes doit porter à l'arrière :",o:["Deux disques de limitation de vitesse, indiquant 60 et 80","Deux disques de limitation de vitesse, indiquant 80 et 90","Trois disques de limitation de vitesse, indiquant 60, 80 et 90","Trois disques de limitation de vitesse, indiquant 60, 70 et 80"],a:2,e:"Un train routier de PMA 40 tonnes doit afficher à l'arrière <strong>trois disques</strong> correspondant aux limitations spécifiques : <strong>60 km/h</strong> (autoroute en conditions dégradées), <strong>80 km/h</strong> (route) et <strong>90 km/h</strong> (autoroute en conditions normales, si autorisé)."},
+{t:"Sécurité / Véhicules",q:"L'extincteur le plus adapté aux différents types de feux est un extincteur :",o:["À eau","À eau plus additif","À gaz carbonique","À poudre A, B, C"],a:0,e:"L'extincteur à <strong>poudre ABC</strong> est le plus polyvalent : il est efficace sur les feux de classe A (solides), B (liquides) et C (gaz). C'est celui recommandé dans les véhicules de transport."},
+{t:"Réglementation transport",q:"Le transport d'un engin de travaux publics de 3,20 m de large nécessite :",o:["Une autorisation individuelle de transport exceptionnel de 1ère catégorie","Une autorisation individuelle de transport exceptionnel de 2ème catégorie","Le respect d'un arrêté préfectoral portant APL","Une autorisation individuelle au voyage"],a:2,e:"Un engin de 3,20 m de large dépasse la largeur réglementaire (2,55 m) mais reste dans les limites de la 1ère catégorie (jusqu'à 3,50 m de large). Le transport s'effectue dans le cadre d'une <strong>Autorisation de Portée Locale (APL)</strong>, arrêté préfectoral permanent."},
+{t:"Transport international (CMR)",q:"Dans le cadre de la CMR, la lettre de voiture internationale est établie par :",o:["Le transporteur, obligatoirement lors du chargement","L'expéditeur, dès la conclusion du contrat de vente","Le transporteur, dès réception de l'ordre de transport","L'expéditeur ou le transporteur sous la responsabilité de l'expéditeur"],a:3,e:"Selon l'<strong>art. 5 CMR</strong>, la lettre de voiture est établie par <strong>l'expéditeur</strong> ou par le transporteur <strong>sous la responsabilité de l'expéditeur</strong>. En pratique, c'est souvent le transporteur qui la rédige mais l'expéditeur en est responsable."},
+{t:"Transport international",q:"La déclaration de détachement via la plateforme européenne IMI :",o:["Est obligatoire lors d'un transport routier international","Est obligatoire lors d'une opération de cabotage","Concerne les conducteurs routiers travailleurs indépendants","Est valable au maximum 24 mois"],a:1,e:"La déclaration de détachement via IMI (ou l'application nationale) est <strong>obligatoire avant toute opération de cabotage</strong> dans un État membre de l'UE (directive 2020/1057). Elle ne s'applique pas aux transports internationaux en transit."},
+{t:"Transport international",q:"Les autorisations bilatérales de transport peuvent être utilisées pour des trafics entre la France et :",o:["Les Pays-Bas","La Lituanie","Le Maroc","Le Royaume-Uni"],a:2,e:"Les autorisations bilatérales s'utilisent pour les transports entre la France et des <strong>pays tiers à l'UE</strong> avec lesquels des accords ont été conclus. Le <strong>Maroc</strong> est un pays tiers. Les Pays-Bas, la Lituanie sont dans l'UE (licence communautaire suffisante). Le Royaume-Uni post-Brexit nécessite un accord spécifique."}
+];
+
+const ANSWERS=[1,0,0,3,1,3,0,3,0,2,0,2,0,3,2,3,1,3,2,1,0,3,2,0,1,1,1,3,1,2,2,2,2,3,0,2,0,3,1,0,0,1,3,2,2,0,2,3,1,2];
+
+let cur=0,ans=new Array(50).fill(-1),locked=new Array(50).fill(false);
+
+function render(){
+  const q=Q[cur];
+  document.getElementById("pfill").style.width=Math.round((cur+1)/50*100)+"%";
+  document.getElementById("qtop").textContent="Question "+(cur+1)+" sur 50";
+  document.getElementById("answered").textContent=locked.filter(Boolean).length+" répondues";
+  document.getElementById("qcount").textContent=(cur+1)+" / 50";
+  document.getElementById("bprev").disabled=cur===0;
+  const nb=document.getElementById("bnext");
+  if(cur===49&&locked[cur]){nb.textContent="Voir les résultats";nb.onclick=showResult;}
+  else{nb.textContent="Suivant →";nb.onclick=()=>go(1);}
+  nb.disabled=!locked[cur]&&ans[cur]===-1;
+  const L=["a","b","c","d"];
+  let h=`<div class="qcard"><div class="qcard-head"><span class="qnum">Q${cur+1}</span></div><div class="qtext">${q.q}</div><div class="options">`;
+  q.o.forEach((o,i)=>{
+    let c="opt";
+    if(locked[cur]){c+=" locked";if(i===ANSWERS[cur])c+=" correct";else if(i===ans[cur]&&ans[cur]!==ANSWERS[cur])c+=" wrong";}
+    else if(i===ans[cur])c+=" selected";
+    h+=`<div class="${c}" onclick="pick(${i})"><div class="opt-letter">${L[i]}</div><div class="opt-text">${o}</div></div>`;
+  });
+  h+=`</div>`;
+  if(locked[cur])h+=`<div class="expl">${q.e}</div>`;
+  h+=`</div>`;
+  document.getElementById("qzone").innerHTML=h;
+  updateScore();
+}
+function pick(i){
+  if(locked[cur])return;
+  ans[cur]=i;locked[cur]=true;render();
+  const nb=document.getElementById("bnext");nb.disabled=false;
+  if(cur===49){nb.textContent="Voir les résultats";nb.onclick=showResult;}
+}
+function go(d){if(cur+d<0||cur+d>=50)return;cur+=d;render();}
+function updateScore(){
+  let ok=0;for(let i=0;i<50;i++)if(locked[i]&&ans[i]===ANSWERS[i])ok++;
+  document.getElementById("score").textContent=ok*2;
+}
+function showResult(){
+  let ok=0;for(let i=0;i<50;i++)if(ans[i]===ANSWERS[i])ok++;
+  const ko=50-ok,pts=ok*2,pct=Math.round(ok/50*100);
+  const themes=[...new Set(Q.map(q=>q.t))];
+  let tS={};themes.forEach(t=>{tS[t]={ok:0,total:0}});
+  Q.forEach((q,i)=>{tS[q.t].total++;if(ans[i]===ANSWERS[i])tS[q.t].ok++;});
+  let bHTML=themes.map(t=>{
+    const s=tS[t],p=Math.round(s.ok/s.total*100);
+    const c=p>=70?"#1A5C38":p>=50?"#F0B429":"#E24B4A";
+    return `<div class="th-row"><div class="th-name">${t}</div><div class="th-bar-wrap"><div class="th-bar" style="width:${p}%;background:${c}"></div></div><div class="th-score">${s.ok}/${s.total}</div></div>`;
+  }).join("");
+  const msg=pts>=60?"Bonne préparation, continue !":pts>=40?"Des points à consolider.":"À retravailler — revois les chapitres en rouge.";
+  document.getElementById("qzone").innerHTML="";
+  document.getElementById("result").innerHTML=`
+    <div class="result-pct">${pct}%</div>
+    <div class="result-msg">${msg}</div>
+    <div class="result-grid">
+      <div class="rstat ok"><div class="rv">${ok}</div><div class="rl">Correctes</div></div>
+      <div class="rstat ko"><div class="rv">${ko}</div><div class="rl">Incorrectes</div></div>
+      <div class="rstat"><div class="rv">${pts}/100</div><div class="rl">Score</div></div>
+    </div>
+    <div class="breakdown"><h3>Résultats par thème</h3>${bHTML}</div>
+    <button class="btn primary" onclick="restart()" style="width:100%">Recommencer</button>`;
+  document.getElementById("result").style.display="block";
+  document.getElementById("nav").style.display="none";
+  document.querySelector(".progress-wrap").style.display="none";
+}
+function restart(){
+  cur=0;ans=new Array(50).fill(-1);locked=new Array(50).fill(false);
+  document.getElementById("result").style.display="none";
+  document.getElementById("nav").style.display="flex";
+  document.querySelector(".progress-wrap").style.display="block";
+  document.getElementById("score").textContent="0";
+  render();
+}
+render();
+</script>
+</body>
+</html>
