@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Capacité de Transport +3,5t</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1A5C38;--green-mid:#2E7D52;--green-light:#E8F5EE;--green-pale:#F2FAF5;--red:#E24B4A;--red-light:#FCEBEB;--text:#1a1a1a;--muted:#6b7280;--border:#e5e7eb;--bg:#F7F8F7;--white:#fff}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem}
+.container{max-width:700px;margin:0 auto}
+.header{background:var(--green);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header h1{color:#fff;font-size:16px;font-weight:600;line-height:1.3}
+.header p{color:#A8D5BC;font-size:12px;margin-top:3px}
+.score-box{text-align:right;flex-shrink:0}
+.score-box .pts{color:#fff;font-size:28px;font-weight:600;line-height:1;font-family:'DM Mono',monospace}
+.score-box .lbl{color:#A8D5BC;font-size:11px;margin-top:2px}
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:6px}
+.progress-info span{font-size:12px;color:var(--muted)}
+.progress-bar{height:5px;background:#d1d5db;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s ease}
+.qcard{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.qcard-head{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.qnum{background:var(--green-light);color:var(--green);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.qtext{font-size:15px;font-weight:500;line-height:1.6;color:var(--text);margin-bottom:1rem}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:var(--white)}
+.opt:hover:not(.locked){background:var(--green-pale);border-color:#a7d3b8}
+.opt.selected{border-color:var(--green);background:var(--green-light)}
+.opt.correct{border-color:var(--green);background:var(--green-light)}
+.opt.wrong{border-color:var(--red);background:var(--red-light)}
+.opt-letter{width:24px;height:24px;min-width:24px;border-radius:50%;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--muted);margin-top:1px;transition:all .15s}
+.opt.selected .opt-letter,.opt.correct .opt-letter{background:var(--green);color:#fff}
+.opt.wrong .opt-letter{background:var(--red);color:#fff}
+.opt-text{font-size:13.5px;color:var(--text);line-height:1.5}
+.expl{margin-top:.875rem;padding:.75rem 1rem;background:var(--green-light);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13px;color:#1A5C38;line-height:1.6}
+.expl strong{font-weight:600}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:.5rem}
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text);transition:all .15s}
+.btn:hover{background:#f3f4f6}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.primary:hover{background:var(--green-mid)}
+.btn:disabled{opacity:.35;cursor:default}
+.qcount{font-size:13px;color:var(--muted);font-weight:500}
+.result-card{display:none;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:2rem 1.5rem;text-align:center}
+.result-pct{font-size:52px;font-weight:700;color:var(--green);line-height:1;font-family:'DM Mono',monospace}
+.result-msg{font-size:15px;color:var(--muted);margin:.5rem 0 1.5rem}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+.rstat{background:#f9fafb;border-radius:10px;padding:1rem}
+.rstat .rv{font-size:24px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
+.rstat .rl{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
+.rstat.ok .rv{color:var(--green)}.rstat.ko .rv{color:var(--red)}
+.breakdown{margin-bottom:1.5rem;text-align:left}
+.breakdown h3{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem}
+.th-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.th-name{font-size:12px;color:var(--text);width:180px;flex-shrink:0}
+.th-bar-wrap{flex:1;height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden}
+.th-bar{height:100%;border-radius:4px;transition:width .5s ease}
+.th-score{font-size:12px;font-weight:600;color:var(--muted);width:36px;text-align:right;flex-shrink:0}
+@media(max-width:480px){.header{flex-direction:column;align-items:flex-start}.result-grid{grid-template-columns:repeat(2,1fr)}.th-name{width:120px;font-size:11px}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <div>
+    <h1>QCM — Capacité de Transport Marchandises +3,5t</h1>
+    <p>50 questions · 100 points · 2 pts / question</p>
+  </div>
+  <div class="score-box">
+    <div class="pts" id="score">0</div>
+    <div class="lbl">pts / 100</div>
+  </div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="qtop">Question 1 sur 50</span>
+    <span id="answered">0 répondues</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:2%"></div></div>
+</div>
+<div id="qzone"></div>
+<div class="result-card" id="result"></div>
+<div class="nav" id="nav">
+  <button class="btn" id="bprev" onclick="go(-1)" disabled>← Précédent</button>
+  <span class="qcount" id="qcount">1 / 50</span>
+  <button class="btn primary" id="bnext" onclick="go(1)">Suivant →</button>
+</div>
+</div>
+<script>
+const Q=[
+{t:"Droit des affaires",q:"L'injonction de payer est :",o:["Un effet de commerce","Une ordonnance du président du tribunal de commerce ou du tribunal d'instance","Une lettre recommandée adressée par le créancier à son débiteur exigeant le paiement immédiat","Une sommation signifiée par voie d'huissier"],a:1,e:"L'injonction de payer est une <strong>ordonnance rendue par le président du tribunal</strong> sur requête du créancier. C'est une procédure judiciaire simplifiée et non contradictoire pour recouvrer une créance certaine."},
+{t:"Droit des affaires",q:"En règle générale, le représentant légal d'une société anonyme à directoire et à conseil de surveillance est :",o:["Le président du conseil de surveillance","Le président du directoire","L'actionnaire majoritaire","Le commissaire aux comptes"],a:1,e:"Dans une SA à directoire, le <strong>président du directoire</strong> est le représentant légal de la société. Le conseil de surveillance exerce uniquement une mission de contrôle, sans pouvoir de représentation."},
+{t:"Droit des affaires",q:"Endosser un effet de commerce c'est :",o:["Bénéficier d'un crédit garanti sur le montant de l'effet","Désigner la banque qui paiera le montant de l'effet","Se porter garant du paiement du montant de l'effet","Transmettre le bénéfice de l'effet à une tierce personne"],a:3,e:"L'endossement est l'opération par laquelle le bénéficiaire d'un effet de commerce le <strong>transmet à une tierce personne</strong> (endossataire) par une signature au dos du document."},
+{t:"Droit des affaires",q:"Un client commerçant domicilié à Brest, vous êtes lillois. Pour une injonction de payer, vous adressez votre requête :",o:["Au tribunal de commerce de Lille","Au tribunal d'instance de Lille","Au tribunal de commerce de Brest","Au tribunal d'instance de Brest"],a:2,e:"L'injonction de payer se fait devant le tribunal du <strong>domicile du débiteur</strong>. Le client étant commerçant domicilié à Brest, c'est le <strong>tribunal de commerce de Brest</strong> qui est compétent."},
+{t:"Contrats de transport",q:"En transport routier intérieur, en cas de retard, le destinataire peut réclamer en application du contrat type général :",o:["Le prix de la marchandise","Le montant du préjudice quel qu'il soit","Au plus le prix du transport","Deux fois le prix du transport"],a:2,e:"Selon le contrat type général, l'indemnité pour retard est limitée à <strong>au plus le prix du transport</strong>. Elle ne peut excéder ce montant, même si le préjudice réel est supérieur."},
+{t:"Droit des affaires",q:"Possède la personnalité morale :",o:["La société en participation","La société de fait","L'entreprise personnelle","La société par actions simplifiée"],a:3,e:"La <strong>SAS</strong> est une société dotée de la personnalité morale dès son immatriculation au RCS. La société en participation et la société de fait n'ont pas de personnalité morale. L'entreprise individuelle est confondue avec son propriétaire."},
+{t:"Droit des affaires",q:"Les juges du tribunal de commerce, appelés juges consulaires, sont :",o:["Des magistrats traditionnels","Des commerçants élus par leurs pairs","Des commerçants désignés par la chambre de commerce","Des commerçants désignés par les organisations professionnelles"],a:1,e:"Les juges consulaires sont des <strong>commerçants ou anciens commerçants élus par leurs pairs</strong> (autres commerçants et chefs d'entreprise). Ce sont des juges non professionnels, bénévoles."},
+{t:"Droit des affaires",q:"Le crédit documentaire peut être annulé à la demande :",o:["Du vendeur","Des banquiers et de l'acheteur","De l'acheteur","Du vendeur, de l'acheteur ou des banquiers"],a:3,e:"Un crédit documentaire révocable peut être annulé à la demande de <strong>n'importe quelle partie</strong> : vendeur, acheteur ou banquiers. En pratique, les crédits documentaires irrévocables (les plus courants) ne peuvent être annulés qu'avec l'accord de toutes les parties."},
+{t:"Réglementation transport",q:"Les sociétés coopératives d'entreprises de transport de marchandises :",o:["Sont inscrites au registre des transporteurs et composées d'entreprises non inscrites","Sont inscrites au registre des transporteurs et composées d'entreprises inscrites","Ne sont pas inscrites au registre des transporteurs mais composées d'entreprises inscrites","Sont inscrites uniquement au registre des commissionnaires"],a:1,e:"Les coopératives de transport sont elles-mêmes <strong>inscrites au registre des transporteurs</strong> et sont composées d'<strong>entreprises également inscrites</strong> à ce registre. Elles exercent le transport pour le compte de leurs membres."},
+{t:"Droit des affaires",q:"Une société en nom collectif réunit au moins deux associés qui peuvent être des personnes :",o:["Physiques exclusivement","Morales exclusivement","Physiques ou morales","Physiques ou morales non commerçantes"],a:2,e:"Une SNC peut réunir des personnes <strong>physiques ou morales</strong>. Tous les associés ont la qualité de commerçant et sont solidairement et indéfiniment responsables des dettes sociales."},
+{t:"Responsabilité",q:"La responsabilité du transporteur routier peut être recherchée par son donneur d'ordre :",o:["Toujours, que ce soit du fait du transporteur ou d'un tiers","Seulement pour les fautes lourdes du préposé","Seulement pour les dommages résultant de la conduite et du chargement","Seulement si les clauses exonératoires le permettent"],a:0,e:"Le transporteur est soumis à une <strong>présomption de responsabilité</strong> pour tout dommage survenu pendant le transport, quel qu'en soit l'auteur. Il ne peut s'exonérer qu'en prouvant la force majeure, le vice propre ou la faute de l'ayant-droit."},
+{t:"Droit des affaires",q:"Les clauses limitant les pouvoirs du gérant d'une SNC sont :",o:["Inopposables aux tiers","Opposables aux tiers","Inopposables aux associés","Opposables aux cocontractants de la société"],a:0,e:"Dans une SNC, les limitations statutaires des pouvoirs du gérant sont <strong>inopposables aux tiers</strong>. Le gérant engage valablement la société envers les tiers pour tous les actes entrant dans l'objet social, même si les statuts les restreignent."},
+{t:"Droit des affaires",q:"Dans une SARL familiale :",o:["Seuls les parents et les enfants sont associés","C'est le chef de famille qui est gérant","Il n'y a pas d'assemblée générale","La SARL peut opter pour l'impôt sur les sociétés ou l'impôt sur le revenu"],a:3,e:"La SARL de famille peut <strong>opter pour l'impôt sur le revenu (IR)</strong> au lieu de l'impôt sur les sociétés (IS), sous conditions. Ses membres doivent appartenir à la même famille (parents en ligne directe, frères, sœurs, conjoints, pacsés)."},
+{t:"Gestion financière",q:"Les loyers des véhicules pris en location sont enregistrés :",o:["À l'actif du bilan","Dans les charges exceptionnelles","Dans les charges d'exploitation","Dans les charges financières"],a:2,e:"Les loyers de location de véhicules constituent des <strong>charges d'exploitation</strong> (compte 6122 du PCG — locations mobilières). Ils figurent dans le compte de résultat, non au bilan."},
+{t:"Gestion financière",q:"Lors des premières annuités, l'avantage de l'amortissement dégressif par rapport au linéaire est une diminution :",o:["Des charges d'exploitation","Du bénéfice imposable","Des intérêts d'emprunt","Des remboursements des capitaux empruntés"],a:1,e:"L'amortissement dégressif génère des annuités plus élevées en début de vie du bien, ce qui augmente les charges déductibles et <strong>diminue le bénéfice imposable</strong> les premières années, procurant un avantage de trésorerie fiscale."},
+{t:"Gestion financière",q:"Le report à nouveau est :",o:["Le cumul des bénéfices de l'entreprise sur plusieurs années","Le report sur le bilan des provisions pour risques et charges des années antérieures","Le report du résultat non encore affecté de l'année précédente","Un différé de remboursement d'emprunt"],a:2,e:"Le report à nouveau est le <strong>résultat de l'exercice précédent non encore affecté</strong> (ni distribué en dividendes, ni mis en réserves). Il figure au passif du bilan en attendant une décision d'affectation par l'AG."},
+{t:"Droit social",q:"La visite médicale d'information et de prévention doit être pratiquée :",o:["Avant la prise effective du poste de travail","Avant la fin de la période d'essai","Après la fin de la période d'essai","Dans les trois mois à compter de la prise effective du poste de travail"],a:3,e:"La visite d'information et de prévention (VIP) doit avoir lieu <strong>dans les 3 mois suivant la prise de poste</strong> (art. R4624-10 Code du travail). Elle n'est pas obligatoire avant l'embauche, sauf postes à risques."},
+{t:"Droit social",q:"Un salarié en CDD du 15 avril au 15 juin a un accident le 30 avril avec arrêt de 3 mois. Sauf clause de report, le contrat s'achèvera :",o:["Le 15 juillet","Le 30 juillet","Le 30 avril","Le 15 juin"],a:3,e:"Un CDD prend fin à la date prévue dans le contrat, <strong>sauf clause de report expressément stipulée</strong>. En l'absence de cette clause, l'accident du travail ne prolonge pas le CDD — il se termine bien le <strong>15 juin</strong>."},
+{t:"Droit social",q:"La déclaration préalable à l'embauche (DPAE) d'un salarié doit s'effectuer :",o:["Pendant la période d'essai","Au plus tôt dans les 8 jours avant l'embauche","Un mois avant l'embauche","Un mois après l'embauche"],a:1,e:"La DPAE doit être effectuée auprès de l'URSSAF <strong>au plus tôt dans les 8 jours précédant l'embauche</strong> et au plus tard au moment de l'embauche (art. R1221-2 Code du travail)."},
+{t:"Droit social",q:"Le document unique d'évaluation des risques pour la sécurité et la santé des travailleurs doit être établi par :",o:["Le médecin du travail","L'employeur","Le comité d'hygiène, de sécurité et des conditions de travail","L'inspecteur du travail"],a:1,e:"Le DUERP (Document Unique d'Évaluation des Risques Professionnels) est établi et mis à jour par <strong>l'employeur</strong> (art. R4121-1 Code du travail). Il répertorie les risques professionnels identifiés dans l'entreprise."},
+{t:"Droit social",q:"Un CDD peut être renouvelé :",o:["Une fois sans que la durée totale puisse dépasser 12 mois","Une fois sans que la durée totale puisse dépasser 18 mois","Plusieurs fois sans que la durée totale puisse dépasser 12 mois","Deux fois sans que la durée totale puisse dépasser 18 mois"],a:3,e:"Depuis la loi du 29 mars 2018, un CDD peut être renouvelé <strong>deux fois maximum</strong>, sans que la durée totale (CDD initial + renouvellements) ne dépasse <strong>18 mois</strong> (sauf exceptions)."},
+{t:"Droit social",q:"Pour qu'un conducteur soit considéré comme 'courte distance', il doit :",o:["Uniquement travailler dans une région déterminée","Prendre son repos journalier hors domicile moins de 6 fois par mois","Rentrer obligatoirement quotidiennement à l'établissement d'attache","Avoir des horaires fixes tous les jours"],a:1,e:"Un conducteur est classé <strong>courte distance</strong> (hors messagerie) s'il prend son repos journalier hors domicile <strong>moins de 6 fois par mois calendaire</strong>. Au-delà, il est classé grand routier."},
+{t:"RSE / Temps de conduite",q:"L'intervalle entre deux téléchargements des données de la carte d'un conducteur ne peut excéder :",o:["95 jours","60 jours","45 jours","28 jours"],a:3,e:"Les données de la <strong>carte conducteur doivent être téléchargées au moins tous les 28 jours</strong> (arrêté du 6 juillet 2005). Les données du tachygraphe embarqué doivent l'être tous les 90 jours."},
+{t:"Droit social",q:"La prescription relative aux rappels de salaires est de :",o:["7 ans","5 ans","3 ans","2 ans"],a:2,e:"Depuis la loi du 14 juin 2013, les actions en paiement de salaire se prescrivent par <strong>3 ans</strong> à compter du jour où celui qui l'exerce a connu ou aurait dû connaître les faits lui permettant de l'exercer."},
+{t:"RSE / Temps de conduite",q:"Selon le règlement (UE) n°165/2014, l'employeur doit conserver les données téléchargées des tachygraphes :",o:["Toute la vie de l'entreprise","Aussi longtemps que le conducteur est salarié","Au moins pendant 1 an","Au moins pendant 5 ans"],a:2,e:"L'employeur doit conserver les données téléchargées des tachygraphes et des cartes conducteurs pendant <strong>au moins 1 an</strong> (règlement UE 165/2014, art. 10)."},
+{t:"Droit social",q:"L'ouverture d'un droit à congés payés de 2,5 jours ouvrables a lieu dès que le salarié a travaillé :",o:["10 jours de travail effectif","3 semaines de travail effectif","1 mois de travail effectif","2 mois de travail effectif"],a:2,e:"Les congés payés s'acquièrent à raison de <strong>2,5 jours ouvrables par mois de travail effectif</strong> chez le même employeur (art. L3141-3 Code du travail)."},
+{t:"RSE / Temps de conduite",q:"En contrôle sur route, le conducteur doit présenter les données d'activités journalières :",o:["De la journée en cours et des 28 jours précédents","De la semaine en cours et du dernier jour de la précédente semaine","De la journée en cours","De la journée en cours et des 15 jours ouvrables précédents"],a:0,e:"Le conducteur doit pouvoir présenter les enregistrements de la <strong>journée en cours et des 28 jours précédents</strong> (art. 36 règlement 165/2014). Depuis janvier 2025, ce délai est étendu à 56 jours."},
+{t:"RSE / Temps de conduite",q:"Pour la conduite en équipage, le repos journalier est au minimum de 9h consécutives par période de :",o:["30h et peut être pris à l'hôtel ou en véhicule à l'arrêt avec couchette","24h en cas de repos à bord du véhicule en marche","30h et peut être pris à bord du véhicule en marche","24h et peut être pris à l'hôtel ou à bord du véhicule à l'arrêt"],a:0,e:"En conduite en équipage, le repos journalier de <strong>9h minimum doit être pris dans une période de 30 heures</strong>. Il peut être pris à l'hôtel ou dans un véhicule à l'arrêt disposant d'un matériel de couchage adapté."},
+{t:"RSE / Temps de conduite",q:"Lors d'une traversée à bord d'un ferry, le conducteur est autorisé à interrompre son repos journalier :",o:["1 fois 15 minutes","2 fois 15 minutes","2 fois sans dépasser une heure au total","1 fois 1 heure"],a:2,e:"Selon l'art. 9 du règlement 561/2006, lors d'un transport en ferry ou en train, le repos journalier peut être interrompu <strong>au maximum 2 fois, pour une durée totale ne dépassant pas 1 heure</strong>."},
+{t:"Réglementation transport",q:"Constituent l'exigence d'établissement d'une entreprise de transport :",o:["Les équipements administratifs et les installations techniques","Les équipements et les parkings des véhicules","Les installations administratives et les parkings des véhicules","Les semi-remorques détenues en pleine propriété ou en location-vente ou crédit-bail"],a:0,e:"L'exigence d'établissement (règlement 1071/2009) implique de disposer de <strong>locaux administratifs</strong> (bureaux, documents) et d'<strong>installations techniques</strong> permettant de gérer réellement l'activité depuis le territoire."},
+{t:"Réglementation transport",q:"L'article R.3211-48 du Code des transports :",o:["Autorise la location transfrontalière de véhicules avec conducteur","Interdit la location transfrontalière d'un véhicule avec conducteur","Interdit la location transfrontalière de véhicule sans conducteur","Interdit la location transfrontalière de véhicules avec ou sans conducteur"],a:1,e:"L'art. R3211-48 du Code des transports <strong>interdit la location transfrontalière de véhicules avec conducteur</strong>. La location sans conducteur entre États membres de l'UE est en revanche autorisée."},
+{t:"Transport national",q:"Les réserves doivent être :",o:["Précisées et validées par le transporteur uniquement","Écrites sur la lettre de voiture avec la mention 'sous réserves de déballage'","Écrites, précises, motivées et contradictoires","Toujours approuvées par le transporteur au moment de la livraison"],a:2,e:"Pour être valables, les réserves doivent être <strong>écrites, précises, motivées et contradictoires</strong> (formulées en présence du transporteur). Une simple mention vague ou 'sous réserves' sans précision n'est pas recevable."},
+{t:"Gestion financière",q:"Légalement, un prix de transport doit couvrir :",o:["Au moins les charges fixes et variables de l'entreprise de transport","Uniquement le flux de liquidités de l'entreprise","Uniquement les charges relatives au renouvellement des véhicules","Uniquement la retraite du chef de l'entreprise"],a:0,e:"Le prix de transport doit permettre de couvrir au minimum les <strong>charges fixes et variables</strong> de l'entreprise. C'est une obligation légale liée à l'interdiction de la vente à perte dans le transport public routier."},
+{t:"Réglementation transport",q:"L'autorisation d'exercer la profession de transporteur routier permet à :",o:["Une personne d'obtenir une attestation de capacité professionnelle","Une entreprise de satisfaire à la condition de capacité professionnelle","Une entreprise d'être inscrite au registre des entreprises de transport","Un gestionnaire de transport d'exercer la profession de transporteur routier"],a:2,e:"L'autorisation d'exercer (licence communautaire) permet à une entreprise d'<strong>être inscrite au registre des entreprises de transport</strong> et d'exercer légalement le transport public routier."},
+{t:"Réglementation transport",q:"Selon le droit français, un déménageur est considéré comme une entreprise de transport :",o:["Même si le déménagement ne comprend pas de transport","Lorsque le déménagement comprend pour partie une prestation de transport","Uniquement lorsque le transport constitue la partie principale du déménagement","Dès lors que le contrat passé avec le client le prévoit"],a:1,e:"Un déménageur est considéré comme entreprise de transport <strong>dès lors que le déménagement comprend pour partie une prestation de transport</strong>, même si le transport n'est pas la partie principale du contrat."},
+{t:"Transport international",q:"À la suite d'un transport international à destination de la France, un transporteur non établi peut effectuer :",o:["Sept opérations de cabotage en trois jours","Huit opérations de cabotage en sept jours","Trois opérations de cabotage en sept jours","Quatre opérations de cabotage en trois jours"],a:2,e:"Selon le règlement 1072/2009, après un transport international entrant, un transporteur peut effectuer <strong>3 opérations de cabotage maximum en 7 jours</strong> sur le territoire de l'État membre de déchargement."},
+{t:"Contrats de transport",q:"L'art. L3222-5 du Code des transports prévoit que le dépassement des durées de chargement/déchargement acceptées ouvre droit à :",o:["Un complément de rémunération","Une renégociation de la rémunération","Une majoration forfaitaire du prix du transport","Des pénalités pour retard"],a:0,e:"Selon l'art. L3222-5, le dépassement des durées de mise à disposition convenues (surestarie) <strong>ouvre droit à un complément de rémunération</strong> pour le transporteur, en plus du prix de transport initial."},
+{t:"Responsabilité",q:"L'art. L3222-6 du Code des transports prévoit que toute prestation annexe non prévue par le contrat qui cause un dommage engage la responsabilité :",o:["De l'entreprise de transport","Du commissionnaire de transport","De la bourse de fret","De l'entreprise bénéficiaire de la prestation"],a:3,e:"Selon l'art. L3222-6, les prestations annexes non contractuelles engagent la responsabilité de <strong>l'entreprise qui en bénéficie</strong>, et non du transporteur qui les exécute sous la direction du bénéficiaire."},
+{t:"Transport international (CMR)",q:"Dans le cadre d'un transport international, en cas de retard, le transporteur devra payer :",o:["8,33 DTS par kilo","Une indemnité qui ne peut dépasser le prix du transport","Une indemnité qui ne peut dépasser la moitié du prix du transport","Une indemnité calculée sur la valeur de la marchandise"],a:1,e:"Selon l'art. 23§5 CMR, l'indemnité pour retard est limitée à <strong>au plus le prix du transport</strong>. Elle ne peut dépasser ce montant, même si le préjudice prouvé est supérieur."},
+{t:"Réglementation transport",q:"Le montant de la capacité financière est calculé en fonction :",o:["Du type d'activité : intérieure ou internationale","Du nombre de véhicules motorisés selon leur poids maximal autorisé (PMA)","De la forme juridique de l'entreprise","Du nombre de véhicules non motorisés"],a:1,e:"La capacité financière est calculée en fonction du <strong>nombre de véhicules motorisés et de leur PMA</strong> (9 000 € pour le 1er véhicule, 5 000 € par véhicule supplémentaire selon le règlement 1071/2009)."},
+{t:"Gestion financière",q:"Dans le transport routier, le délai maximum de paiement est de :",o:["30 jours à compter de l'émission de la facture","45 jours fin de mois","45 jours à compter de la livraison des marchandises","60 jours à compter de l'émission de la facture"],a:0,e:"La loi Gayssot (art. L441-9 Code de commerce) fixe le délai maximal de paiement dans le transport routier à <strong>30 jours à compter de la date d'émission de la facture</strong>. Ce délai dérogatoire est plus court que le délai général de 60 jours."},
+{t:"Transport international (CMR)",q:"Lors d'un transport international CMR, le retard à la livraison ne peut donner lieu à indemnité que si une réserve écrite a été adressée dans le délai maximum de :",o:["21 jours à dater de la livraison","30 jours à dater de la livraison","60 jours à dater de l'enlèvement","Un an à dater de la livraison"],a:0,e:"Selon l'art. 30§3 CMR, en cas de retard, les réserves doivent être notifiées par écrit au transporteur dans un délai de <strong>21 jours à compter de la mise à disposition de la marchandise</strong>."},
+{t:"Sécurité / Véhicules",q:"Le poids maximal autorisé d'un ensemble routier (train routier) comportant 4 essieux ne doit pas dépasser :",o:["32 tonnes","35 tonnes","38 tonnes","40 tonnes"],a:2,e:"La masse maximale d'un train routier à <strong>4 essieux</strong> est de <strong>38 tonnes</strong> (art. R312-4 Code de la route). Pour 5 essieux : 40 t, pour 6 essieux : 44 t."},
+{t:"Sécurité / Véhicules",q:"Les dimensions d'une EURO palette sont de :",o:["80 x 80 cm","80 x 120 cm","100 x 120 cm","120 x 120 cm"],a:1,e:"La palette EUR (EPAL) a des dimensions standardisées de <strong>80 cm x 120 cm</strong> pour une hauteur de 14,4 cm. C'est la palette la plus utilisée en Europe pour le transport et la logistique."},
+{t:"Marchandises dangereuses",q:"Selon l'ADR, les indications devant figurer sur les documents de transport sont :",o:["Le nom et l'adresse du fabricant de la marchandise dangereuse","Le nom et l'adresse de l'emballeur","Le(s) nom(s) et l'adresse(s) du/des destinataire(s)","La date d'expiration du certificat d'agrément du véhicule"],a:2,e:"Selon l'ADR (section 5.4.1), le document de transport doit mentionner notamment <strong>le(s) nom(s) et adresse(s) du/des destinataire(s)</strong>, ainsi que la désignation officielle de transport, le numéro ONU, la classe, le groupe d'emballage et la quantité."},
+{t:"Sécurité / Véhicules",q:"Il y a suspicion d'infraction lorsque l'éthylotest détecte dans l'air expiré un taux d'alcool pur de :",o:["0,25 milligrammes par litre","0,35 milligrammes par litre","0,40 milligrammes par litre","0,50 milligrammes par litre"],a:0,e:"Le seuil de <strong>suspicion d'infraction par éthylotest</strong> est de <strong>0,25 mg/litre d'air expiré</strong> (soit 0,5 g/litre de sang). En dessous, le résultat est considéré négatif. Au-dessus, une vérification par éthylomètre est effectuée."},
+{t:"Sécurité / Véhicules",q:"Lors d'un contrôle sur route, le document justifiant la validité de la visite technique d'un véhicule poids-lourd est :",o:["Le carnet d'entretien","Le certificat d'immatriculation","L'attestation d'assurance","Le feuillet d'enregistrement"],a:3,e:"La validité du contrôle technique d'un poids lourd est attestée par le <strong>procès-verbal (ou feuillet) d'enregistrement</strong> délivré par un centre de contrôle agréé. C'est le seul document officiel prouvant la réalisation et la validité du contrôle technique."},
+{t:"Transport international",q:"Pour un transport entre la France et la Roumanie avec un véhicule de plus de 7,5 tonnes PMA, le titre administratif à bord est :",o:["Une copie conforme de la licence de transport intérieur","Une autorisation bilatérale","Une autorisation de transit","Une copie certifiée conforme de la licence communautaire"],a:3,e:"La Roumanie est membre de l'UE. Pour tout transport international entre États membres, le conducteur doit avoir à bord la <strong>copie certifiée conforme de la licence communautaire</strong>. Aucune autorisation bilatérale n'est requise."},
+{t:"Transport international",q:"La Russie est partie à l'accord sur :",o:["L'Espace économique européen (EEE)","L'Organisation mondiale du commerce (OMC)","Le Forum International des transports (FIT/CEMT)","L'Union européenne (UE)"],a:2,e:"La Russie est membre du <strong>Forum International des Transports (FIT, anciennement CEMT)</strong>, ce qui permet l'utilisation d'autorisations multilatérales CEMT pour les transports entre la Russie et les pays membres. Elle n'est ni dans l'UE ni dans l'EEE."},
+{t:"Transport international (CMR)",q:"En transport international, en cas de perte partielle, avarie ou retard, l'action en justice est prescrite :",o:["1 an après le jour de la livraison","1 an après la prise en charge par le transporteur","3 ans après le jour de la livraison","3 ans après la prise en charge par le transporteur"],a:0,e:"Selon l'art. 32 CMR, l'action se prescrit par <strong>1 an à compter du jour de la livraison</strong> (ou du jour où la livraison aurait dû avoir lieu en cas de perte). En cas de dol ou faute inexcusable : 3 ans."}
+];
+
+const ANSWERS=[1,1,3,2,2,3,1,3,1,2,0,0,3,2,1,2,3,3,1,1,3,1,3,2,2,2,0,0,2,0,1,2,0,2,1,2,0,3,1,1,0,0,2,1,2,0,3,3,2,0];
+
+let cur=0,ans=new Array(50).fill(-1),locked=new Array(50).fill(false);
+
+function render(){
+  const q=Q[cur];
+  document.getElementById("pfill").style.width=Math.round((cur+1)/50*100)+"%";
+  document.getElementById("qtop").textContent="Question "+(cur+1)+" sur 50";
+  document.getElementById("answered").textContent=locked.filter(Boolean).length+" répondues";
+  document.getElementById("qcount").textContent=(cur+1)+" / 50";
+  document.getElementById("bprev").disabled=cur===0;
+  const nb=document.getElementById("bnext");
+  if(cur===49&&locked[cur]){nb.textContent="Voir les résultats";nb.onclick=showResult;}
+  else{nb.textContent="Suivant →";nb.onclick=()=>go(1);}
+  nb.disabled=!locked[cur]&&ans[cur]===-1;
+  const L=["a","b","c","d"];
+  let h=`<div class="qcard"><div class="qcard-head"><span class="qnum">Q${cur+1}</span></div><div class="qtext">${q.q}</div><div class="options">`;
+  q.o.forEach((o,i)=>{
+    let c="opt";
+    if(locked[cur]){c+=" locked";if(i===ANSWERS[cur])c+=" correct";else if(i===ans[cur]&&ans[cur]!==ANSWERS[cur])c+=" wrong";}
+    else if(i===ans[cur])c+=" selected";
+    h+=`<div class="${c}" onclick="pick(${i})"><div class="opt-letter">${L[i]}</div><div class="opt-text">${o}</div></div>`;
+  });
+  h+=`</div>`;
+  if(locked[cur])h+=`<div class="expl">${q.e}</div>`;
+  h+=`</div>`;
+  document.getElementById("qzone").innerHTML=h;
+  updateScore();
+}
+function pick(i){
+  if(locked[cur])return;
+  ans[cur]=i;locked[cur]=true;render();
+  const nb=document.getElementById("bnext");nb.disabled=false;
+  if(cur===49){nb.textContent="Voir les résultats";nb.onclick=showResult;}
+}
+function go(d){if(cur+d<0||cur+d>=50)return;cur+=d;render();}
+function updateScore(){
+  let ok=0;for(let i=0;i<50;i++)if(locked[i]&&ans[i]===ANSWERS[i])ok++;
+  document.getElementById("score").textContent=ok*2;
+}
+function showResult(){
+  let ok=0;for(let i=0;i<50;i++)if(ans[i]===ANSWERS[i])ok++;
+  const ko=50-ok,pts=ok*2,pct=Math.round(ok/50*100);
+  const themes=[...new Set(Q.map(q=>q.t))];
+  let tS={};themes.forEach(t=>{tS[t]={ok:0,total:0}});
+  Q.forEach((q,i)=>{tS[q.t].total++;if(ans[i]===ANSWERS[i])tS[q.t].ok++;});
+  let bHTML=themes.map(t=>{
+    const s=tS[t],p=Math.round(s.ok/s.total*100);
+    const c=p>=70?"#1A5C38":p>=50?"#F0B429":"#E24B4A";
+    return `<div class="th-row"><div class="th-name">${t}</div><div class="th-bar-wrap"><div class="th-bar" style="width:${p}%;background:${c}"></div></div><div class="th-score">${s.ok}/${s.total}</div></div>`;
+  }).join("");
+  const msg=pts>=60?"Bonne préparation, continue !":pts>=40?"Des points à consolider.":"À retravailler — revois les chapitres en rouge.";
+  document.getElementById("qzone").innerHTML="";
+  document.getElementById("result").innerHTML=`
+    <div class="result-pct">${pct}%</div>
+    <div class="result-msg">${msg}</div>
+    <div class="result-grid">
+      <div class="rstat ok"><div class="rv">${ok}</div><div class="rl">Correctes</div></div>
+      <div class="rstat ko"><div class="rv">${ko}</div><div class="rl">Incorrectes</div></div>
+      <div class="rstat"><div class="rv">${pts}/100</div><div class="rl">Score</div></div>
+    </div>
+    <div class="breakdown"><h3>Résultats par thème</h3>${bHTML}</div>
+    <button class="btn primary" onclick="restart()" style="width:100%">Recommencer</button>`;
+  document.getElementById("result").style.display="block";
+  document.getElementById("nav").style.display="none";
+  document.querySelector(".progress-wrap").style.display="none";
+}
+function restart(){
+  cur=0;ans=new Array(50).fill(-1);locked=new Array(50).fill(false);
+  document.getElementById("result").style.display="none";
+  document.getElementById("nav").style.display="flex";
+  document.querySelector(".progress-wrap").style.display="block";
+  document.getElementById("score").textContent="0";
+  render();
+}
+render();
+</script>
+</body>
+</html>
