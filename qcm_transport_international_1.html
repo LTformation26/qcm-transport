@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Transport International</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1A5C38;--green-mid:#2E7D52;--green-light:#E8F5EE;--green-pale:#F2FAF5;
+  --red:#E24B4A;--red-light:#FCEBEB;
+  --text:#1a1a1a;--muted:#6b7280;--border:#e5e7eb;--bg:#F7F8F7;--white:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem}
+.container{max-width:700px;margin:0 auto}
+.header{background:var(--green);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header h1{color:#fff;font-size:16px;font-weight:600;line-height:1.3}
+.header p{color:#A8D5BC;font-size:12px;margin-top:3px}
+.score-box{text-align:right;flex-shrink:0}
+.score-box .pts{color:#fff;font-size:28px;font-weight:600;line-height:1;font-family:'DM Mono',monospace}
+.score-box .lbl{color:#A8D5BC;font-size:11px;margin-top:2px}
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:6px}
+.progress-info span{font-size:12px;color:var(--muted)}
+.progress-bar{height:5px;background:#d1d5db;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s ease}
+.qcard{background:var(--white);border-radius:14px;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.07);margin-bottom:1rem}
+.qcard-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+.qnum{background:var(--green-light);color:var(--green);font-size:12px;font-weight:600;padding:2px 10px;border-radius:20px}
+.qtext{font-size:15px;font-weight:500;line-height:1.5;color:var(--text)}
+.options{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+.opt{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s}
+.opt:hover:not(.locked){border-color:var(--green-mid);background:var(--green-pale)}
+.opt.selected{border-color:var(--green);background:var(--green-light)}
+.opt.correct{border-color:#16a34a;background:#f0fdf4}
+.opt.wrong{border-color:var(--red);background:var(--red-light)}
+.opt.locked{cursor:default}
+.opt-letter{width:24px;height:24px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;color:var(--muted)}
+.opt.selected .opt-letter{background:var(--green);color:#fff}
+.opt.correct .opt-letter{background:#16a34a;color:#fff}
+.opt.wrong .opt-letter{background:var(--red);color:#fff}
+.opt-text{font-size:14px;line-height:1.45;padding-top:3px}
+.expl{margin-top:1rem;background:var(--green-pale);border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:.75rem 1rem;font-size:13px;line-height:1.55;color:#374151}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding-top:.25rem}
+.btn{padding:.65rem 1.25rem;border-radius:10px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .15s}
+.btn.primary{background:var(--green);color:#fff}
+.btn.primary:hover:not(:disabled){background:var(--green-mid)}
+.btn.secondary{background:var(--white);color:var(--text);border:1.5px solid var(--border)}
+.btn.secondary:hover:not(:disabled){border-color:var(--green);color:var(--green)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.qcount{font-size:13px;color:var(--muted)}
+#result{display:none;background:var(--white);border-radius:14px;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.result-pct{font-size:56px;font-weight:700;color:var(--green);text-align:center;font-family:'DM Mono',monospace}
+.result-msg{text-align:center;color:var(--muted);margin-top:.25rem;margin-bottom:1.5rem;font-size:15px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem}
+.rstat{background:var(--green-pale);border-radius:10px;padding:1rem;text-align:center}
+.rstat.ok .rv{color:#16a34a}
+.rstat.ko .rv{color:var(--red)}
+.rv{font-size:28px;font-weight:700;font-family:'DM Mono',monospace}
+.rl{font-size:11px;color:var(--muted);margin-top:3px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>QCM — Transport International</h1>
+      <p id="answered">0 répondues</p>
+    </div>
+    <div class="score-box">
+      <div class="pts" id="score">0</div>
+      <div class="lbl">pts / 40</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span id="qtop">Question 1 sur 20</span>
+      <span id="qcount">1 / 20</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:5%"></div></div>
+  </div>
+  <div id="qzone"></div>
+  <div id="result"></div>
+  <div class="nav" id="nav">
+    <button class="btn secondary" id="bprev" onclick="go(-1)" disabled>← Précédent</button>
+    <button class="btn primary" id="bnext" onclick="go(1)" disabled>Suivant →</button>
+  </div>
+</div>
+
+<script>
+const Q = [
+  {
+    q: "La licence communautaire permet à un transporteur d'effectuer des transports de marchandises pour compte d'autrui :",
+    o: ["Uniquement dans les pays de l'Union européenne", "Dans tous les pays de l'Espace Économique Européen et en Suisse", "Dans les 43 pays membres de la CEMT", "Dans tous les pays signataires de la convention CMR"],
+    a: 1,
+    e: "La licence communautaire autorise le transport dans tous les pays de l'<strong>EEE (27 UE + Islande + Norvège + Liechtenstein) ainsi qu'en Suisse</strong>. Elle ne couvre pas les pays hors EEE."
+  },
+  {
+    q: "Combien de pays composent l'Espace Économique Européen (EEE) ?",
+    o: ["27 pays", "28 pays", "30 pays", "43 pays"],
+    a: 2,
+    e: "L'EEE regroupe <strong>30 pays</strong> : les 27 membres de l'UE auxquels s'ajoutent l'Islande, la Norvège et le Liechtenstein."
+  },
+  {
+    q: "L'original de la licence communautaire doit être :",
+    o: ["À bord du véhicule en permanence", "Conservé au siège de l'entreprise", "Déposé à la DREAL", "Remis au conducteur pour toute mission internationale"],
+    a: 1,
+    e: "<strong>L'original de la licence communautaire doit être conservé au siège de l'entreprise.</strong> Ce sont les copies certifiées conformes numérotées qui doivent se trouver à bord de chaque véhicule."
+  },
+  {
+    q: "Pour quelle durée maximale la licence communautaire est-elle délivrée ?",
+    o: ["5 ans renouvelable", "10 ans renouvelable", "15 ans renouvelable", "Durée illimitée"],
+    a: 1,
+    e: "La licence communautaire est octroyée pour une durée maximale de <strong>10 ans renouvelable</strong> par les autorités compétentes de l'État membre d'établissement."
+  },
+  {
+    q: "L'autorisation CEMT (FIT) permet au transporteur d'effectuer :",
+    o: ["Du cabotage dans les pays membres", "Des transports internationaux entre les pays membres et du cabotage", "Des transports internationaux entre les pays membres uniquement", "Des transports nationaux et internationaux"],
+    a: 2,
+    e: "L'autorisation CEMT permet d'effectuer des <strong>transports internationaux entre les pays membres</strong>. Elle <strong>ne permet pas le cabotage</strong> (transport intérieur à un pays membre)."
+  },
+  {
+    q: "Depuis le 1er janvier 2026, les autorisations CEMT sont délivrées sous quelle forme ?",
+    o: ["Document papier A4 plastifié", "QR Code numérique accessible sur une plateforme en ligne", "Vignette à apposer sur le pare-brise", "Carte à puce similaire à la carte conducteur"],
+    a: 1,
+    e: "Depuis le 1er janvier 2026 (dématérialisation obligatoire), les autorisations CEMT se présentent sous forme de <strong>QR Code numérique</strong>, accessible sur la plateforme https://eds.itf-oecd.org/. Les autorisations papier ne sont plus valables."
+  },
+  {
+    q: "Combien de pays participent au système de contingent multilatéral CEMT ?",
+    o: ["27 pays", "30 pays", "43 pays", "58 pays"],
+    a: 2,
+    e: "Le contingent multilatéral CEMT regroupe <strong>43 pays européens</strong>, dont la France, l'Allemagne, la Russie, la Turquie, l'Ukraine, la Suisse, et tous les pays de l'UE."
+  },
+  {
+    q: "Les autorisations bilatérales de transport international sont délivrées :",
+    o: ["Par la Commission européenne", "Par la CEMT sur une base multilatérale", "Sur la base d'un accord entre la France et un pays tiers à l'UE", "Par l'ambassade du pays de destination"],
+    a: 2,
+    e: "Les autorisations bilatérales sont délivrées <strong>sur la base d'un accord conclu entre la France et un pays tiers à l'Union européenne</strong>. Elles permettent des transports bilatéraux, triangulaires et de transit."
+  },
+  {
+    q: "À la suite d'un transport international à destination de la France, un transporteur étranger peut effectuer au maximum :",
+    o: ["1 opération de cabotage en 3 jours", "2 opérations de cabotage en 7 jours", "3 opérations de cabotage en 7 jours", "5 opérations de cabotage en 10 jours"],
+    a: 2,
+    e: "Selon le règlement CE n°1072/2009, après un transport international à destination de la France, le transporteur peut effectuer <strong>3 opérations de cabotage maximum dans un délai de 7 jours</strong> à compter du déchargement."
+  },
+  {
+    q: "Depuis le Paquet Mobilité 1 (en vigueur depuis février 2022), après avoir effectué des opérations de cabotage dans un pays, le transporteur doit respecter :",
+    o: ["Une période de carence de 2 jours avant de recommencer dans ce pays", "Une période de carence de 4 jours avant de recommencer dans ce pays", "Une période de carence de 7 jours avant de recommencer dans ce pays", "Aucune période de carence n'est prévue"],
+    a: 1,
+    e: "Le Règlement UE 2020/1055 (Paquet Mobilité 1) impose une <strong>période de carence de 4 jours complets</strong> avant d'effectuer de nouvelles opérations de cabotage dans le même pays avec le même véhicule."
+  },
+  {
+    q: "La Convention CMR régit :",
+    o: ["Les transports nationaux de marchandises", "Les transports internationaux de marchandises par route", "Les transports de voyageurs en autocar international", "Les transports maritimes et routiers combinés"],
+    a: 1,
+    e: "La Convention CMR (Genève, 19 mai 1956) régit <strong>les contrats de transport international de marchandises par route</strong> à titre onéreux. Elle s'applique dès lors que les lieux de prise en charge et de livraison sont dans deux pays différents, dont au moins un est signataire."
+  },
+  {
+    q: "Combien d'exemplaires originaux la lettre de voiture CMR comporte-t-elle en principe ?",
+    o: ["1 exemplaire", "2 exemplaires", "3 exemplaires", "5 exemplaires"],
+    a: 2,
+    e: "La CMR est établie en <strong>3 exemplaires originaux</strong> : un pour l'expéditeur, un pour accompagner la marchandise jusqu'au destinataire, et un conservé par le transporteur."
+  },
+  {
+    q: "Dans le cadre de la CMR, le plafond d'indemnisation en cas de perte ou d'avarie est de :",
+    o: ["5,00 DTS par kg de marchandise", "8,33 DTS par kg de poids brut manquant ou avarié", "10,00 DTS par kg de marchandise", "23,00 DTS par kg de marchandise"],
+    a: 1,
+    e: "Selon l'article 23 §3 de la Convention CMR, <strong>l'indemnité ne peut dépasser 8,33 DTS (Droits de Tirage Spéciaux) par kilogramme de poids brut manquant ou avarié</strong>. Ce plafond tombe en cas de faute lourde du transporteur."
+  },
+  {
+    q: "Le DTS (Droit de Tirage Spécial) utilisé dans la convention CMR est :",
+    o: ["Une unité indexée sur le cours de l'or", "Une monnaie calculée sur un panier de 5 devises (Dollar, Euro, Livre sterling, Yen, Yuan)", "Une unité fixée par la Commission européenne", "Un taux fixé annuellement par la CEMT"],
+    a: 1,
+    e: "Le DTS est une unité de compte du FMI, calculée sur la base d'un <strong>panier de 5 devises : Dollar USD, Euro, Livre sterling GBP, Yen JPY et Yuan CNY</strong>. Son cours fluctue quotidiennement (environ 1,25-1,35 €)."
+  },
+  {
+    q: "Pour des dommages non apparents constatés après livraison, le destinataire doit formuler ses réserves par écrit :",
+    o: ["Dans les 3 jours ouvrables suivant la livraison (dimanches et jours fériés exclus)", "Dans les 7 jours suivant la livraison (dimanches et jours fériés exclus)", "Dans les 14 jours suivant la livraison", "Dans les 21 jours suivant la livraison"],
+    a: 1,
+    e: "Selon la Convention CMR, pour les <strong>dommages non apparents</strong>, les réserves écrites doivent être formulées <strong>dans les 7 jours suivant la livraison, dimanches et jours fériés exclus</strong>. En cas de non-respect, il n'y a pas de forclusion en international, mais la charge de la preuve incombe au destinataire."
+  },
+  {
+    q: "En cas de retard à la livraison, le destinataire doit formuler ses réserves dans un délai de :",
+    o: ["7 jours (dimanches et jours fériés exclus)", "14 jours (dimanches et jours fériés exclus)", "21 jours (dimanches et jours fériés inclus)", "30 jours (dimanches et jours fériés inclus)"],
+    a: 2,
+    e: "Pour les <strong>retards à la livraison</strong>, la Convention CMR prévoit que les réserves doivent être formulées dans les <strong>21 jours à compter de la mise à disposition de la marchandise, dimanches et jours fériés INCLUS</strong>. Passé ce délai, il y a forclusion."
+  },
+  {
+    q: "La présomption de perte d'une marchandise s'applique, lorsqu'une date de livraison a été convenue, après :",
+    o: ["14 jours à compter de la date de livraison convenue", "30 jours à compter de la date de livraison convenue", "60 jours à compter de la prise en charge", "90 jours à compter de la date de livraison convenue"],
+    a: 1,
+    e: "Selon la Convention CMR, lorsqu'une date de livraison a été convenue, la présomption de perte s'applique passé un délai de <strong>30 jours après la date de livraison convenue</strong>. Sans date convenue, le délai est de 60 jours après la prise en charge."
+  },
+  {
+    q: "Lors d'une location transfrontalière d'un véhicule, la feuille de location doit obligatoirement mentionner :",
+    o: ["Uniquement le numéro d'immatriculation du véhicule", "Le numéro d'immatriculation, les dates de location et les identifiants SIREN du loueur et du locataire", "Seulement le nom et l'adresse des deux sociétés", "Le montant du loyer et les conditions de restitution"],
+    a: 1,
+    e: "La feuille de location doit comporter : la date d'établissement, les dates de début et fin de mise à disposition, le <strong>nom, adresse et SIREN du loueur et du locataire</strong>, le numéro d'immatriculation du véhicule, et le régime de location (avec ou sans conducteur)."
+  },
+  {
+    q: "Dans le cadre d'un transport international, le transporteur est déchargé de sa responsabilité si la perte ou l'avarie résulte :",
+    o: ["D'un retard de chargement imputable au conducteur", "D'un vice propre de la marchandise", "D'un défaut d'arrimage signalé tardivement", "D'une erreur sur l'adresse de livraison"],
+    a: 1,
+    e: "La Convention CMR prévoit plusieurs causes d'exonération. <strong>Le vice propre de la marchandise</strong> (défaut inhérent à la marchandise elle-même, indépendant de l'action du transporteur) est l'une des causes légitimes d'exonération de responsabilité."
+  },
+  {
+    q: "Une entreprise de transport établie en France qui loue un de ses véhicules à une entreprise étrangère :",
+    o: ["Peut transférer sa copie conforme de licence communautaire au locataire", "Ne peut pas faire bénéficier le locataire de sa propre copie conforme de licence communautaire", "Doit obtenir une autorisation spéciale de la DREAL", "Peut prêter sa copie conforme pendant 30 jours maximum"],
+    a: 1,
+    e: "Une entreprise qui donne son véhicule en location <strong>ne peut pas faire bénéficier le locataire de sa propre copie conforme de licence communautaire</strong>. Chaque entreprise doit utiliser SA PROPRE copie de licence pour ses véhicules."
+  }
+];
+
+const ANSWERS = Q.map(q => q.a);
+let cur = 0, ans = new Array(20).fill(-1), locked = new Array(20).fill(false);
+
+function render() {
+  const q = Q[cur];
+  document.getElementById("pfill").style.width = Math.round((cur + 1) / 20 * 100) + "%";
+  document.getElementById("qtop").textContent = "Question " + (cur + 1) + " sur 20";
+  document.getElementById("answered").textContent = locked.filter(Boolean).length + " répondues";
+  document.getElementById("qcount").textContent = (cur + 1) + " / 20";
+  document.getElementById("bprev").disabled = cur === 0;
+  const nb = document.getElementById("bnext");
+  if (cur === 19 && locked[cur]) { nb.textContent = "Voir les résultats"; nb.onclick = showResult; }
+  else { nb.textContent = "Suivant →"; nb.onclick = () => go(1); }
+  nb.disabled = !locked[cur] && ans[cur] === -1;
+  const L = ["A", "B", "C", "D"];
+  let h = `<div class="qcard"><div class="qcard-head"><span class="qnum">Q${cur + 1}</span></div><div class="qtext">${q.q}</div><div class="options">`;
+  q.o.forEach((o, i) => {
+    let c = "opt";
+    if (locked[cur]) {
+      c += " locked";
+      if (i === ANSWERS[cur]) c += " correct";
+      else if (i === ans[cur] && ans[cur] !== ANSWERS[cur]) c += " wrong";
+    } else if (i === ans[cur]) c += " selected";
+    h += `<div class="${c}" onclick="pick(${i})"><div class="opt-letter">${L[i]}</div><div class="opt-text">${o}</div></div>`;
+  });
+  h += `</div>`;
+  if (locked[cur]) h += `<div class="expl">${q.e}</div>`;
+  h += `</div>`;
+  document.getElementById("qzone").innerHTML = h;
+  updateScore();
+}
+
+function pick(i) {
+  if (locked[cur]) return;
+  ans[cur] = i; locked[cur] = true; render();
+  const nb = document.getElementById("bnext"); nb.disabled = false;
+  if (cur === 19) { nb.textContent = "Voir les résultats"; nb.onclick = showResult; }
+}
+
+function go(d) { if (cur + d < 0 || cur + d >= 20) return; cur += d; render(); }
+
+function updateScore() {
+  let ok = 0;
+  for (let i = 0; i < 20; i++) if (locked[i] && ans[i] === ANSWERS[i]) ok++;
+  document.getElementById("score").textContent = ok * 2;
+}
+
+function showResult() {
+  let ok = 0;
+  for (let i = 0; i < 20; i++) if (ans[i] === ANSWERS[i]) ok++;
+  const ko = 20 - ok, pts = ok * 2, pct = Math.round(ok / 20 * 100);
+  const msg = pts >= 32 ? "Excellente maîtrise du transport international !" : pts >= 24 ? "Bonne préparation, quelques points à consolider." : "Des chapitres à retravailler — revois le cours.";
+  document.getElementById("qzone").innerHTML = "";
+  document.getElementById("result").innerHTML = `
+    <div class="result-pct">${pct}%</div>
+    <div class="result-msg">${msg}</div>
+    <div class="result-grid">
+      <div class="rstat ok"><div class="rv">${ok}</div><div class="rl">Correctes</div></div>
+      <div class="rstat ko"><div class="rv">${ko}</div><div class="rl">Incorrectes</div></div>
+      <div class="rstat"><div class="rv">${pts}/40</div><div class="rl">Score</div></div>
+    </div>
+    <button class="btn primary" onclick="restart()" style="width:100%;margin-top:1rem">Recommencer</button>`;
+  document.getElementById("result").style.display = "block";
+  document.getElementById("nav").style.display = "none";
+  document.querySelector(".progress-wrap").style.display = "none";
+}
+
+function restart() {
+  cur = 0; ans = new Array(20).fill(-1); locked = new Array(20).fill(false);
+  document.getElementById("result").style.display = "none";
+  document.getElementById("nav").style.display = "flex";
+  document.querySelector(".progress-wrap").style.display = "block";
+  document.getElementById("score").textContent = "0";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
