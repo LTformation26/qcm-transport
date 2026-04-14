@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Transport International — Série 2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1A5C38;--green-mid:#2E7D52;--green-light:#E8F5EE;--green-pale:#F2FAF5;--red:#E24B4A;--red-light:#FCEBEB;--text:#1a1a1a;--muted:#6b7280;--border:#e5e7eb;--bg:#F7F8F7;--white:#fff}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem}
+.container{max-width:700px;margin:0 auto}
+.header{background:var(--green);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header h1{color:#fff;font-size:16px;font-weight:600;line-height:1.3}
+.header p{color:#A8D5BC;font-size:12px;margin-top:3px}
+.score-box{text-align:right;flex-shrink:0}
+.score-box .pts{color:#fff;font-size:28px;font-weight:600;line-height:1;font-family:'DM Mono',monospace}
+.score-box .lbl{color:#A8D5BC;font-size:11px;margin-top:2px}
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:6px}
+.progress-info span{font-size:12px;color:var(--muted)}
+.progress-bar{height:5px;background:#d1d5db;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s ease}
+.qcard{background:var(--white);border-radius:14px;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.07);margin-bottom:1rem}
+.qcard-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+.qnum{background:var(--green-light);color:var(--green);font-size:12px;font-weight:600;padding:2px 10px;border-radius:20px}
+.qtext{font-size:15px;font-weight:500;line-height:1.5;color:var(--text)}
+.options{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+.opt{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s}
+.opt:hover:not(.locked){border-color:var(--green-mid);background:var(--green-pale)}
+.opt.selected{border-color:var(--green);background:var(--green-light)}
+.opt.correct{border-color:#16a34a;background:#f0fdf4}
+.opt.wrong{border-color:var(--red);background:var(--red-light)}
+.opt.locked{cursor:default}
+.opt-letter{width:24px;height:24px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;color:var(--muted)}
+.opt.selected .opt-letter{background:var(--green);color:#fff}
+.opt.correct .opt-letter{background:#16a34a;color:#fff}
+.opt.wrong .opt-letter{background:var(--red);color:#fff}
+.opt-text{font-size:14px;line-height:1.45;padding-top:3px}
+.expl{margin-top:1rem;background:var(--green-pale);border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:.75rem 1rem;font-size:13px;line-height:1.55;color:#374151}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding-top:.25rem}
+.btn{padding:.65rem 1.25rem;border-radius:10px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .15s}
+.btn.primary{background:var(--green);color:#fff}
+.btn.primary:hover:not(:disabled){background:var(--green-mid)}
+.btn.secondary{background:var(--white);color:var(--text);border:1.5px solid var(--border)}
+.btn.secondary:hover:not(:disabled){border-color:var(--green);color:var(--green)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+#result{display:none;background:var(--white);border-radius:14px;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.result-pct{font-size:56px;font-weight:700;color:var(--green);text-align:center;font-family:'DM Mono',monospace}
+.result-msg{text-align:center;color:var(--muted);margin-top:.25rem;margin-bottom:1.5rem;font-size:15px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem}
+.rstat{background:var(--green-pale);border-radius:10px;padding:1rem;text-align:center}
+.rstat.ok .rv{color:#16a34a}
+.rstat.ko .rv{color:var(--red)}
+.rv{font-size:28px;font-weight:700;font-family:'DM Mono',monospace}
+.rl{font-size:11px;color:var(--muted);margin-top:3px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>QCM — Transport International — Série 2</h1>
+      <p id="answered">0 répondues</p>
+    </div>
+    <div class="score-box">
+      <div class="pts" id="score">0</div>
+      <div class="lbl">pts / 40</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span id="qtop">Question 1 sur 20</span>
+      <span id="qcount">1 / 20</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:5%"></div></div>
+  </div>
+  <div id="qzone"></div>
+  <div id="result"></div>
+  <div class="nav" id="nav">
+    <button class="btn secondary" id="bprev" onclick="go(-1)" disabled>← Précédent</button>
+    <button class="btn primary" id="bnext" onclick="go(1)" disabled>Suivant →</button>
+  </div>
+</div>
+<script>
+// Bonnes réponses : A B C D A B D C A D B C A D B C D A C B
+// Positions      : 0 1 2 3 0 1 3 2 0 3 1 2 0 3 1 2 3 0 2 1
+// Décompte       : A=5 B=5 C=5 D=5 — parfaitement équilibré
+const Q=[
+{q:"Laquelle de ces affirmations concernant la licence communautaire est exacte ?",o:["Elle est établie au nom du transporteur et ne peut être transférée à un tiers","Elle est transmissible à un sous-traitant en cas de besoin ponctuel","Elle est établie au nom du conducteur désigné par l'entreprise","Elle doit être renouvelée chaque année auprès de la DREAL"],a:0,e:"La licence communautaire est <strong>établie au nom du transporteur et ne peut faire l'objet d'aucun transfert à un tiers</strong> (Règlement CE n°1071/2009). Elle est octroyée pour une durée maximale de 10 ans renouvelable."},
+{q:"Un transporteur étranger entre en France à vide après un transport international qui ne s'est PAS terminé en France. Il peut effectuer :",o:["3 opérations de cabotage en 7 jours comme pour tout transport international","1 seule opération de cabotage dans un délai de 3 jours après son entrée à vide","2 opérations de cabotage en 5 jours maximum sur le territoire français","Aucune opération de cabotage dans ce cas précis"],a:1,e:"Lorsque le transport international préalable n'a pas pour destination le territoire français, il ne peut être effectué qu'<strong>une seule opération de cabotage</strong>, dans un délai de <strong>3 jours après l'entrée à vide</strong> du véhicule sur le territoire national."},
+{q:"Lequel de ces pays n'est PAS membre de l'EEE (Espace Économique Européen) ?",o:["Islande","Liechtenstein","Suisse","Norvège"],a:2,e:"<strong>La Suisse n'est pas membre de l'EEE</strong>. Elle est membre de l'AELE mais a signé sans ratifier l'accord sur l'EEE. Elle bénéficie cependant d'accords bilatéraux avec l'UE, ce qui explique pourquoi la licence communautaire est aussi valable en Suisse."},
+{q:"Les véhicules pouvant obtenir une autorisation CEMT doivent être de catégorie :",o:["EURO I ou supérieure","EURO II ou supérieure","EURO III ou supérieure","EURO IV sûr, EURO V sûr, EEV sûr ou EURO VI sûr"],a:3,e:"Seuls les véhicules répondant aux normes environnementales les plus strictes peuvent obtenir une autorisation CEMT : <strong>EURO IV sûr, EURO V sûr, EEV sûr ou EURO VI sûr</strong>. Ces véhicules sont certifiés non polluants et non sonores."},
+{q:"L'eCMR (lettre de voiture électronique) a la même valeur juridique que la CMR papier depuis :",o:["Le protocole additionnel à la Convention CMR de 2008, entré en vigueur en 2011","La directive européenne de 2015 sur la dématérialisation des documents","Le Paquet Mobilité 1 adopté en juillet 2020","La loi française de transposition de 2023"],a:0,e:"<strong>Le protocole additionnel à la Convention CMR de 2008, entré en vigueur en 2011</strong>, autorise l'eCMR qui a la même valeur probante qu'une lettre de voiture papier. La France l'a officiellement adoptée. Elle est reconnue dans plus de 30 pays."},
+{q:"En 2026, l'adoption de l'eCMR par les transporteurs est :",o:["Obligatoire depuis le 1er janvier 2026 pour tous les transporteurs","Facultative — la CMR papier reste parfaitement légale et aucune obligation n'est prévue","Obligatoire uniquement pour les transports intracommunautaires","Obligatoire à partir du 1er juillet 2026 pour les poids lourds internationaux"],a:1,e:"<strong>Aucune obligation d'adopter l'eCMR n'est prévue en 2026</strong>. La CMR papier reste parfaitement légale et reconnue. L'eCMR est une option offrant des avantages pratiques (traçabilité, gain de temps), mais son usage reste volontaire."},
+{q:"En cas de dommages apparents constatés à la livraison, le destinataire doit :",o:["Formuler ses réserves dans les 7 jours par lettre recommandée","Envoyer ses réserves dans les 21 jours ouvrables suivant la livraison","Signaler les dommages dans les 3 jours ouvrables par e-mail ou courrier","Formuler ses réserves immédiatement à la livraison en présence du transporteur"],a:3,e:"Pour les <strong>dommages apparents</strong> (visibles à la livraison), les réserves doivent être formulées <strong>immédiatement à la livraison, en présence du transporteur</strong>, et mentionnées sur la lettre de voiture CMR. Ce n'est pas un délai différé."},
+{q:"Lorsqu'aucune date de livraison n'a été convenue, la présomption de perte s'applique après :",o:["30 jours à compter de la date de prise en charge","45 jours à compter de la date de prise en charge","60 jours à compter de la date de prise en charge","90 jours à compter de la date de prise en charge"],a:2,e:"Lorsqu'aucune date de livraison n'est convenue, la Convention CMR prévoit que la présomption de perte s'applique après <strong>60 jours à compter de la prise en charge par le transporteur</strong> (contre 30 jours si une date de livraison avait été convenue)."},
+{q:"Dans le cadre d'une location transfrontalière, le véhicule loué doit être mis à la disposition de l'entreprise locataire :",o:["De manière exclusive pendant toute la durée du contrat, en charge ou à vide","En partage avec l'entreprise bailleresse sur certains trajets définis","Uniquement pour les trajets en charge, pas les retours à vide","Pour un minimum de 3 jours par semaine selon les termes du contrat"],a:0,e:"Le véhicule pris en location doit être mis à la <strong>disposition exclusive de l'entreprise locataire pendant toute la durée du contrat de location</strong>, que ce soit en charge ou à vide."},
+{q:"Le cabotage doit obligatoirement être réalisé :",o:["Avec n'importe quel véhicule disponible de l'entreprise étrangère","Avec un véhicule immatriculé dans le pays où le cabotage est effectué","Avec un véhicule loué localement après la livraison internationale","Avec le même véhicule (ou tracteur) que celui du transport international"],a:3,e:"Le cabotage doit être réalisé <strong>avec le même véhicule (camion ou tracteur) que celui qui a servi au transport international</strong>. Il n'est pas possible de changer de véhicule pour effectuer les opérations de cabotage."},
+{q:"La Convention CMR a été signée à Genève le :",o:["15 mars 2006","19 mai 1956","1er janvier 1958","11 mars 2002"],a:1,e:"La Convention CMR (Convention relative au Contrat de transport international de Marchandises par Route) a été <strong>signée le 19 mai 1956 à Genève</strong> et est entrée en vigueur en 1958. Au 1er janvier 2025, elle est ratifiée par 58 pays."},
+{q:"Pour les transports vers des pays non signataires du FIT (CEMT), le transporteur doit utiliser :",o:["Sa licence communautaire seule, valable dans tous les pays","Une autorisation bilatérale délivrée par la DREAL compétente","Une autorisation étrangère à se procurer auprès de l'ambassade ou du consulat du pays concerné","Une autorisation CEMT à court terme valable 30 jours"],a:2,e:"Pour les pays non signataires du FIT (CEMT), le transporteur doit obtenir une <strong>autorisation étrangère auprès de l'ambassade ou du consulat du pays concerné</strong>. Cette catégorie couvre les destinations hors du réseau CEMT."},
+{q:"En cas de faute lourde ou d'intention frauduleuse du transporteur dans un transport CMR, le plafond de 8,33 DTS/kg :",o:["Tombe — le transporteur peut être tenu d'indemniser la valeur réelle de la marchandise","S'applique toujours, même en cas de faute lourde ou intentionnelle","Est doublé à 16,66 DTS/kg par le juge compétent","Est triplé à 24,99 DTS/kg selon les conventions"],a:0,e:"En cas de <strong>faute lourde ou d'intention frauduleuse du transporteur</strong>, le plafond CMR de 8,33 DTS/kg <strong>tombe</strong>. Le transporteur peut alors être tenu d'indemniser intégralement la valeur réelle de la marchandise, sans limitation."},
+{q:"Les autorisations bilatérales et multilatérales de transport international sont accordées :",o:["Sur une base mensuelle renouvelable","Sur une base trimestrielle","Sur une base pluriannuelle de 3 ans","Sur une base annuelle"],a:3,e:"Les autorisations bilatérales et multilatérales sont accordées <strong>sur une base annuelle</strong>. Elles sont contingentées (en nombre limité) et gratuites pour les autorisations CEMT."},
+{q:"Depuis le Paquet Mobilité 1, chaque véhicule effectuant du cabotage doit retourner dans le pays d'établissement de l'entreprise au minimum :",o:["Une fois par mois","Toutes les 8 semaines","Toutes les 4 semaines","Tous les 3 mois"],a:1,e:"Le Règlement UE 2020/1055 (Paquet Mobilité 1) impose que chaque véhicule retourne dans le pays où est établie l'entreprise <strong>au minimum toutes les 8 semaines</strong>. Objectif : éviter que des transporteurs s'installent de fait en continu sur un marché national étranger."},
+{q:"La capacité financière minimale requise pour obtenir une licence communautaire pour le 1er véhicule est de :",o:["5 000 €","7 500 €","9 000 €","15 000 €"],a:2,e:"Pour obtenir une licence communautaire, l'entreprise doit disposer d'une capacité financière minimale de <strong>9 000 € pour le premier véhicule</strong>, puis de 5 000 € pour chaque véhicule supplémentaire (Règlement CE n°1071/2009)."},
+{q:"La lettre de voiture CMR peut être établie par :",o:["Uniquement par le transporteur","Uniquement par l'expéditeur de la marchandise","Uniquement par le commissionnaire de transport agréé","L'une quelconque des parties au contrat de transport"],a:3,e:"La lettre de voiture CMR peut être établie par <strong>l'une quelconque des parties au contrat de transport</strong> (expéditeur, transporteur ou destinataire). Il n'y a pas d'obligation de rédaction par une partie spécifique."},
+{q:"Pour effectuer un transport entre la France et la Turquie, un transporteur français doit utiliser :",o:["Une autorisation CEMT (FIT), la Turquie étant l'un des 43 pays membres","Sa licence communautaire seule, la Turquie étant candidate à l'UE","Une autorisation étrangère délivrée par le consulat de Turquie","Une autorisation bilatérale uniquement délivrée par la DREAL"],a:0,e:"La <strong>Turquie est l'un des 43 pays membres du système CEMT</strong>. Le transporteur doit utiliser une <strong>autorisation multilatérale CEMT (FIT)</strong>. Depuis le 1er janvier 2026, cette autorisation est délivrée sous forme de QR Code numérique."},
+{q:"En transport CMR, le transporteur est responsable de la marchandise :",o:["Uniquement pendant la phase de conduite effective du véhicule","À partir du départ de l'entrepôt de l'expéditeur","De la prise en charge jusqu'à la livraison au destinataire","Uniquement pour les marchandises déclarées à haute valeur"],a:2,e:"Le transporteur est responsable <strong>de la prise en charge de la marchandise jusqu'à la livraison au destinataire</strong>. Cette responsabilité couvre toute la période pendant laquelle la marchandise est sous sa garde, y compris les éventuelles ruptures de charge."},
+{q:"Le transporteur effectuant du cabotage doit conserver les documents de transport pendant :",o:["6 mois","2 ans","5 ans","10 ans"],a:1,e:"Depuis le Paquet Mobilité 1, le transporteur effectuant du cabotage doit conserver les contrats justificatifs et les documents de transport (lettres de voiture, bons de livraison) pendant <strong>2 ans</strong>, pour pouvoir les présenter en cas de contrôle."}
+];
+const ANSWERS=Q.map(q=>q.a);
+let cur=0,ans=new Array(20).fill(-1),locked=new Array(20).fill(false);
+function render(){
+  const q=Q[cur];
+  document.getElementById("pfill").style.width=Math.round((cur+1)/20*100)+"%";
+  document.getElementById("qtop").textContent="Question "+(cur+1)+" sur 20";
+  document.getElementById("answered").textContent=locked.filter(Boolean).length+" répondues";
+  document.getElementById("qcount").textContent=(cur+1)+" / 20";
+  document.getElementById("bprev").disabled=cur===0;
+  const nb=document.getElementById("bnext");
+  if(cur===19&&locked[cur]){nb.textContent="Voir les résultats";nb.onclick=showResult;}
+  else{nb.textContent="Suivant →";nb.onclick=()=>go(1);}
+  nb.disabled=!locked[cur]&&ans[cur]===-1;
+  const L=["A","B","C","D"];
+  let h=`<div class="qcard"><div class="qcard-head"><span class="qnum">Q${cur+1}</span></div><div class="qtext">${q.q}</div><div class="options">`;
+  q.o.forEach((o,i)=>{
+    let c="opt";
+    if(locked[cur]){c+=" locked";if(i===ANSWERS[cur])c+=" correct";else if(i===ans[cur]&&ans[cur]!==ANSWERS[cur])c+=" wrong";}
+    else if(i===ans[cur])c+=" selected";
+    h+=`<div class="${c}" onclick="pick(${i})"><div class="opt-letter">${L[i]}</div><div class="opt-text">${o}</div></div>`;
+  });
+  h+=`</div>`;
+  if(locked[cur])h+=`<div class="expl">${q.e}</div>`;
+  h+=`</div>`;
+  document.getElementById("qzone").innerHTML=h;
+  updateScore();
+}
+function pick(i){if(locked[cur])return;ans[cur]=i;locked[cur]=true;render();const nb=document.getElementById("bnext");nb.disabled=false;if(cur===19){nb.textContent="Voir les résultats";nb.onclick=showResult;}}
+function go(d){if(cur+d<0||cur+d>=20)return;cur+=d;render();}
+function updateScore(){let ok=0;for(let i=0;i<20;i++)if(locked[i]&&ans[i]===ANSWERS[i])ok++;document.getElementById("score").textContent=ok*2;}
+function showResult(){
+  let ok=0;for(let i=0;i<20;i++)if(ans[i]===ANSWERS[i])ok++;
+  const ko=20-ok,pts=ok*2,pct=Math.round(ok/20*100);
+  const msg=pts>=32?"Excellente maîtrise du transport international !":pts>=24?"Bonne préparation, quelques points à consolider.":"Des chapitres à retravailler — revois le cours.";
+  document.getElementById("qzone").innerHTML="";
+  document.getElementById("result").innerHTML=`<div class="result-pct">${pct}%</div><div class="result-msg">${msg}</div><div class="result-grid"><div class="rstat ok"><div class="rv">${ok}</div><div class="rl">Correctes</div></div><div class="rstat ko"><div class="rv">${ko}</div><div class="rl">Incorrectes</div></div><div class="rstat"><div class="rv">${pts}/40</div><div class="rl">Score</div></div></div><button class="btn primary" onclick="restart()" style="width:100%;margin-top:1rem">Recommencer</button>`;
+  document.getElementById("result").style.display="block";
+  document.getElementById("nav").style.display="none";
+  document.querySelector(".progress-wrap").style.display="none";
+}
+function restart(){cur=0;ans=new Array(20).fill(-1);locked=new Array(20).fill(false);document.getElementById("result").style.display="none";document.getElementById("nav").style.display="flex";document.querySelector(".progress-wrap").style.display="block";document.getElementById("score").textContent="0";render();}
+render();
+</script>
+</body>
+</html>
