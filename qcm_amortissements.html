@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Amortissements | Capacité Transport +3,5t</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1A5C38;--green-mid:#2E7D52;--green-light:#E8F5EE;--green-pale:#F2FAF5;--red:#E24B4A;--red-light:#FCEBEB;--orange:#f59e0b;--text:#1a1a1a;--muted:#6b7280;--border:#e5e7eb;--bg:#F7F8F7;--white:#fff}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem}
+.container{max-width:700px;margin:0 auto}
+.header{background:var(--green);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header-left h1{color:#fff;font-size:15px;font-weight:600;line-height:1.3}
+.header-left p{color:#A8D5BC;font-size:12px;margin-top:3px}
+.score-box{text-align:right;flex-shrink:0}
+.score-box .pts{color:#fff;font-size:28px;font-weight:600;line-height:1;font-family:'DM Mono',monospace}
+.score-box .lbl{color:#A8D5BC;font-size:11px;margin-top:2px}
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:6px}
+.progress-info span{font-size:12px;color:var(--muted)}
+.progress-bar{height:5px;background:#d1d5db;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s ease}
+.card{background:var(--white);border-radius:14px;padding:1.5rem;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:1rem}
+.q-num{font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
+.q-text{font-size:15px;font-weight:500;line-height:1.55;margin-bottom:1.1rem;color:var(--text)}
+.opts{display:flex;flex-direction:column;gap:.55rem}
+.opt{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;transition:all .18s;background:var(--white);text-align:left;width:100%;font-family:inherit;font-size:14px;color:var(--text)}
+.opt:hover:not(.locked){border-color:var(--green);background:var(--green-pale)}
+.opt-letter{width:26px;height:26px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;transition:all .18s}
+.opt.correct{border-color:#16a34a;background:#f0fdf4}
+.opt.correct .opt-letter{background:#16a34a;border-color:#16a34a;color:#fff}
+.opt.wrong{border-color:var(--red);background:var(--red-light)}
+.opt.wrong .opt-letter{background:var(--red);border-color:var(--red);color:#fff}
+.opt.show-correct{border-color:#16a34a;background:#f0fdf4}
+.opt.show-correct .opt-letter{background:#16a34a;border-color:#16a34a;color:#fff}
+.opt.locked{cursor:default}
+.expl{margin-top:.85rem;padding:.75rem 1rem;background:var(--green-light);border-radius:8px;border-left:3px solid var(--green);font-size:13px;color:#1a3a2a;line-height:1.5;display:none}
+.expl.show{display:block}
+.expl strong{color:var(--green)}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin-top:1rem}
+.btn{padding:.7rem 1.4rem;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .18s}
+.btn.primary{background:var(--green);color:#fff}
+.btn.primary:hover{background:var(--green-mid)}
+.btn.secondary{background:var(--white);color:var(--text);border:1.5px solid var(--border)}
+.btn.secondary:hover{border-color:var(--green);color:var(--green)}
+.btn:disabled{opacity:.4;cursor:default}
+#result{display:none;background:var(--white);border-radius:14px;padding:2rem;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.result-pct{font-size:52px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace}
+.result-msg{font-size:15px;color:var(--muted);margin:.5rem 0 1.5rem}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem}
+.rstat{background:var(--bg);border-radius:10px;padding:.9rem .5rem}
+.rstat .rv{font-size:26px;font-weight:700;color:var(--text)}
+.rstat.ok .rv{color:#16a34a}
+.rstat.ko .rv{color:var(--red)}
+.rstat .rl{font-size:11px;color:var(--muted);margin-top:3px}
+.badge-theme{display:inline-block;padding:.2rem .6rem;border-radius:999px;font-size:11px;font-weight:600;background:var(--green-light);color:var(--green);margin-bottom:.5rem}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <h1>QCM — Les Amortissements</h1>
+      <p>Capacité de Transport Marchandises +3,5t · Niveau annale examen</p>
+    </div>
+    <div class="score-box">
+      <div class="pts" id="score">0</div>
+      <div class="lbl">pts / 40</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span id="prog-txt">Question 1 / 20</span>
+      <span id="pct-txt">0 %</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="qcard" class="card"></div>
+
+  <div class="nav" id="nav">
+    <button class="btn secondary" id="btn-prev" onclick="move(-1)" disabled>← Précédent</button>
+    <button class="btn primary"   id="btn-next" onclick="move(1)">Suivant →</button>
+  </div>
+
+  <div id="result"></div>
+</div>
+
+<script>
+const Q=[{"q":"Une entreprise acquiert un tracteur routier le 01/01/N pour 120 000 € HT, amortissable sur 5 ans en mode linéaire. Quelle est la dotation annuelle ?","opts":["20 000 €","30 000 €","12 000 €","24 000 €"],"a":3,"expl":"Dotation = 120 000 ÷ 5 = 24 000 €. Taux linéaire = 100/5 = 20 %."},{"q":"Quelle est la Valeur Nette Comptable (VNC) d'un camion acquis le 01/01/N pour 80 000 € HT, amorti sur 4 ans, à la fin de la 2ème année ?","opts":["60 000 €","20 000 €","40 000 €","16 000 €"],"a":2,"expl":"Dotation annuelle = 80 000 ÷ 4 = 20 000 €. AC après 2 ans = 40 000 €. VNC = 80 000 − 40 000 = 40 000 €."},{"q":"Selon le PCG, à partir de quelle date commence l'amortissement linéaire d'une immobilisation ?","opts":["La date de mise en service","La date de commande","La date de livraison","La date de paiement"],"a":0,"expl":"En amortissement linéaire, le point de départ est la date de mise en service du bien, et non la date d'achat ou de livraison."},{"q":"Un bien est mis en service le 13 août N. Combien de jours d'amortissement comptabilise-t-on pour le mois d'août (convention 30 jours/mois) ?","opts":["17 jours","18 jours","17 jours","19 jours"],"a":1,"expl":"Formule : 30 − J + 1 = 30 − 13 + 1 = 18 jours. Le jour de mise en service est inclus dans le décompte."},{"q":"Un matériel de transport est acquis le 01/07/N pour 200 000 € HT, mis en service le même jour, amortissable sur 5 ans en linéaire. Quelle est la dotation de la 1ʳᵉ année ?","opts":["40 000 €","10 000 €","30 000 €","20 000 €"],"a":3,"expl":"Taux = 20 %. Du 01/07 au 31/12 = 180 jours. 200 000 × 20 % × (180/360) = 20 000 €."},{"q":"Quel coefficient fiscal s'applique à l'amortissement dégressif pour un bien dont la durée d'utilisation est de 5 ans ?","opts":["1,25","2,25","1,75","1,50"],"a":2,"expl":"Selon l'art. 39 A du CGI : coefficient 1,75 pour les biens amortis sur 5 ou 6 ans (source BOFiP BOI-BIC-AMT-20-20-30)."},{"q":"Quel est le taux d'amortissement dégressif d'un camion neuf dont la durée normale d'utilisation est de 4 ans ?","opts":["31,25 %","35 %","22,5 %","25 %"],"a":0,"expl":"Taux linéaire = 100/4 = 25 %. Coefficient 4 ans = 1,25. Taux dégressif = 25 % × 1,25 = 31,25 %."},{"q":"En amortissement dégressif, à partir de quel moment calcule-t-on le prorata temporis de la 1ʳᵉ annuité ?","opts":["La date de mise en service","Le mois d'acquisition","La date de livraison","Le 1er jour de l'exercice"],"a":1,"expl":"En dégressif, la 1ʳᵉ annuité est calculée à partir du mois d'acquisition (et non de la mise en service), par tranches de mois entiers."},{"q":"Un tracteur est acheté le 2 mai N pour 76 500 € HT, amortissable sur 5 ans en dégressif. Quelle est la 1ʳᵉ dotation ?","opts":["20 000 €","12 000 €","22 400 €","17 850 €"],"a":3,"expl":"Taux dégressif = 35 %. Achat en mai → 8 mois. 76 500 × 35 % × (8/12) = 17 850 €."},{"q":"Quand bascule-t-on de l'amortissement dégressif vers l'amortissement linéaire ?","opts":["À partir de la 3ème année","Quand la VNC atteint 50 % de la VO","Quand la dotation linéaire résiduelle dépasse la dotation dégressive","Jamais, on reste en dégressif jusqu'au bout"],"a":2,"expl":"Dès que la dotation calculée en linéaire sur la durée restante devient supérieure à la dotation dégressive, on bascule en linéaire."},{"q":"Une semi-remorque est acquise le 01/10/2022 pour 200 000 € HT, durée 4 ans, mode dégressif. Quelle est la dotation 2022 ?","opts":["15 625 €","50 000 €","31 250 €","10 000 €"],"a":0,"expl":"Taux dégressif = 25 % × 1,25 = 31,25 %. Achat en octobre → 3 mois. 200 000 × 31,25 % × (3/12) = 15 625 €."},{"q":"Pour être amortissable en mode dégressif, un bien doit être :","opts":["Acquis d'occasion avec une durée de vie > 2 ans","Neuf avec une durée d'utilisation > 3 ans","Neuf ou d'occasion avec une durée > 5 ans","Acquis d'occasion et mis en service la même année"],"a":1,"expl":"L'amortissement dégressif est réservé aux biens neufs (art. 39 A CGI) dont la durée d'utilisation est supérieure à 3 ans."},{"q":"Quelle est la Valeur Nette Comptable au bilan d'un bien entièrement amorti ?","opts":["Égale à la valeur de revente","Égale à 50 % de la VO","Égale au dernier amortissement cumulé","Égale à 0 €"],"a":3,"expl":"À la fin de la durée d'amortissement, les amortissements cumulés = VO, donc VNC = VO − AC = 0 €."},{"q":"En quoi l'amortissement est-il différent de la provision pour dépréciation ?","opts":["L'amortissement est facultatif, la provision est obligatoire","L'amortissement s'applique aux actifs financiers, pas la provision","L'amortissement constate une perte certaine et irréversible, la provision une perte probable et réversible","Seule la provision est une charge non décaissée"],"a":2,"expl":"L'amortissement constate une dépréciation certaine et définitive. La provision constate une dépréciation probable mais non définitive — elle peut faire l'objet d'une reprise."},{"q":"Sur quelle base est calculé l'amortissement d'un véhicule de transport de marchandises en France ?","opts":["Le prix HT","Le prix TTC","Le prix HT diminué de la valeur résiduelle","Le prix TTC augmenté des frais de livraison"],"a":0,"expl":"En transport de marchandises, la TVA est récupérable. L'amortissement est donc calculé sur la valeur HT du bien."},{"q":"Un camion frigo est acquis le 01/01/2020 pour 96 000 € TTC (TVA 20 %), amorti sur 5 ans en linéaire. Quelle est la VNC au 31/12/2022 ?","opts":["57 600 €","32 000 €","16 000 €","64 000 €"],"a":1,"expl":"VO HT = 96 000 ÷ 1,20 = 80 000 €. Dotation annuelle = 80 000 ÷ 5 = 16 000 €. Après 3 ans (2020, 2021, 2022) : AC = 48 000 €. VNC = 80 000 − 48 000 = 32 000 €."},{"q":"Quelle est la durée d'utilisation communément admise pour un véhicule poids lourd neuf en transport de marchandises ?","opts":["2 à 3 ans","8 à 10 ans","1 à 2 ans","4 à 5 ans"],"a":3,"expl":"La durée d'usage communément retenue pour les véhicules de transport de marchandises (poids lourds) est de 4 à 5 ans (source : BOFiP BOI-BIC-AMT-20-40-60)."},{"q":"La dotation aux amortissements est qualifiée de charge 'non décaissée'. Que signifie ce terme ?","opts":["Elle n'est pas déductible fiscalement","Elle génère un remboursement de TVA","Elle diminue le résultat sans engendrer de sortie de trésorerie","Elle doit être provisionnée dans un compte bancaire dédié"],"a":2,"expl":"La dotation aux amortissements réduit le résultat comptable (et donc l'impôt), mais ne donne lieu à aucun paiement effectif — il n'y a pas de sortie de trésorerie lors de sa comptabilisation."},{"q":"Un bien acquis le 01/04/N pour 150 000 € HT est amorti sur 5 ans en linéaire. Quelle est la dotation de la dernière année d'amortissement ?","opts":["7 500 €","30 000 €","15 000 €","22 500 €"],"a":0,"expl":"1ʳᵉ annuité : 270 jours. Dernière annuité : 360 − 270 = 90 jours. 150 000 × 20 % × (90/360) = 7 500 €."},{"q":"Quel article du Code Général des Impôts régit les coefficients de l'amortissement dégressif en France ?","opts":["Art. 214-8 du PCG","Art. 39 A du CGI","Art. L1232-2 du Code du travail","Art. 322-1 du PCG"],"a":1,"expl":"Les coefficients fiscaux de l'amortissement dégressif (1,25 / 1,75 / 2,25) sont fixés par l'article 39 A du Code Général des Impôts, précisé par le BOFiP BOI-BIC-AMT-20-20-30."}];
+let cur=0, ans=new Array(20).fill(-1), locked=new Array(20).fill(false);
+
+function score(){
+  return Q.reduce((s,q,i)=> ans[i]===q.a ? s+2 : s, 0);
+}
+
+function render(){
+  const q=Q[cur];
+  const letters=['A','B','C','D'];
+  const isLocked=locked[cur];
+  const userAns=ans[cur];
+
+  document.getElementById('prog-txt').textContent=`Question ${cur+1} / 20`;
+  const pct=Math.round((cur/(Q.length))*100);
+  document.getElementById('pct-txt').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('score').textContent=score();
+
+  let optsHtml=q.opts.map((o,i)=>{
+    let cls='opt'+(isLocked?' locked':'');
+    if(isLocked){
+      if(i===q.a) cls+=' show-correct';
+      if(i===userAns && userAns!==q.a) cls+=' wrong';
+    } else if(i===userAns) cls+=' selected';
+    return `<button class="${cls}" onclick="choose(${i})">
+      <span class="opt-letter">${letters[i]}</span>
+      <span>${o}</span>
+    </button>`;
+  }).join('');
+
+  const explCls='expl'+(isLocked?' show':'');
+  const icon=isLocked?(userAns===q.a?'✅':'❌'):'';
+
+  document.getElementById('qcard').innerHTML=`
+    <div class="q-num">Question ${cur+1} sur 20</div>
+    <div class="q-text">${q.q}</div>
+    <div class="opts">${optsHtml}</div>
+    <div class="${explCls}"><strong>${icon} Explication :</strong> ${q.expl}</div>
+  `;
+
+  document.getElementById('btn-prev').disabled=(cur===0);
+  const isLast=(cur===Q.length-1);
+  const btnNext=document.getElementById('btn-next');
+  if(isLast && isLocked){
+    btnNext.textContent='Voir les résultats';
+    btnNext.onclick=showResult;
+  } else {
+    btnNext.textContent='Suivant →';
+    btnNext.onclick=()=>move(1);
+  }
+  btnNext.disabled=(!isLocked && userAns===-1 && !isLast);
+}
+
+function choose(i){
+  if(locked[cur]) return;
+  ans[cur]=i;
+  locked[cur]=true;
+  // Marquer correct/wrong visuellement
+  const btns=document.querySelectorAll('.opt');
+  btns.forEach((b,idx)=>{
+    b.classList.add('locked');
+    if(idx===Q[cur].a) b.classList.add('correct');
+    if(idx===i && i!==Q[cur].a) b.classList.add('wrong');
+  });
+  document.querySelector('.expl').classList.add('show');
+  document.getElementById('score').textContent=score();
+  // Activer le bouton suivant
+  const isLast=(cur===Q.length-1);
+  const btnNext=document.getElementById('btn-next');
+  btnNext.disabled=false;
+  if(isLast){
+    btnNext.textContent='Voir les résultats';
+    btnNext.onclick=showResult;
+  }
+}
+
+function move(d){
+  cur+=d;
+  if(cur<0)cur=0;
+  if(cur>=Q.length)cur=Q.length-1;
+  render();
+}
+
+function showResult(){
+  const ok=Q.filter((_,i)=>ans[i]===Q[i].a).length;
+  const ko=20-ok;
+  const pts=score();
+  const pct=Math.round((pts/40)*100);
+  let msg='';
+  if(pct>=80) msg='Excellent ! Niveau examen atteint 🎉';
+  else if(pct>=60) msg='Bon résultat, continue à réviser 💪';
+  else msg='Des révisions s\'imposent — relis le cours 📚';
+
+  document.getElementById('result').innerHTML=`
+    <div class="result-pct">${pct}%</div>
+    <div class="result-msg">${msg}</div>
+    <div class="result-grid">
+      <div class="rstat ok"><div class="rv">${ok}</div><div class="rl">Correctes</div></div>
+      <div class="rstat ko"><div class="rv">${ko}</div><div class="rl">Incorrectes</div></div>
+      <div class="rstat"><div class="rv">${pts}/40</div><div class="rl">Score</div></div>
+    </div>
+    <button class="btn primary" onclick="restart()" style="width:100%;margin-top:.5rem">Recommencer</button>
+  `;
+  document.getElementById('result').style.display='block';
+  document.getElementById('nav').style.display='none';
+  document.querySelector('.progress-wrap').style.display='none';
+  document.getElementById('qcard').style.display='none';
+}
+
+function restart(){
+  cur=0; ans=new Array(20).fill(-1); locked=new Array(20).fill(false);
+  document.getElementById('result').style.display='none';
+  document.getElementById('nav').style.display='flex';
+  document.querySelector('.progress-wrap').style.display='block';
+  document.getElementById('qcard').style.display='block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
