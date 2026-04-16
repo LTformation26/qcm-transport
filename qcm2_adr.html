@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM N°2 — Transport ADR — Signalisation & cas pratiques</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:1.5rem 1rem}
+  .wrap{max-width:740px;margin:0 auto}
+  .top-bar{background:#1a5c38;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;color:#fff}
+  .top-bar h1{font-size:20px;font-weight:700;margin-bottom:.2rem}
+  .top-bar p{font-size:13px;color:#aaccbb}
+  .prog-bar{height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin-top:.9rem;overflow:hidden}
+  .prog-fill{height:100%;background:#fff;border-radius:3px;transition:width .3s}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+  .stat{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:.75rem;text-align:center}
+  .stat-v{font-size:22px;font-weight:700;color:#1a1a1a}
+  .stat-l{font-size:11px;color:#888;margin-top:2px}
+  .stat.ok .stat-v{color:#1a7f45}
+  .stat.ko .stat-v{color:#c0392b}
+  .q-card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+  .q-num{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+  .q-text{font-size:15px;color:#1a1a1a;line-height:1.65;margin-bottom:1rem;font-weight:500}
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .choice{display:flex;align-items:flex-start;gap:10px;padding:.7rem 1rem;border:1.5px solid #e0e0e0;border-radius:8px;cursor:pointer;transition:background .12s,border-color .12s;background:#fff}
+  .choice:hover:not(.disabled){background:#f0faf4;border-color:#2e7d52}
+  .choice.correct{background:#e8f5ee;border-color:#1a7f45}
+  .choice.wrong{background:#fdf2f0;border-color:#c0392b}
+  .choice.disabled{cursor:default}
+  .choice-label{font-size:13px;font-weight:700;min-width:22px;color:#888;padding-top:1px;flex-shrink:0}
+  .choice.correct .choice-label{color:#1a7f45}
+  .choice.wrong .choice-label{color:#c0392b}
+  .choice-text{font-size:14px;color:#1a1a1a;line-height:1.5}
+  .expl{margin-top:.85rem;padding:.7rem 1rem;background:#fef5ec;border-left:3px solid #d35400;border-radius:0 6px 6px 0;font-size:13px;color:#5d3600;line-height:1.55;display:none}
+  .expl-label{font-weight:700;color:#d35400;font-size:12px;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-top:1rem}
+  .btn{padding:.55rem 1.3rem;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer;transition:background .12s;font-family:Arial,sans-serif;font-weight:600}
+  .btn:hover{background:#f5f5f5}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btn-primary{background:#1a5c38;color:#fff;border-color:#1a5c38}
+  .btn-primary:hover{background:#2e7d52}
+  .q-counter{font-size:13px;color:#888;font-weight:500}
+  .result-wrap{text-align:center;padding:2.5rem 1rem}
+  .result-score{font-size:56px;font-weight:700;color:#1a5c38;margin-bottom:.2rem}
+  .result-pct{font-size:18px;color:#888;margin-bottom:.75rem}
+  .result-msg{font-size:15px;color:#1a1a1a;line-height:1.6;margin-bottom:2rem;max-width:480px;margin-left:auto;margin-right:auto}
+  .result-msg.good{color:#1a7f45}
+  .result-msg.med{color:#b7950b}
+  .result-msg.low{color:#c0392b}
+  .btn-gap{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top-bar">
+    <h1>QCM N&#176;2 &#8212; Signalisation, emballage &amp; cas pratiques</h1>
+    <p>15 questions &nbsp;&#8226;&nbsp; 1 seule bonne r&#233;ponse &nbsp;&#8226;&nbsp; Type annales examen CTM &nbsp;&#8226;&nbsp; ADR 2025</p>
+    <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-v" id="s-total">0/15</div><div class="stat-l">R&#233;pondues</div></div>
+    <div class="stat ok"><div class="stat-v" id="s-ok">0</div><div class="stat-l">Correctes</div></div>
+    <div class="stat ko"><div class="stat-v" id="s-ko">0</div><div class="stat-l">Incorrectes</div></div>
+  </div>
+
+  <div id="q-area"></div>
+
+  <div class="nav">
+    <button class="btn" id="btn-prev" onclick="go(-1)" disabled>&#8592; Pr&#233;c&#233;dent</button>
+    <span class="q-counter" id="q-counter">Question 1 / 15</span>
+    <button class="btn btn-primary" id="btn-next" onclick="go(1)" disabled>Suivant &#8594;</button>
+  </div>
+
+</div>
+
+<script>
+var QS=[
+{q:"Un transporteur achemine 500 litres d'essence (UN 1203). Quel code de danger doit figurer sur la partie sup\u00e9rieure de sa plaque orange\u00a0?",
+c:["30 (liquide inflammable sans danger secondaire)","13 (explosif et inflammable)","33 (liquide tr\u00e8s inflammable)","03 (mati\u00e8re comburante l\u00e9g\u00e8rement inflammable)"],
+r:2,e:"L'essence (UN 1203) a le code de danger 33\u00a0: liquide tr\u00e8s inflammable. Premier \u20183\u2019\u00a0= inflammable (danger principal), deuxi\u00e8me \u20183\u2019\u00a0= intensification du danger. Plaque compl\u00e8te\u00a0: 33\u00a0/\u00a01203."},
+{q:"Quelle affirmation concernant l'emballage ADR est exacte\u00a0?",
+c:["Tout emballage doit porter un marquage ONU attestant son homologation apr\u00e8s tests de r\u00e9sistance (chute, pression, \u00e9tanch\u00e9it\u00e9)","N'importe quel emballage solide peut \u00eatre utilis\u00e9 si la quantit\u00e9 est inf\u00e9rieure \u00e0 5 kg","L'emballage homologu\u00e9 n'est obligatoire que pour les classes 1 et 7","Un emballage l\u00e9g\u00e8rement endommag\u00e9 peut \u00eatre utilis\u00e9 si le couvercle est intact"],
+r:0,e:"L'ADR impose que tout emballage soit homologu\u00e9 apr\u00e8s tests rigoureux (chute, pression interne, \u00e9tanch\u00e9it\u00e9). Le marquage ONU atteste cette homologation. Un emballage endommag\u00e9 ou non approuv\u00e9 est strictement interdit."},
+{q:"Un exp\u00e9diteur transporte du chlore gazeux (UN\u00a01017). Dans quelle classe ADR le chlore est-il class\u00e9\u00a0?",
+c:["Classe 6.1 car c'est un produit toxique solide","Classe 8 car il est corrosif pour les m\u00e9taux","Classe 3 car il peut former des m\u00e9langes inflammables","Classe 2 car c'est un gaz toxique non inflammable"],
+r:3,e:"Le chlore est un gaz toxique non inflammable class\u00e9 en Classe\u00a02 de l'ADR. La Classe\u00a02 regroupe tous les gaz sous pression, qu'ils soient inflammables, non inflammables non toxiques, ou toxiques. Num\u00e9ro ONU\u00a01017."},
+{q:"Un conducteur constate que son v\u00e9hicule charg\u00e9 de mati\u00e8res dangereuses tombe en panne sur l'autoroute. Quelle r\u00e8gle de stationnement ADR s'applique\u00a0?",
+c:["Il peut stationner n'importe o\u00f9 car c'est une urgence","Il doit appliquer les r\u00e8gles ADR, s\u00e9curiser le v\u00e9hicule et ne jamais le laisser sans surveillance","Il doit pousser le v\u00e9hicule jusqu'\u00e0 l'aire de repos la plus proche","Il peut abandonner le v\u00e9hicule apr\u00e8s avoir pr\u00e9venu son employeur"],
+r:1,e:"L'ADR interdit formellement d'abandonner un v\u00e9hicule charg\u00e9 de mati\u00e8res dangereuses sans surveillance. Le conducteur doit s\u00e9curiser le v\u00e9hicule, mettre en place la signalisation de d\u00e9tresse et alerter les secours si n\u00e9cessaire."},
+{q:"Parmi ces mati\u00e8res, laquelle appartient \u00e0 la Classe\u00a05.1 (mati\u00e8res comburantes) de l'ADR\u00a0?",
+c:["Peroxyde d'hydrog\u00e8ne (eau oxyg\u00e9n\u00e9e concentr\u00e9e)","Acide chlorhydrique","Propane sous pression","Dichlorom\u00e9thane (solvant chlor\u00e9)"],
+r:0,e:"Le peroxyde d'hydrog\u00e8ne concentr\u00e9 est class\u00e9 en Classe\u00a05.1 (mati\u00e8res comburantes). Ces mati\u00e8res favorisent l'inflammation d'autres substances en lib\u00e9rant de l'oxyg\u00e8ne. \u00c0 ne pas confondre avec l'eau oxyg\u00e9n\u00e9e pharmaceutique dilu\u00e9e, non soumise \u00e0 l'ADR."},
+{q:"Quelle sanction risque une entreprise ne d\u00e9signant pas de CSTMD alors qu'elle y est soumise\u00a0?",
+c:["Une simple mise en demeure sans sanction financi\u00e8re","L'obligation de former tous les conducteurs \u00e0 la place","Une suspension temporaire de 30 jours de la licence de transport","Des contraventions de 4e ou 5e classe, immobilisation du v\u00e9hicule et poursuites p\u00e9nales possibles"],
+r:3,e:"L'absence de CSTMD est une infraction \u00e0 la r\u00e9glementation TMD. Sanctions\u00a0: contraventions de 4e ou 5e classe, immobilisation du v\u00e9hicule. En cas d'accident impliquant un manquement, des poursuites p\u00e9nales peuvent \u00eatre engag\u00e9es contre le responsable."},
+{q:"Un emballage porte la mention \u2018X\u2019 dans son code de marquage ONU (ex. UN/4G/X10). Que signifie ce \u2018X\u2019\u00a0?",
+c:["L'emballage est homologu\u00e9 pour les mati\u00e8res radioactives uniquement","L'emballage est interdit en transport international","L'emballage convient aux groupes d'emballage I, II et III (niveau de r\u00e9sistance maximal)","L'emballage contient une mati\u00e8re r\u00e9agissant avec l'eau"],
+r:2,e:"Dans le marquage ONU des emballages, X\u00a0= homologu\u00e9 pour les groupes d'emballage I\u00a0+\u00a0II\u00a0+\u00a0III. Y\u00a0= GE\u00a0II\u00a0+\u00a0III. Z\u00a0= GE\u00a0III uniquement. X est donc le niveau de r\u00e9sistance le plus \u00e9lev\u00e9."},
+{q:"Quel document ADR doit obligatoirement accompagner chaque transport de mati\u00e8res dangereuses\u00a0?",
+c:["La d\u00e9claration de transport (document ADR), accessible en permanence au conducteur","Le certificat d'origine de la marchandise d\u00e9livr\u00e9 par la chambre de commerce","La fiche de donn\u00e9es de s\u00e9curit\u00e9 (FDS) au format papier A3","Le bordereau de livraison commercial de l'exp\u00e9diteur"],
+r:0,e:"La d\u00e9claration de transport (document ADR) est obligatoire depuis le chargement jusqu'\u00e0 la livraison finale. Elle mentionne\u00a0: num\u00e9ros ONU, d\u00e9signation officielle, classe, groupe d'emballage, quantit\u00e9 et coordonn\u00e9es des intervenants."},
+{q:"Un conducteur transporte de l'acide nitrique (UN\u00a02031, Classe\u00a08). Quelle restriction s'applique \u00e0 son extincteur\u00a0?",
+c:["Il peut utiliser n'importe quel extincteur \u00e0 eau pulv\u00e9ris\u00e9e","Il doit utiliser un extincteur \u00e0 poudre ou CO\u2082 homologu\u00e9 \u2014 ne jamais utiliser d'eau sur cette mati\u00e8re","L'extincteur n'est pas obligatoire pour les mati\u00e8res de Classe\u00a08","Un extincteur \u00e0 mousse est recommand\u00e9 pour les acides"],
+r:1,e:"L'ADR impose des extincteurs homologu\u00e9s (poudre ou CO\u2082 selon le v\u00e9hicule). L'acide nitrique r\u00e9agit avec l'eau et g\u00e9n\u00e8re des vapeurs nitreuses toxiques. L'extincteur doit \u00eatre adapt\u00e9 \u00e0 la classe de la mati\u00e8re transport\u00e9e."},
+{q:"En ADR, qu'est-ce que le \u2018groupe d'emballage\u2019 d'une mati\u00e8re dangereuse\u00a0?",
+c:["La couleur de l'\u00e9tiquette de danger \u2014 9 couleurs","L'ordre de priorit\u00e9 de d\u00e9chargement en cas d'accident \u2014 5 ordres","Le code de compatibilit\u00e9 entre emballages \u2014 7 codes","Le niveau de danger (I\u00a0= grand danger, II\u00a0= moyen, III\u00a0= faible) \u2014 3 groupes"],
+r:3,e:"Le groupe d'emballage (GE) classe les mati\u00e8res selon leur dangerosit\u00e9\u00a0: GE\u00a0I\u00a0= grand danger, GE\u00a0II\u00a0= danger moyen, GE\u00a0III\u00a0= faible danger. Il d\u00e9termine le type d'emballage homologu\u00e9 requis (X pour GE\u00a0I+II+III, Y pour GE\u00a0II+III, Z pour GE\u00a0III)."},
+{q:"\u00c0 quoi correspondent les pictogrammes de danger (losanges) appos\u00e9s sur un v\u00e9hicule ADR\u00a0?",
+c:["Ils identifient l'entreprise de transport agr\u00e9\u00e9e","Ils servent uniquement pour les douanes lors des passages de fronti\u00e8res","Ils identifient visuellement la ou les classes de danger pour les secours et le public","Ils remplacent la plaque orange si le conducteur n'en dispose pas"],
+r:2,e:"Les pictogrammes ADR (losanges color\u00e9s) signalent la ou les classes de danger des mati\u00e8res transport\u00e9es. Ils permettent aux secours d'identifier rapidement les risques en cas d'accident. Ils compl\u00e8tent les plaques orange et ne les remplacent pas."},
+{q:"Quel est le num\u00e9ro ONU du gazole (fuel domestique) et dans quelle classe est-il class\u00e9\u00a0?",
+c:["UN\u00a01203 \u2014 Classe\u00a03 (tr\u00e8s inflammable, code 33)","UN\u00a01202 \u2014 Classe\u00a03 (inflammable, code danger 30)","UN\u00a01965 \u2014 Classe\u00a02 (gaz inflammable)","UN\u00a01830 \u2014 Classe\u00a08 (mati\u00e8re corrosive)"],
+r:1,e:"Le gazole est identifi\u00e9 par UN\u00a01202, Classe\u00a03, code de danger 30 (inflammable sans danger secondaire). \u00c0 distinguer de l'essence\u00a0: UN\u00a01203, code 33 (tr\u00e8s inflammable). M\u00eame classe, mais niveau de danger diff\u00e9rent."},
+{q:"Quelle est la premi\u00e8re action lors de la r\u00e9ception d'une marchandise dangereuse\u00a0?",
+c:["V\u00e9rifier l'emballage, l'\u00e9tiquetage et les documents de transport, et respecter les r\u00e8gles de manutention","Peser imm\u00e9diatement la marchandise pour v\u00e9rifier la coh\u00e9rence avec le document","Signer le bon de livraison sans v\u00e9rification si l'emballage semble intact","Ouvrir l'emballage pour contr\u00f4ler visuellement le contenu avant signature"],
+r:0,e:"Lors de la r\u00e9ception\u00a0: v\u00e9rifier la conformit\u00e9 de l'emballage (int\u00e9grit\u00e9, homologation), l'\u00e9tiquetage (danger, num\u00e9ro ONU), les documents ADR, et s'assurer que les r\u00e8gles de manutention et le port des EPI sont respect\u00e9s."},
+{q:"Le code de danger \u2018268\u2019 est inscrit sur une plaque orange. Que signifie cette combinaison\u00a0?",
+c:["Mati\u00e8re comburante, corrosive et explosive","Liquide inflammable, toxique et nocif","Mati\u00e8re solide inflammable avec danger d'auto-\u00e9chauffement","Gaz (2) toxique (6) avec propri\u00e9t\u00e9 corrosive (8) suppl\u00e9mentaire"],
+r:3,e:"Code 268\u00a0: 2\u00a0= gaz (danger principal), 6\u00a0= toxique (danger secondaire), 8\u00a0= corrosif (danger tertiaire). Il s'agit d'un gaz pr\u00e9sentant simultan\u00e9ment des propri\u00e9t\u00e9s toxiques ET corrosives. Les EPI doivent \u00eatre adapt\u00e9s aux trois types de dangers."},
+{q:"Dans quelles circonstances un transport peut-il b\u00e9n\u00e9ficier d'une exemption de l'application compl\u00e8te de l'ADR (ch.\u00a01.1.3)\u00a0?",
+c:["Lorsque le transport est effectu\u00e9 par un v\u00e9hicule de moins de 3,5 tonnes","Lorsque l'entreprise poss\u00e8de un certificat ISO\u00a09001","Lorsque les quantit\u00e9s restent en dessous des seuils ADR (quantit\u00e9s limit\u00e9es ou except\u00e9es)","Lorsque le trajet ne d\u00e9passe pas 50\u00a0km"],
+r:2,e:"L'ADR ch.\u00a01.1.3 pr\u00e9voit des exemptions pour les quantit\u00e9s limit\u00e9es (QE) ou except\u00e9es. Ces exemptions permettent de s'affranchir de certaines obligations (plaque orange, certificat ADR conducteur) si les seuils fix\u00e9s par l'ADR sont strictement respect\u00e9s pour chaque mati\u00e8re."}
+];
+
+var cur=0, answers=new Array(15).fill(null);
+var labels=['a)','b)','c)','d)'];
+
+function render(){
+  var q=QS[cur];
+  var total=answers.filter(function(v){return v!==null}).length;
+  var ok=answers.filter(function(v,i){return v===QS[i].r}).length;
+  var ko=answers.filter(function(v,i){return v!==null&&v!==QS[i].r}).length;
+
+  document.getElementById('s-total').textContent=total+'/15';
+  document.getElementById('s-ok').textContent=ok;
+  document.getElementById('s-ko').textContent=ko;
+  document.getElementById('prog').style.width=(total/15*100)+'%';
+  document.getElementById('q-counter').textContent='Question '+(cur+1)+' / 15';
+  document.getElementById('btn-prev').disabled=(cur===0);
+
+  var answered=answers[cur]!==null;
+  var nb=document.getElementById('btn-next');
+  if(cur===14&&answered){nb.textContent='Voir les r\u00e9sultats';nb.disabled=false;}
+  else if(cur<14){nb.textContent='Suivant \u2192';nb.disabled=!answered;}
+  else{nb.disabled=true;}
+
+  var html='<div class="q-card">';
+  html+='<div class="q-num">Question '+(cur+1)+' sur 15</div>';
+  html+='<div class="q-text">'+q.q+'</div>';
+  html+='<div class="choices">';
+  for(var i=0;i<4;i++){
+    var cls='choice';
+    if(answered){
+      cls+=' disabled';
+      if(i===q.r) cls+=' correct';
+      else if(i===answers[cur]) cls+=' wrong';
+    }
+    html+='<div class="'+cls+'" onclick="pick('+i+')">';
+    html+='<span class="choice-label">'+labels[i]+'</span>';
+    html+='<span class="choice-text">'+q.c[i]+'</span></div>';
+  }
+  html+='</div>';
+  if(answered){
+    html+='<div class="expl" style="display:block"><span class="expl-label">Explication</span>'+q.e+'</div>';
+  }
+  html+='</div>';
+  document.getElementById('q-area').innerHTML=html;
+}
+
+function pick(i){
+  if(answers[cur]!==null) return;
+  answers[cur]=i;
+  var nb=document.getElementById('btn-next');
+  nb.disabled=false;
+  if(cur===14) nb.textContent='Voir les r\u00e9sultats';
+  render();
+}
+
+function go(dir){
+  if(dir===1&&cur===14){showResult();return;}
+  cur=Math.max(0,Math.min(14,cur+dir));
+  render();
+}
+
+function showResult(){
+  var ok=answers.filter(function(v,i){return v===QS[i].r}).length;
+  var pct=Math.round(ok/15*100);
+  var msg='',cls='';
+  if(pct>=80){msg='Excellent r\u00e9sultat\u00a0! Vous ma\u00eetrisez bien la signalisation et les obligations ADR.';cls='good';}
+  else if(pct>=60){msg='Bon niveau. Quelques points \u00e0 revoir avant l\'examen.';cls='med';}
+  else{msg='Des r\u00e9visions sont n\u00e9cessaires. Relisez les explications et recommencez.';cls='low';}
+
+  document.getElementById('q-area').innerHTML=
+    '<div class="result-wrap">'+
+    '<div class="result-score">'+ok+'/15</div>'+
+    '<div class="result-pct">'+pct+'% de r\u00e9ussite</div>'+
+    '<div class="result-msg '+cls+'">'+msg+'</div>'+
+    '<div class="btn-gap">'+
+    '<button class="btn btn-primary" onclick="restart()">\u21bb Recommencer</button>'+
+    '</div></div>';
+  document.getElementById('btn-prev').disabled=true;
+  document.getElementById('btn-next').disabled=true;
+  document.getElementById('q-counter').textContent='Termin\u00e9';
+}
+
+function restart(){
+  answers=new Array(15).fill(null);
+  cur=0; render();
+}
+
+render();
+</script>
+</body>
+</html>
