@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM N°1 — Infractions & Sanctions pénales</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:1.5rem 1rem}
+  .wrap{max-width:740px;margin:0 auto}
+  .top-bar{background:#1a5c38;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;color:#fff}
+  .top-bar h1{font-size:20px;font-weight:700;margin-bottom:0}
+  .prog-bar{height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin-top:.9rem;overflow:hidden}
+  .prog-fill{height:100%;background:#fff;border-radius:3px;transition:width .3s}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+  .stat{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:.75rem;text-align:center}
+  .stat-v{font-size:22px;font-weight:700;color:#1a1a1a}
+  .stat-l{font-size:11px;color:#888;margin-top:2px}
+  .stat.ok .stat-v{color:#1a7f45}
+  .stat.ko .stat-v{color:#c0392b}
+  .q-card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+  .q-num{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+  .q-text{font-size:15px;color:#1a1a1a;line-height:1.65;margin-bottom:1rem;font-weight:500}
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .choice{display:flex;align-items:flex-start;gap:10px;padding:.7rem 1rem;border:1.5px solid #e0e0e0;border-radius:8px;cursor:pointer;transition:background .12s,border-color .12s;background:#fff}
+  .choice:hover:not(.disabled){background:#f0faf4;border-color:#2e7d52}
+  .choice.correct{background:#e8f5ee;border-color:#1a7f45}
+  .choice.wrong{background:#fdf2f0;border-color:#c0392b}
+  .choice.disabled{cursor:default}
+  .choice-label{font-size:13px;font-weight:700;min-width:22px;color:#888;padding-top:1px;flex-shrink:0}
+  .choice.correct .choice-label{color:#1a7f45}
+  .choice.wrong .choice-label{color:#c0392b}
+  .choice-text{font-size:14px;color:#1a1a1a;line-height:1.5}
+  .expl{margin-top:.85rem;padding:.7rem 1rem;background:#fef5ec;border-left:3px solid #d35400;border-radius:0 6px 6px 0;font-size:13px;color:#5d3600;line-height:1.55}
+  .expl-label{font-weight:700;color:#d35400;font-size:12px;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-top:1rem}
+  .btn{padding:.55rem 1.3rem;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer;transition:background .12s;font-family:Arial,sans-serif;font-weight:600}
+  .btn:hover{background:#f5f5f5}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btn-primary{background:#1a5c38;color:#fff;border-color:#1a5c38}
+  .btn-primary:hover{background:#2e7d52}
+  .q-counter{font-size:13px;color:#888;font-weight:500}
+  .result-wrap{text-align:center;padding:2.5rem 1rem}
+  .result-score{font-size:56px;font-weight:700;color:#1a5c38;margin-bottom:.2rem}
+  .result-pct{font-size:18px;color:#888;margin-bottom:.75rem}
+  .result-msg{font-size:15px;color:#1a1a1a;line-height:1.6;margin-bottom:2rem;max-width:480px;margin-left:auto;margin-right:auto}
+  .result-msg.good{color:#1a7f45}
+  .result-msg.med{color:#b7950b}
+  .result-msg.low{color:#c0392b}
+  .btn-gap{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-bar">
+    <h1>QCM N&#176;1 &#8212; Infractions &amp; Sanctions p&#233;nales</h1>
+    <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-v" id="s-total">0/20</div><div class="stat-l">R&#233;pondues</div></div>
+    <div class="stat ok"><div class="stat-v" id="s-ok">0</div><div class="stat-l">Correctes</div></div>
+    <div class="stat ko"><div class="stat-v" id="s-ko">0</div><div class="stat-l">Incorrectes</div></div>
+  </div>
+  <div id="q-area"></div>
+  <div class="nav">
+    <button class="btn" id="btn-prev" onclick="go(-1)" disabled>&#8592; Pr&#233;c&#233;dent</button>
+    <span class="q-counter" id="q-counter">Question 1 / 20</span>
+    <button class="btn btn-primary" id="btn-next" onclick="go(1)" disabled>Suivant &#8594;</button>
+  </div>
+</div>
+<script>
+// pos = index (0=a, 1=b, 2=c, 3=d) où sera placée la bonne réponse
+// Distribution : c,a,d,b,a,d,c,b,d,a,c,b,d,a,c,b,d,a,c,b => 5a,5b,5c,5d
+var RAW=[
+  {q:"Combien de types d'infractions le système pénal français prévoit-il ?",
+   good:"3 types : contraventions, délits et crimes",
+   bad:["2 types : contraventions et délits","4 types incluant les infractions administratives","5 types correspondant aux 5 classes de contraventions"],
+   pos:2,
+   e:"Le système pénal français prévoit 3 types d'infractions : les contraventions, les délits et les crimes. En matière de transports routiers, seules les contraventions et les délits s'appliquent."},
+
+  {q:"En combien de classes les contraventions se répartissent-elles selon la gravité ?",
+   good:"5 classes",
+   bad:["3 classes","4 classes","6 classes"],
+   pos:0,
+   e:"Les contraventions se répartissent en 5 classes selon la gravité de l'infraction. Les amendes s'échelonnent de 11 € (classe 1) à 1 500 € (classe 5)."},
+
+  {q:"Qu'est-ce que la forfaitisation d'une contravention ?",
+   good:"Le paiement d'une somme forfaitaire qui éteint l'action judiciaire",
+   bad:["Une procédure pour contester l'amende devant un tribunal","Une réduction automatique pour les professionnels du transport","Un délai supplémentaire accordé pour payer l'amende"],
+   pos:3,
+   e:"La forfaitisation signifie que, moyennant le paiement d'une somme forfaitaire, l'action judiciaire s'éteint. La plupart des contraventions des 4 premières classes peuvent en faire l'objet."},
+
+  {q:"Dans quel délai l'amende forfaitaire est-elle minorée pour une contravention de 3e classe du code de la route ?",
+   good:"Dans les 3 jours suivant la constatation ou 15 jours après envoi de l'avis",
+   bad:["Dans les 24 heures","Dans les 7 jours","Dans les 30 jours"],
+   pos:1,
+   e:"L'amende est minorée si le paiement intervient dans les 3 jours à compter de la constatation ou dans les 15 jours suivant l'envoi de l'avis. Cela s'applique aux classes 2, 3 et 4 du code de la route, hors stationnement."},
+
+  {q:"Au-delà de quel délai l'amende forfaitaire est-elle majorée ?",
+   good:"45 jours",
+   bad:["15 jours","30 jours","60 jours"],
+   pos:0,
+   e:"L'amende forfaitaire est majorée si le paiement intervient au-delà de 45 jours. Passé ce délai, le montant augmente automatiquement."},
+
+  {q:"Quelle est l'amende forfaitaire d'une contravention de 2e classe ?",
+   good:"45 €",
+   bad:["22 €","35 €","68 €"],
+   pos:3,
+   e:"L'amende forfaitaire de 2e classe est de 45 €. L'amende pénale maximale est de 150 €, l'amende majorée de 75 € et l'amende minorée de 35 €."},
+
+  {q:"Quelle est l'amende pénale maximale pour une contravention de 5e classe ?",
+   good:"1 500 €",
+   bad:["750 €","1 000 €","3 000 €"],
+   pos:2,
+   e:"L'amende pénale maximale pour une contravention de 5e classe est de 1 500 €. En récidive, elle peut atteindre 3 000 € (3 750 € pour un excès de vitesse)."},
+
+  {q:"Quelle sanction pénale est prévue pour la fraude au chronotachygraphe ?",
+   good:"1 an d'emprisonnement et 30 000 € d'amende",
+   bad:["6 mois d'emprisonnement et 3 750 €","1 mois d'emprisonnement et 30 000 €","2 ans d'emprisonnement et 45 000 €"],
+   pos:1,
+   e:"La fraude au chronotachygraphe est sanctionnée par 1 an d'emprisonnement et 30 000 € d'amende. C'est l'une des infractions les plus sévèrement punies en raison des risques pour la sécurité routière."},
+
+  {q:"Quelle sanction est prévue pour obstacle au contrôle en transport routier ?",
+   good:"6 mois d'emprisonnement et 3 750 € d'amende",
+   bad:["3 mois d'emprisonnement et 1 500 €","1 an d'emprisonnement et 15 000 €","1 an d'emprisonnement et 30 000 €"],
+   pos:3,
+   e:"L'obstacle au contrôle est sanctionné par 6 mois d'emprisonnement et 3 750 € d'amende. Cette infraction concerne le refus de se soumettre aux contrôles des agents habilités."},
+
+  {q:"Quelle est la sanction pour exercice illégal de la profession de transporteur ?",
+   good:"1 an d'emprisonnement et 15 000 € d'amende",
+   bad:["6 mois d'emprisonnement et 7 500 €","2 ans d'emprisonnement et 30 000 €","3 ans d'emprisonnement et 45 000 €"],
+   pos:0,
+   e:"L'exercice illégal de la profession de transporteur est sanctionné par 1 an d'emprisonnement et 15 000 € d'amende."},
+
+  {q:"Quelle sanction s'applique en cas de fraude au limiteur de vitesse ?",
+   good:"1 mois d'emprisonnement, 30 000 € d'amende et 3 ans de suspension du permis",
+   bad:["1 an d'emprisonnement et 30 000 €","6 mois d'emprisonnement et 15 000 €","Amende forfaitaire de 750 € uniquement"],
+   pos:2,
+   e:"La fraude au limiteur de vitesse cumule trois peines : 1 mois d'emprisonnement, 30 000 € d'amende ET 3 ans de suspension du permis de conduire."},
+
+  {q:"Quelle est la sanction pour réalisation d'un cabotage illégal par un transporteur non autorisé ?",
+   good:"1 an d'emprisonnement et 15 000 € d'amende",
+   bad:["Amende de 7 500 € uniquement","6 mois d'emprisonnement et 7 500 €","2 ans d'emprisonnement et 30 000 €"],
+   pos:1,
+   e:"Le cabotage illégal est sanctionné par 1 an d'emprisonnement et 15 000 € d'amende. Le cabotage désigne les transports nationaux effectués en France par un transporteur d'un autre État membre."},
+
+  {q:"Qu'est-ce qu'une consignation en droit des transports routiers ?",
+   good:"Une somme d'argent versée en garantie du paiement d'une amende fixée ultérieurement",
+   bad:["Un document attestant la conformité du véhicule","Une caution bancaire pour l'obtention d'une licence","Un dépôt de garantie versé à l'embauche d'un conducteur"],
+   pos:3,
+   e:"La consignation est une somme versée en garantie du paiement d'une amende fixée ultérieurement par le tribunal. Elle est exigée du conducteur d'une entreprise non-résidente en France quand l'infraction ne fait pas l'objet d'un paiement immédiat."},
+
+  {q:"Quelle est l'amende forfaitaire pour une contravention de 4e classe ?",
+   good:"135 €",
+   bad:["90 €","180 €","375 €"],
+   pos:0,
+   e:"L'amende forfaitaire de 4e classe est de 135 €. L'amende pénale maximale est de 750 €, l'amende minorée (sous 30 jours) de 300 € et l'amende majorée de 375 €."},
+
+  {q:"Pour quelle classe de contraventions n'existe-t-il pas d'amende forfaitaire ?",
+   good:"5e classe",
+   bad:["4e classe","3e classe","2e classe"],
+   pos:2,
+   e:"Les contraventions de 5e classe n'ont pas d'amende forfaitaire. Ce sont les infractions les plus graves relevant du tribunal de police."},
+
+  {q:"Devant quel tribunal sont jugées les contraventions de 5e classe ?",
+   good:"Le tribunal de police",
+   bad:["Le tribunal correctionnel","Le tribunal administratif","La cour d'appel"],
+   pos:1,
+   e:"Les contraventions de 5e classe sont jugées par le tribunal de police. Les délits relèvent des tribunaux correctionnels."},
+
+  {q:"Quelle est l'amende pénale maximale prévue par la loi pour un délit en transport routier ?",
+   good:"150 000 €",
+   bad:["15 000 €","30 000 €","75 000 €"],
+   pos:3,
+   e:"L'amende pénale maximale pour un délit est de 150 000 €. Les délits sont les infractions les plus graves relevant des tribunaux correctionnels."},
+
+  {q:"Quelle est l'amende minorée pour une contravention de 1re classe en matière de stationnement ?",
+   good:"17 €",
+   bad:["11 €","22 €","33 €"],
+   pos:0,
+   e:"Pour les contraventions de 1re classe en matière d'arrêt et de stationnement, l'amende minorée est de 17 € (contre 11 € pour les autres infractions de 1re classe)."},
+
+  {q:"Quelle infraction cumule emprisonnement, amende ET suspension du permis de conduire ?",
+   good:"La fraude au limiteur de vitesse",
+   bad:["L'obstacle au contrôle","L'exercice illégal de la profession","Le cabotage illégal"],
+   pos:2,
+   e:"La fraude au limiteur de vitesse est la seule infraction prévoyant les trois peines cumulées : emprisonnement, amende et suspension du permis de conduire."},
+
+  {q:"Un conducteur paie son amende de 4e classe 20 jours après la constatation. Quel montant paie-t-il ?",
+   good:"300 € (amende minorée car payée sous 30 jours)",
+   bad:["135 € (amende forfaitaire normale)","375 € (amende majorée)","750 € (amende pénale maximale)"],
+   pos:1,
+   e:"Pour les contraventions de 4e classe, l'amende minorée de 300 € s'applique si le paiement intervient dans les 30 jours. À 20 jours, le conducteur bénéficie du tarif minoré."}
+];
+
+var QS=RAW.map(function(item){
+  var choices=item.bad.slice();
+  choices.splice(item.pos,0,item.good);
+  return {q:item.q,c:choices,r:item.pos,e:item.e};
+});
+
+var cur=0,answers=new Array(20).fill(null);
+var labels=['a)','b)','c)','d)'];
+
+function render(){
+  var q=QS[cur];
+  var total=answers.filter(function(v){return v!==null}).length;
+  var ok=answers.filter(function(v,i){return v===QS[i].r}).length;
+  var ko=answers.filter(function(v,i){return v!==null&&v!==QS[i].r}).length;
+  document.getElementById('s-total').textContent=total+'/20';
+  document.getElementById('s-ok').textContent=ok;
+  document.getElementById('s-ko').textContent=ko;
+  document.getElementById('prog').style.width=(total/20*100)+'%';
+  document.getElementById('q-counter').textContent='Question '+(cur+1)+' / 20';
+  document.getElementById('btn-prev').disabled=(cur===0);
+  var answered=answers[cur]!==null;
+  var nb=document.getElementById('btn-next');
+  if(cur===19&&answered){nb.textContent='Voir les r\u00e9sultats';nb.disabled=false;}
+  else if(cur<19){nb.textContent='Suivant \u2192';nb.disabled=!answered;}
+  else{nb.disabled=true;}
+  var html='<div class="q-card">';
+  html+='<div class="q-num">Question '+(cur+1)+' sur 20</div>';
+  html+='<div class="q-text">'+q.q+'</div>';
+  html+='<div class="choices">';
+  for(var i=0;i<4;i++){
+    var cls='choice';
+    if(answered){cls+=' disabled';if(i===q.r)cls+=' correct';else if(i===answers[cur])cls+=' wrong';}
+    html+='<div class="'+cls+'" onclick="pick('+i+')">';
+    html+='<span class="choice-label">'+labels[i]+'</span>';
+    html+='<span class="choice-text">'+q.c[i]+'</span></div>';
+  }
+  html+='</div>';
+  if(answered){html+='<div class="expl"><span class="expl-label">Explication</span>'+q.e+'</div>';}
+  html+='</div>';
+  document.getElementById('q-area').innerHTML=html;
+}
+
+function pick(i){
+  if(answers[cur]!==null)return;
+  answers[cur]=i;
+  document.getElementById('btn-next').disabled=false;
+  if(cur===19)document.getElementById('btn-next').textContent='Voir les r\u00e9sultats';
+  render();
+}
+
+function go(dir){
+  if(dir===1&&cur===19){showResult();return;}
+  cur=Math.max(0,Math.min(19,cur+dir));
+  render();
+}
+
+function showResult(){
+  var ok=answers.filter(function(v,i){return v===QS[i].r}).length;
+  var pct=Math.round(ok/20*100);
+  var msg='',cls='';
+  if(pct>=80){msg='Excellent r\u00e9sultat\u00a0! Vous ma\u00eetrisez bien les sanctions p\u00e9nales du transport routier.';cls='good';}
+  else if(pct>=60){msg='Bon niveau. Quelques points \u00e0 revoir avant l\'examen.';cls='med';}
+  else{msg='Des r\u00e9visions sont n\u00e9cessaires. Relisez les explications et recommencez.';cls='low';}
+  document.getElementById('q-area').innerHTML=
+    '<div class="result-wrap">'+
+    '<div class="result-score">'+ok+'/20</div>'+
+    '<div class="result-pct">'+pct+'% de r\u00e9ussite</div>'+
+    '<div class="result-msg '+cls+'">'+msg+'</div>'+
+    '<div class="btn-gap"><button class="btn btn-primary" onclick="restart()">\u21bb Recommencer</button></div></div>';
+  document.getElementById('btn-prev').disabled=true;
+  document.getElementById('btn-next').disabled=true;
+  document.getElementById('q-counter').textContent='Termin\u00e9';
+}
+
+function restart(){answers=new Array(20).fill(null);cur=0;render();}
+render();
+</script>
+</body>
+</html>
