@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM N°2 — Sanctions administratives & civiles</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:1.5rem 1rem}
+  .wrap{max-width:740px;margin:0 auto}
+  .top-bar{background:#1a5c38;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;color:#fff}
+  .top-bar h1{font-size:20px;font-weight:700;margin-bottom:0}
+  .prog-bar{height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin-top:.9rem;overflow:hidden}
+  .prog-fill{height:100%;background:#fff;border-radius:3px;transition:width .3s}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+  .stat{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:.75rem;text-align:center}
+  .stat-v{font-size:22px;font-weight:700;color:#1a1a1a}
+  .stat-l{font-size:11px;color:#888;margin-top:2px}
+  .stat.ok .stat-v{color:#1a7f45}
+  .stat.ko .stat-v{color:#c0392b}
+  .q-card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+  .q-num{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+  .q-text{font-size:15px;color:#1a1a1a;line-height:1.65;margin-bottom:1rem;font-weight:500}
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .choice{display:flex;align-items:flex-start;gap:10px;padding:.7rem 1rem;border:1.5px solid #e0e0e0;border-radius:8px;cursor:pointer;transition:background .12s,border-color .12s;background:#fff}
+  .choice:hover:not(.disabled){background:#f0faf4;border-color:#2e7d52}
+  .choice.correct{background:#e8f5ee;border-color:#1a7f45}
+  .choice.wrong{background:#fdf2f0;border-color:#c0392b}
+  .choice.disabled{cursor:default}
+  .choice-label{font-size:13px;font-weight:700;min-width:22px;color:#888;padding-top:1px;flex-shrink:0}
+  .choice.correct .choice-label{color:#1a7f45}
+  .choice.wrong .choice-label{color:#c0392b}
+  .choice-text{font-size:14px;color:#1a1a1a;line-height:1.5}
+  .expl{margin-top:.85rem;padding:.7rem 1rem;background:#fef5ec;border-left:3px solid #d35400;border-radius:0 6px 6px 0;font-size:13px;color:#5d3600;line-height:1.55}
+  .expl-label{font-weight:700;color:#d35400;font-size:12px;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-top:1rem}
+  .btn{padding:.55rem 1.3rem;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer;transition:background .12s;font-family:Arial,sans-serif;font-weight:600}
+  .btn:hover{background:#f5f5f5}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btn-primary{background:#1a5c38;color:#fff;border-color:#1a5c38}
+  .btn-primary:hover{background:#2e7d52}
+  .q-counter{font-size:13px;color:#888;font-weight:500}
+  .result-wrap{text-align:center;padding:2.5rem 1rem}
+  .result-score{font-size:56px;font-weight:700;color:#1a5c38;margin-bottom:.2rem}
+  .result-pct{font-size:18px;color:#888;margin-bottom:.75rem}
+  .result-msg{font-size:15px;color:#1a1a1a;line-height:1.6;margin-bottom:2rem;max-width:480px;margin-left:auto;margin-right:auto}
+  .result-msg.good{color:#1a7f45}
+  .result-msg.med{color:#b7950b}
+  .result-msg.low{color:#c0392b}
+  .btn-gap{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-bar">
+    <h1>QCM N&#176;2 &#8212; Sanctions administratives &amp; civiles</h1>
+    <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-v" id="s-total">0/20</div><div class="stat-l">R&#233;pondues</div></div>
+    <div class="stat ok"><div class="stat-v" id="s-ok">0</div><div class="stat-l">Correctes</div></div>
+    <div class="stat ko"><div class="stat-v" id="s-ko">0</div><div class="stat-l">Incorrectes</div></div>
+  </div>
+  <div id="q-area"></div>
+  <div class="nav">
+    <button class="btn" id="btn-prev" onclick="go(-1)" disabled>&#8592; Pr&#233;c&#233;dent</button>
+    <span class="q-counter" id="q-counter">Question 1 / 20</span>
+    <button class="btn btn-primary" id="btn-next" onclick="go(1)" disabled>Suivant &#8594;</button>
+  </div>
+</div>
+<script>
+// pos = index où sera placée la bonne réponse (0=a,1=b,2=c,3=d)
+// Distribution sur 20 questions : 5a, 5b, 5c, 5d — alternance équilibrée
+var RAW=[
+  {q:"Quelle instance prononce les sanctions administratives dans le transport routier ?",
+   good:"Le préfet de région après avis de la Commission Territoriale des Sanctions Administratives (CTSA)",
+   bad:["Le tribunal correctionnel après réquisition du procureur","Le ministre des transports directement","La DREAL uniquement"],
+   pos:2,
+   e:"Les sanctions administratives sont prononcées par le préfet de région, après avis de la CTSA. La CTSA est présidée par un magistrat de l'ordre administratif et réunit des représentants de l'État, de la profession, des salariés et des usagers."},
+
+  {q:"Quelle est la durée maximale d'immobilisation administrative d'un véhicule ?",
+   good:"3 mois",
+   bad:["1 mois","6 mois","1 an"],
+   pos:0,
+   e:"L'immobilisation administrative d'un véhicule est possible pour une durée maximale de 3 mois, après 2 délits commis en matière de réglementation des transports, du travail ou d'hygiène et de sécurité."},
+
+  {q:"À partir de combien de délits l'immobilisation administrative d'un véhicule peut-elle être prononcée ?",
+   good:"2 délits",
+   bad:["1 délit","3 délits","5 délits"],
+   pos:3,
+   e:"L'immobilisation d'un ou plusieurs véhicules peut être prononcée après 2 délits commis en matière de réglementation des transports, du travail ou d'hygiène et de sécurité."},
+
+  {q:"Le retrait définitif d'une licence de transport peut-il intervenir sans décision préalable ?",
+   good:"Non, il ne peut intervenir qu'après une première décision de retrait temporaire dans les 5 années précédentes",
+   bad:["Oui, si l'infraction est particulièrement grave","Oui, après une condamnation pénale","Non, il faut obligatoirement 3 retraits temporaires préalables"],
+   pos:1,
+   e:"Le retrait définitif des copies conformes de licences ne peut intervenir qu'après une première décision de retrait temporaire dans les 5 années précédentes. Cette règle protège l'entreprise d'une sanction définitive sans avertissement."},
+
+  {q:"Dans quel délai l'entreprise doit-elle être convoquée avant la séance de la CTSA ?",
+   good:"Au moins 3 semaines à l'avance",
+   bad:["Au moins 1 semaine","Au moins 2 semaines","Au moins 1 mois"],
+   pos:0,
+   e:"L'entreprise doit être avisée de la séance de la CTSA au moins 3 semaines à l'avance, par lettre l'informant de la sanction encourue."},
+
+  {q:"L'entreprise peut-elle se faire représenter devant la CTSA ?",
+   good:"Oui, par tout mandataire régulièrement désigné",
+   bad:["Non, le dirigeant doit être présent personnellement","Oui, uniquement par un avocat","Oui, uniquement par un membre de la famille"],
+   pos:3,
+   e:"L'entreprise peut présenter des observations écrites et orales, et se faire assister ou représenter par toute personne à laquelle elle a donné régulièrement mandat. Il n'est pas obligatoire de faire appel à un avocat."},
+
+  {q:"Dans quel délai la CTSA transmet-elle son avis motivé au préfet de région ?",
+   good:"Dans les 2 mois suivant la saisine",
+   bad:["Dans le mois suivant la saisine","Dans les 3 mois","Dans les 6 mois"],
+   pos:2,
+   e:"Le président de la CTSA transmet l'avis motivé au préfet de région dans les 2 mois qui suivent la saisine de la commission."},
+
+  {q:"Où les décisions de sanctions administratives doivent-elles être publiées ?",
+   good:"Dans les locaux de l'entreprise et dans 2 journaux régionaux, aux frais de l'entreprise",
+   bad:["Uniquement au Journal Officiel","Sur le site du ministère des transports","Dans les locaux de l'entreprise uniquement"],
+   pos:1,
+   e:"Les décisions doivent être affichées dans les locaux de l'entreprise sanctionnée et publiées dans deux journaux régionaux, aux frais de l'entreprise. Elles sont également mentionnées au registre électronique national."},
+
+  {q:"Auprès de quelle autorité l'entreprise peut-elle contester une sanction administrative ?",
+   good:"Auprès du ministre chargé des transports, qui recueille l'avis de la CTSA",
+   bad:["Auprès du tribunal administratif directement","Auprès du préfet de département","Auprès du Conseil d'État uniquement"],
+   pos:3,
+   e:"L'entreprise peut contester la sanction auprès du ministre chargé des transports. Le ministre se prononcera après avoir recueilli l'avis de la CTSA. C'est un recours hiérarchique avant tout recours contentieux."},
+
+  {q:"Qu'entraîne la perte de l'honorabilité professionnelle pour le gestionnaire de transport ?",
+   good:"Une déclaration temporaire d'inaptitude à gérer toute entreprise de transport public routier",
+   bad:["Une simple interdiction d'exercer pendant 6 mois","Une obligation de repasser l'examen de capacité","Une amende personnelle de 15 000 €"],
+   pos:0,
+   e:"La perte de l'honorabilité professionnelle entraîne une déclaration temporaire d'inaptitude à gérer les activités de transport, de déménagement ou de location de véhicules de toute entreprise de transport public routier."},
+
+  {q:"Dans quels cas la perte de l'honorabilité professionnelle peut-elle être prononcée ?",
+   good:"Si le gestionnaire a fait l'objet d'une condamnation pénale grave ou d'une sanction pour infraction grave aux réglementations communautaires",
+   bad:["En cas de non-paiement des cotisations sociales","En cas de retard répété dans le renouvellement des licences","En cas de déficit financier de l'entreprise"],
+   pos:2,
+   e:"La perte de l'honorabilité peut être prononcée si le gestionnaire a fait l'objet d'une condamnation pénale grave ou d'une sanction pour infraction grave aux réglementations communautaires (annexe V du règlement CE n°1071/2009)."},
+
+  {q:"Quelle est la durée maximale de l'interdiction de cabotage à titre de sanction administrative ?",
+   good:"1 an",
+   bad:["3 mois","6 mois","2 ans"],
+   pos:1,
+   e:"L'interdiction de cabotage peut être prononcée pour une durée maximale de 1 an, pour un transporteur non-résident ayant commis en France une infraction grave au droit de l'Union européenne en matière de transports."},
+
+  {q:"Quel délai est accordé en cas d'incapacité physique ou de décès du gestionnaire de transport ?",
+   good:"9 mois maximum",
+   bad:["3 mois maximum","6 mois maximum","12 mois maximum"],
+   pos:3,
+   e:"En cas d'incapacité physique ou de décès du gestionnaire, l'entreprise dispose de 9 mois maximum pour régulariser sa situation. Ce délai est plus long en raison de la situation difficile de l'entreprise."},
+
+  {q:"Quel délai est accordé en cas de perte d'honorabilité du gestionnaire pour régulariser la situation ?",
+   good:"6 mois maximum",
+   bad:["3 mois maximum","9 mois maximum","12 mois maximum"],
+   pos:0,
+   e:"En cas de perte d'honorabilité du gestionnaire ou du responsable de l'entreprise, le délai accordé pour régulariser est de 6 mois maximum, identique au délai pour la régularisation de la capacité financière."},
+
+  {q:"Que se passe-t-il si l'entreprise ne restitue pas ses licences dans les 15 jours suivant la suspension ?",
+   good:"Le préfet lui retire l'autorisation d'exercer et la radie du registre national",
+   bad:["Elle reçoit une mise en demeure de 30 jours supplémentaires","Elle est soumise à une astreinte financière journalière","Elle est automatiquement mise en liquidation judiciaire"],
+   pos:2,
+   e:"À défaut de restitution dans les 15 jours suivant la décision de suspension, le préfet retire l'autorisation d'exercer et radie l'entreprise du registre électronique national des entreprises de transport par route."},
+
+  {q:"Que se passe-t-il lorsque la décision de suspension est levée car l'entreprise est à nouveau conforme ?",
+   good:"Le préfet rapporte la suspension et restitue la licence avec copies conformes correspondant à la capacité financière",
+   bad:["L'entreprise doit déposer une nouvelle demande d'autorisation","L'entreprise est soumise à une période probatoire de 6 mois","L'entreprise doit repasser l'examen de capacité professionnelle"],
+   pos:1,
+   e:"Lorsque l'entreprise satisfait à nouveau aux exigences, le préfet rapporte la décision de suspension et restitue la licence avec un nombre de copies certifiées conformes correspondant au montant de la capacité financière."},
+
+  {q:"Sur quoi peut se fonder une action civile en matière de transport routier ?",
+   good:"Sur la concurrence illicite causant un préjudice aux professionnels régulièrement inscrits",
+   bad:["Uniquement sur un accident corporel","Sur tout retard de livraison","Sur le non-respect des tarifs réglementés"],
+   pos:3,
+   e:"Une action civile peut être fondée sur une faute caractérisant la concurrence illicite, susceptible de porter préjudice aux professionnels régulièrement inscrits pour l'exploitation d'un même service."},
+
+  {q:"Qui peut exercer une action civile suite à une infraction à la réglementation des transports ?",
+   good:"Toute personne justifiant d'un intérêt direct et d'un dommage lié à l'infraction",
+   bad:["Uniquement l'État via le ministère des transports","Uniquement les syndicats professionnels","Uniquement les clients ayant subi un préjudice direct"],
+   pos:0,
+   e:"Toute personne pouvant justifier d'un intérêt direct et d'un dommage prenant sa source dans l'infraction constatée peut exercer une action civile. Cela inclut notamment les concurrents lésés par la concurrence illicite."},
+
+  {q:"L'interdiction de cabotage prononcée par un préfet de région s'applique-t-elle sur tout le territoire français ?",
+   good:"Oui, la décision est transmise à l'ensemble des préfets de région pour application sur tout le territoire",
+   bad:["Non, uniquement dans la région qui a prononcé la sanction","Oui, mais uniquement sur les autoroutes et routes nationales","Non, elle ne s'applique qu'aux départements limitrophes"],
+   pos:2,
+   e:"La décision d'interdiction de cabotage est transmise par voie électronique à l'ensemble des préfets de région. Chaque préfet est chargé de l'application de cette décision sur son territoire."},
+
+  {q:"Les sanctions administratives peuvent-elles se cumuler entre elles ?",
+   good:"Oui, retrait de licence, immobilisation de véhicule, interdiction de cabotage et perte d'honorabilité sont cumulables",
+   bad:["Non, une seule sanction à la fois peut être prononcée","Oui, mais uniquement deux sanctions au maximum","Non, le préfet doit choisir la sanction la plus grave uniquement"],
+   pos:1,
+   e:"Les sanctions administratives peuvent se cumuler : retrait de licences, immobilisation de véhicules, perte d'honorabilité, interdiction de cabotage. Elles sont également indépendantes des sanctions pénales et civiles."}
+];
+
+var QS=RAW.map(function(item){
+  var choices=item.bad.slice();
+  choices.splice(item.pos,0,item.good);
+  return {q:item.q,c:choices,r:item.pos,e:item.e};
+});
+
+var cur=0,answers=new Array(20).fill(null);
+var labels=['a)','b)','c)','d)'];
+
+function render(){
+  var q=QS[cur];
+  var total=answers.filter(function(v){return v!==null}).length;
+  var ok=answers.filter(function(v,i){return v===QS[i].r}).length;
+  var ko=answers.filter(function(v,i){return v!==null&&v!==QS[i].r}).length;
+  document.getElementById('s-total').textContent=total+'/20';
+  document.getElementById('s-ok').textContent=ok;
+  document.getElementById('s-ko').textContent=ko;
+  document.getElementById('prog').style.width=(total/20*100)+'%';
+  document.getElementById('q-counter').textContent='Question '+(cur+1)+' / 20';
+  document.getElementById('btn-prev').disabled=(cur===0);
+  var answered=answers[cur]!==null;
+  var nb=document.getElementById('btn-next');
+  if(cur===19&&answered){nb.textContent='Voir les r\u00e9sultats';nb.disabled=false;}
+  else if(cur<19){nb.textContent='Suivant \u2192';nb.disabled=!answered;}
+  else{nb.disabled=true;}
+  var html='<div class="q-card">';
+  html+='<div class="q-num">Question '+(cur+1)+' sur 20</div>';
+  html+='<div class="q-text">'+q.q+'</div>';
+  html+='<div class="choices">';
+  for(var i=0;i<4;i++){
+    var cls='choice';
+    if(answered){cls+=' disabled';if(i===q.r)cls+=' correct';else if(i===answers[cur])cls+=' wrong';}
+    html+='<div class="'+cls+'" onclick="pick('+i+')">';
+    html+='<span class="choice-label">'+labels[i]+'</span>';
+    html+='<span class="choice-text">'+q.c[i]+'</span></div>';
+  }
+  html+='</div>';
+  if(answered){html+='<div class="expl"><span class="expl-label">Explication</span>'+q.e+'</div>';}
+  html+='</div>';
+  document.getElementById('q-area').innerHTML=html;
+}
+
+function pick(i){
+  if(answers[cur]!==null)return;
+  answers[cur]=i;
+  document.getElementById('btn-next').disabled=false;
+  if(cur===19)document.getElementById('btn-next').textContent='Voir les r\u00e9sultats';
+  render();
+}
+
+function go(dir){
+  if(dir===1&&cur===19){showResult();return;}
+  cur=Math.max(0,Math.min(19,cur+dir));
+  render();
+}
+
+function showResult(){
+  var ok=answers.filter(function(v,i){return v===QS[i].r}).length;
+  var pct=Math.round(ok/20*100);
+  var msg='',cls='';
+  if(pct>=80){msg='Excellent r\u00e9sultat\u00a0! Vous ma\u00eetrisez bien les sanctions administratives et civiles.';cls='good';}
+  else if(pct>=60){msg='Bon niveau. Quelques points \u00e0 revoir avant l\'examen.';cls='med';}
+  else{msg='Des r\u00e9visions sont n\u00e9cessaires. Relisez les explications et recommencez.';cls='low';}
+  document.getElementById('q-area').innerHTML=
+    '<div class="result-wrap">'+
+    '<div class="result-score">'+ok+'/20</div>'+
+    '<div class="result-pct">'+pct+'% de r\u00e9ussite</div>'+
+    '<div class="result-msg '+cls+'">'+msg+'</div>'+
+    '<div class="btn-gap"><button class="btn btn-primary" onclick="restart()">\u21bb Recommencer</button></div></div>';
+  document.getElementById('btn-prev').disabled=true;
+  document.getElementById('btn-next').disabled=true;
+  document.getElementById('q-counter').textContent='Termin\u00e9';
+}
+
+function restart(){answers=new Array(20).fill(null);cur=0;render();}
+render();
+</script>
+</body>
+</html>
