@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Permis C, C1, CE, C1E · FIMO · FCO · CQC</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:1.5rem 1rem}
+  .wrap{max-width:740px;margin:0 auto}
+  .top-bar{background:#1a5c38;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;color:#fff}
+  .top-bar h1{font-size:20px;font-weight:700;margin-bottom:0}
+  .prog-bar{height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin-top:.9rem;overflow:hidden}
+  .prog-fill{height:100%;background:#fff;border-radius:3px;transition:width .3s}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+  .stat{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:.75rem;text-align:center}
+  .stat-v{font-size:22px;font-weight:700;color:#1a1a1a}
+  .stat-l{font-size:11px;color:#888;margin-top:2px}
+  .stat.ok .stat-v{color:#1a7f45}
+  .stat.ko .stat-v{color:#c0392b}
+  .q-card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+  .q-num{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+  .q-text{font-size:15px;color:#1a1a1a;line-height:1.65;margin-bottom:1rem;font-weight:500}
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .choice{display:flex;align-items:flex-start;gap:10px;padding:.7rem 1rem;border:1.5px solid #e0e0e0;border-radius:8px;cursor:pointer;transition:background .12s,border-color .12s;background:#fff}
+  .choice:hover:not(.disabled){background:#f0faf4;border-color:#2e7d52}
+  .choice.correct{background:#e8f5ee;border-color:#1a7f45}
+  .choice.wrong{background:#fdf2f0;border-color:#c0392b}
+  .choice.disabled{cursor:default}
+  .choice-label{font-size:13px;font-weight:700;min-width:22px;color:#888;padding-top:1px;flex-shrink:0}
+  .choice.correct .choice-label{color:#1a7f45}
+  .choice.wrong .choice-label{color:#c0392b}
+  .choice-text{font-size:14px;color:#1a1a1a;line-height:1.5}
+  .expl{margin-top:.85rem;padding:.7rem 1rem;background:#fef5ec;border-left:3px solid #d35400;border-radius:0 6px 6px 0;font-size:13px;color:#5d3600;line-height:1.55}
+  .expl-label{font-weight:700;color:#d35400;font-size:12px;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-top:1rem}
+  .btn{padding:.55rem 1.3rem;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer;transition:background .12s;font-family:Arial,sans-serif;font-weight:600}
+  .btn:hover{background:#f5f5f5}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btn-primary{background:#1a5c38;color:#fff;border-color:#1a5c38}
+  .btn-primary:hover{background:#2e7d52}
+  .q-counter{font-size:13px;color:#888;font-weight:500}
+  .result-wrap{text-align:center;padding:2.5rem 1rem}
+  .result-score{font-size:56px;font-weight:700;color:#1a5c38;margin-bottom:.2rem}
+  .result-pct{font-size:18px;color:#888;margin-bottom:.75rem}
+  .result-msg{font-size:15px;color:#1a1a1a;line-height:1.6;margin-bottom:2rem;max-width:480px;margin-left:auto;margin-right:auto}
+  .result-msg.good{color:#1a7f45}
+  .result-msg.med{color:#b7950b}
+  .result-msg.low{color:#c0392b}
+  .btn-gap{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-bar">
+    <h1>QCM — Permis C, C1, CE, C1E &middot; FIMO &middot; FCO &middot; CQC</h1>
+    <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-v" id="s-total">0/20</div><div class="stat-l">R&#233;pondues</div></div>
+    <div class="stat ok"><div class="stat-v" id="s-ok">0</div><div class="stat-l">Correctes</div></div>
+    <div class="stat ko"><div class="stat-v" id="s-ko">0</div><div class="stat-l">Incorrectes</div></div>
+  </div>
+  <div id="q-area"></div>
+  <div class="nav">
+    <button class="btn" id="btn-prev" onclick="go(-1)" disabled>&#8592; Pr&#233;c&#233;dent</button>
+    <span class="q-counter" id="q-counter">Question 1 / 20</span>
+    <button class="btn btn-primary" id="btn-next" onclick="go(1)" disabled>Suivant &#8594;</button>
+  </div>
+</div>
+<script>
+// pos = index où est placée la bonne réponse (0=a, 1=b, 2=c, 3=d)
+// Distribution : c,a,d,b,c,a,d,b,c,a,d,b,c,a,d,b,c,a,d,b => 5a,5b,5c,5d
+var RAW=[
+  {q:"Quel est le PTAC maximum autorisé pour un véhicule conduit avec un permis C1 ?",
+   good:"7,5 tonnes",
+   bad:["3,5 tonnes","10 tonnes","12 tonnes"],
+   pos:2,
+   e:"Le permis C1 autorise la conduite de véhicules dont le PTAC est compris entre 3,5T et 7,5T. Au-delà de 7,5T, il faut le permis C. En dessous de 3,5T, le permis B suffit."},
+
+  {q:"Quel est l'âge minimum pour obtenir le permis C en dehors de toute formation professionnelle ?",
+   good:"21 ans",
+   bad:["16 ans","18 ans","23 ans"],
+   pos:0,
+   e:"L'âge minimum pour le permis C est de 21 ans en dehors de toute formation professionnelle. Cependant, cet âge est abaissé à 18 ans pour les conducteurs suivant une formation professionnelle (CAP, Bac Pro, apprentissage transport)."},
+
+  {q:"Quel permis est nécessaire pour conduire un ensemble routier articulé (semi-remorque) de plus de 7,5T avec une remorque de plus de 750 kg ?",
+   good:"Le permis CE",
+   bad:["Le permis C","Le permis C1E","Le permis BE"],
+   pos:3,
+   e:"Le permis CE est indispensable pour conduire un ensemble routier articulé (tracteur > 7,5T + semi-remorque > 750 kg). Le permis C seul ne permet de tracter qu'une remorque de 750 kg maximum."},
+
+  {q:"Quelle est la durée de la FIMO pour le transport de marchandises ?",
+   good:"140 heures (4 semaines)",
+   bad:["35 heures (1 semaine)","70 heures (2 semaines)","280 heures (8 semaines)"],
+   pos:1,
+   e:"La FIMO (Formation Initiale Minimale Obligatoire) dure 140 heures, soit environ 4 semaines. Elle peut être réduite à 70 heures dans certains cas spécifiques. La FCO, elle, dure seulement 35 heures."},
+
+  {q:"Quel document officiel atteste qu'un conducteur a bien effectué sa FIMO et ses FCO ?",
+   good:"La carte de qualification conducteur (CQC)",
+   bad:["Le permis de conduire seul","Le certificat médical d'aptitude","L'attestation de l'employeur"],
+   pos:2,
+   e:"La carte de qualification conducteur (CQC) est le document officiel délivré par la préfecture attestant que le conducteur a bien suivi la FIMO et les FCO. Elle doit être présentée lors des contrôles routiers avec le permis de conduire."},
+
+  {q:"Quelle est la validité de la carte de qualification conducteur (CQC) ?",
+   good:"5 ans",
+   bad:["1 an","3 ans","10 ans"],
+   pos:0,
+   e:"La carte de qualification conducteur (CQC) est valable 5 ans. À l'expiration, le conducteur doit avoir effectué sa FCO (35 heures) pour obtenir le renouvellement de sa carte et maintenir son droit à exercer la conduite professionnelle."},
+
+  {q:"Quelle est la périodicité de la FCO (Formation Continue Obligatoire) ?",
+   good:"Tous les 5 ans",
+   bad:["Tous les ans","Tous les 3 ans","Tous les 10 ans"],
+   pos:3,
+   e:"La FCO doit être effectuée tous les 5 ans après la FIMO. Elle dure 35 heures (1 semaine) et permet de renouveler la carte de qualification conducteur. Si elle n'est pas effectuée avant l'expiration, le conducteur ne peut plus exercer la conduite professionnelle."},
+
+  {q:"Quel permis permet de conduire un véhicule de 3,5T à 7,5T avec une remorque dont l'ensemble dépasse légèrement 750 kg mais ne dépasse pas 12 tonnes au total ?",
+   good:"Le permis C1E",
+   bad:["Le permis C1","Le permis CE","Le permis BE"],
+   pos:1,
+   e:"Le permis C1E permet de conduire un véhicule C1 (3,5T à 7,5T) attelé d'une remorque de plus de 750 kg, à condition que le poids total réel de l'ensemble ne dépasse pas 12 tonnes. Au-delà, il faut le permis CE."},
+
+  {q:"Quel code est inscrit sur le permis de conduire d'un conducteur titulaire de la qualification professionnelle ?",
+   good:"Le code 95",
+   bad:["Le code 78","Le code 101","Le code 45"],
+   pos:2,
+   e:"Le code 95 est inscrit sur le permis de conduire du conducteur qualifié. Il indique la date d'expiration de la qualification professionnelle. Les agents de contrôle vérifient ce code lors des contrôles routiers."},
+
+  {q:"Quelle est la durée de validité du permis C pour un conducteur âgé de 62 ans ?",
+   good:"2 ans",
+   bad:["1 an","5 ans","3 ans"],
+   pos:0,
+   e:"Pour un conducteur âgé de 60 à 76 ans, la durée de validité du permis C est de 2 ans (au lieu de 5 ans avant 55 ans). Un contrôle médical est obligatoire à chaque renouvellement."},
+
+  {q:"Quelle est la sanction pour un conducteur qui ne peut pas présenter sa carte de qualification conducteur lors d'un contrôle ?",
+   good:"Une amende forfaitaire de 135 € (contravention de 4e classe)",
+   bad:["Une amende de 750 €","Un retrait du permis de conduire","Une immobilisation systématique du véhicule"],
+   pos:3,
+   e:"Ne pas présenter la CQC lors d'un contrôle constitue une contravention de 4e classe, sanctionnée par une amende forfaitaire de 135 €. L'immobilisation du véhicule est également possible. L'employeur qui laisse conduire un conducteur non qualifié s'expose aussi à des sanctions."},
+
+  {q:"Quel est le prérequis obligatoire pour obtenir le permis C ?",
+   good:"Le permis B",
+   bad:["Le permis A","Le permis C1","Aucun prérequis"],
+   pos:1,
+   e:"Le permis B est le prérequis obligatoire pour passer le permis C. Il n'est pas nécessaire de posséder le permis C1 avant d'obtenir le permis C. En revanche, le permis C est lui-même prérequis pour le permis CE."},
+
+  {q:"Un conducteur titulaire d'un CAP Conducteur Routier obtenu il y a 3 ans doit-il passer la FIMO pour conduire professionnellement ?",
+   good:"Non, il en est dispensé car son diplôme a moins de 5 ans",
+   bad:["Oui, la FIMO est toujours obligatoire","Oui, sauf s'il a plus de 21 ans","Non, tous les titulaires d'un CAP en sont définitivement dispensés"],
+   pos:2,
+   e:"Les conducteurs titulaires d'un CAP Conducteur Routier ou d'un Bac Pro Transport sont dispensés de FIMO si leur diplôme a été obtenu depuis moins de 5 ans. Au-delà de 5 ans sans avoir exercé, la FIMO peut être exigée."},
+
+  {q:"Quel est le poids total maximum d'un ensemble routier standard en France ?",
+   good:"44 tonnes (transport combiné) — 40 tonnes en général",
+   bad:["20 tonnes","30 tonnes","60 tonnes"],
+   pos:0,
+   e:"En France, le poids total autorisé en charge (PTAC) d'un ensemble routier est généralement de 40 tonnes. Il peut atteindre 44 tonnes pour certains transports combinés (rail-route). Au-delà, un convoi exceptionnel est nécessaire."},
+
+  {q:"Quelle est la durée de la FCO pour le transport de marchandises ?",
+   good:"35 heures (1 semaine)",
+   bad:["70 heures (2 semaines)","140 heures (4 semaines)","21 heures (3 jours)"],
+   pos:3,
+   e:"La FCO dure 35 heures, soit environ 1 semaine. C'est beaucoup moins que la FIMO (140 heures). La FCO permet de maintenir et actualiser les connaissances du conducteur en matière de conduite, sécurité et réglementation."},
+
+  {q:"Quel permis faut-il posséder avant de passer le permis CE ?",
+   good:"Le permis C",
+   bad:["Le permis B","Le permis C1E","Le permis BE"],
+   pos:1,
+   e:"Le permis C est obligatoire avant de passer le permis CE. La progression logique est : permis B → permis C → permis CE. Le permis CE ajoute la possibilité de tracter une remorque de plus de 750 kg avec un véhicule de plus de 7,5T."},
+
+  {q:"Quelle est la durée de validité du permis C pour un conducteur de 78 ans ?",
+   good:"1 an",
+   bad:["2 ans","5 ans","6 mois"],
+   pos:2,
+   e:"Pour un conducteur de plus de 76 ans, la durée de validité du permis est réduite à 1 an. Un contrôle médical annuel est obligatoire. La fréquence augmente avec l'âge pour garantir l'aptitude à la conduite de poids lourds."},
+
+  {q:"Qu'est-ce que la FIMO oblige principalement le conducteur à acquérir ?",
+   good:"Des compétences en conduite rationnelle, réglementation, sécurité, service et logistique",
+   bad:["Uniquement les règles du code de la route","Uniquement la manipulation des chronotachygraphes","Uniquement les règles de chargement et arrimage"],
+   pos:0,
+   e:"La FIMO couvre un large programme : conduite rationnelle (économie de carburant, sécurité), réglementation sociale (temps de conduite, repos), sécurité routière, service et logistique, santé du conducteur. C'est une formation globale du conducteur professionnel."},
+
+  {q:"Un conducteur dont la FCO a expiré depuis 2 mois peut-il légalement conduire un camion de livraison professionnel ?",
+   good:"Non, il a perdu son droit à exercer la conduite professionnelle",
+   bad:["Oui, avec un délai de grâce de 6 mois","Oui, s'il a un accord écrit de son employeur","Oui, uniquement pour les trajets de moins de 50 km"],
+   pos:3,
+   e:"Si la FCO n'est pas effectuée avant l'expiration de la carte CQC, le conducteur perd immédiatement son droit à exercer la conduite professionnelle. Il ne peut pas conduire un véhicule > 3,5T à titre professionnel jusqu'à régularisation. Il n'existe aucun délai de grâce."},
+
+  {q:"Quel est le poids total maximum d'un ensemble C1E (véhicule C1 + remorque > 750 kg) ?",
+   good:"12 tonnes",
+   bad:["7,5 tonnes","19 tonnes","26 tonnes"],
+   pos:2,
+   e:"Le permis C1E autorise un ensemble dont le poids total réel ne dépasse pas 12 tonnes. Le véhicule tracteur C1 est limité à 7,5T de PTAC. Si l'ensemble dépasse 12 tonnes ou si le tracteur dépasse 7,5T, c'est le permis CE qui s'applique."}
+];
+
+var QS=RAW.map(function(item){
+  var choices=item.bad.slice();
+  choices.splice(item.pos,0,item.good);
+  return {q:item.q,c:choices,r:item.pos,e:item.e};
+});
+
+var cur=0,answers=new Array(20).fill(null);
+var labels=['a)','b)','c)','d)'];
+
+function render(){
+  var q=QS[cur];
+  var total=answers.filter(function(v){return v!==null}).length;
+  var ok=answers.filter(function(v,i){return v===QS[i].r}).length;
+  var ko=answers.filter(function(v,i){return v!==null&&v!==QS[i].r}).length;
+  document.getElementById('s-total').textContent=total+'/20';
+  document.getElementById('s-ok').textContent=ok;
+  document.getElementById('s-ko').textContent=ko;
+  document.getElementById('prog').style.width=(total/20*100)+'%';
+  document.getElementById('q-counter').textContent='Question '+(cur+1)+' / 20';
+  document.getElementById('btn-prev').disabled=(cur===0);
+  var answered=answers[cur]!==null;
+  var nb=document.getElementById('btn-next');
+  if(cur===19&&answered){nb.textContent='Voir les r\u00e9sultats';nb.disabled=false;}
+  else if(cur<19){nb.textContent='Suivant \u2192';nb.disabled=!answered;}
+  else{nb.disabled=true;}
+  var html='<div class="q-card">';
+  html+='<div class="q-num">Question '+(cur+1)+' sur 20</div>';
+  html+='<div class="q-text">'+q.q+'</div>';
+  html+='<div class="choices">';
+  for(var i=0;i<4;i++){
+    var cls='choice';
+    if(answered){cls+=' disabled';if(i===q.r)cls+=' correct';else if(i===answers[cur])cls+=' wrong';}
+    html+='<div class="'+cls+'" onclick="pick('+i+')">';
+    html+='<span class="choice-label">'+labels[i]+'</span>';
+    html+='<span class="choice-text">'+q.c[i]+'</span></div>';
+  }
+  html+='</div>';
+  if(answered){html+='<div class="expl"><span class="expl-label">Explication</span>'+q.e+'</div>';}
+  html+='</div>';
+  document.getElementById('q-area').innerHTML=html;
+}
+
+function pick(i){
+  if(answers[cur]!==null)return;
+  answers[cur]=i;
+  document.getElementById('btn-next').disabled=false;
+  if(cur===19)document.getElementById('btn-next').textContent='Voir les r\u00e9sultats';
+  render();
+}
+
+function go(dir){
+  if(dir===1&&cur===19){showResult();return;}
+  cur=Math.max(0,Math.min(19,cur+dir));
+  render();
+}
+
+function showResult(){
+  var ok=answers.filter(function(v,i){return v===QS[i].r}).length;
+  var pct=Math.round(ok/20*100);
+  var msg='',cls='';
+  if(pct>=80){msg='Excellent r\u00e9sultat\u00a0! Vous ma\u00eetrisez bien les permis poids lourd et les qualifications professionnelles.';cls='good';}
+  else if(pct>=60){msg='Bon niveau. Quelques points \u00e0 revoir avant l\'examen.';cls='med';}
+  else{msg='Des r\u00e9visions sont n\u00e9cessaires. Relisez le cours et recommencez.';cls='low';}
+  document.getElementById('q-area').innerHTML=
+    '<div class="result-wrap">'+
+    '<div class="result-score">'+ok+'/20</div>'+
+    '<div class="result-pct">'+pct+'% de r\u00e9ussite</div>'+
+    '<div class="result-msg '+cls+'">'+msg+'</div>'+
+    '<div class="btn-gap"><button class="btn btn-primary" onclick="restart()">\u21bb Recommencer</button></div></div>';
+  document.getElementById('btn-prev').disabled=true;
+  document.getElementById('btn-next').disabled=true;
+  document.getElementById('q-counter').textContent='Termin\u00e9';
+}
+
+function restart(){answers=new Array(20).fill(null);cur=0;render();}
+render();
+</script>
+</body>
+</html>
