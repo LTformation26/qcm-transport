@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM – Contrat de commission de transport | Série 1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap');
+  :root {
+    --green-dark: #1a5c38; --green-mid: #2e7d52; --green-light: #e8f5ee;
+    --green-accent: #2ecc71; --red: #c0392b; --red-light: #fdecea;
+    --grey-bg: #f4f4f2; --grey-border: #ddd; --text: #1c1c1c; --white: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: var(--grey-bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--green-dark); color: var(--white);
+    padding: 22px 36px 18px; border-bottom: 4px solid var(--green-accent);
+  }
+  header .label { font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--green-accent); margin-bottom:5px; }
+  header h1 { font-family:'Barlow Condensed',sans-serif; font-size:23px; font-weight:700; }
+  header .meta { margin-top:6px; font-size:12px; color:rgba(255,255,255,0.6); }
+
+  .progress-wrap { background: var(--green-dark); padding: 12px 36px; display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .progress-track { flex:1; background:rgba(255,255,255,0.15); border-radius:4px; height:5px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--green-accent); border-radius:4px; transition:width 0.4s ease; }
+  .progress-label { font-family:'Barlow Condensed',sans-serif; font-size:13px; color:rgba(255,255,255,0.8); white-space:nowrap; min-width:70px; text-align:right; }
+
+  .container { max-width:740px; margin:36px auto; padding:0 20px 60px; }
+
+  .card {
+    background:var(--white); border-radius:12px; border:1px solid var(--grey-border);
+    padding:32px 36px; box-shadow:0 2px 12px rgba(0,0,0,0.06);
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .q-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .q-badge { background:var(--green-dark); color:var(--white); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; padding:3px 11px; border-radius:5px; }
+  .q-pts { font-size:12px; color:#999; }
+  .q-text { font-size:16px; font-weight:600; line-height:1.5; margin-bottom:22px; color:var(--text); }
+
+  .choices { display:flex; flex-direction:column; gap:9px; }
+  .choice-label {
+    display:flex; align-items:flex-start; gap:12px;
+    padding:11px 15px; border:1.5px solid var(--grey-border);
+    border-radius:8px; cursor:pointer; font-size:14.5px;
+    transition:border-color 0.15s, background 0.15s; line-height:1.4;
+  }
+  .choice-label:hover:not(.locked) { border-color:var(--green-mid); background:var(--green-light); }
+  .choice-label input { display:none; }
+  .choice-letter {
+    font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:13px;
+    color:var(--green-dark); background:var(--green-light);
+    border-radius:4px; padding:2px 8px; flex-shrink:0; margin-top:1px;
+  }
+  .choice-label.selected { border-color:var(--green-dark); background:var(--green-light); }
+  .choice-label.correct { border-color:var(--green-accent); background:#eafaf1; }
+  .choice-label.wrong   { border-color:var(--red); background:var(--red-light); }
+  .choice-label.correct .choice-letter { background:#c3efda; color:#1a7a3f; }
+  .choice-label.wrong   .choice-letter { background:#fadbd8; color:var(--red); }
+
+  .feedback-box {
+    display:none; margin-top:18px; padding:14px 16px; border-radius:8px; font-size:13.5px; line-height:1.55;
+  }
+  .feedback-box.ok { background:#eafaf1; border-left:4px solid var(--green-accent); color:#1a5c38; }
+  .feedback-box.ko { background:var(--red-light); border-left:4px solid var(--red); color:#8b1a1a; }
+  .feedback-box .fb-verdict { font-weight:700; font-size:14px; margin-bottom:5px; }
+  .feedback-box .fb-comment { color:#333; }
+
+  .nav { display:flex; justify-content:space-between; align-items:center; margin-top:26px; gap:10px; }
+  .btn {
+    font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700;
+    letter-spacing:1px; text-transform:uppercase; border:none;
+    border-radius:7px; padding:11px 22px; cursor:pointer; transition:background 0.2s, opacity 0.2s;
+  }
+  .btn-prev { background:#e8e8e4; color:#555; }
+  .btn-prev:hover { background:#d5d5ce; }
+  .btn-validate { background:var(--green-dark); color:var(--white); flex:1; }
+  .btn-validate:hover { background:var(--green-mid); }
+  .btn-validate:disabled { opacity:0.45; cursor:not-allowed; }
+  .btn-next { background:var(--green-dark); color:var(--white); }
+  .btn-next:hover { background:var(--green-mid); }
+
+  .score-card {
+    display:none; background:var(--green-dark); color:var(--white);
+    border-radius:12px; padding:40px 36px; text-align:center;
+    box-shadow:0 4px 20px rgba(26,92,56,0.2);
+  }
+  .score-card .big { font-family:'Barlow Condensed',sans-serif; font-size:72px; font-weight:700; color:var(--green-accent); line-height:1; }
+  .score-card .sub { font-size:14px; color:rgba(255,255,255,0.65); margin-top:6px; }
+  .score-card .mention { font-size:18px; font-weight:600; margin-top:18px; }
+  .score-card .detail { margin-top:10px; font-size:13px; color:rgba(255,255,255,0.6); }
+  .btn-restart { margin-top:22px; background:transparent; border:2px solid rgba(255,255,255,0.35); color:var(--white); font-family:'Barlow Condensed',sans-serif; font-size:14px; letter-spacing:1px; text-transform:uppercase; padding:10px 26px; border-radius:7px; cursor:pointer; }
+  .btn-restart:hover { border-color:var(--green-accent); color:var(--green-accent); }
+
+  @media(max-width:600px){
+    header { padding:18px 16px 14px; } header h1 { font-size:19px; }
+    .progress-wrap { padding:10px 16px; }
+    .container { padding:0 12px 48px; }
+    .card { padding:22px 18px; }
+    .q-text { font-size:15px; }
+    .choice-label { font-size:13.5px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">Capacité de Transport de Marchandises +3,5t</div>
+  <h1>Contrat de commission de transport — Série 1</h1>
+  <div class="meta">20 questions · 2 points chacune · Score max : 40 points</div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 20</div>
+</div>
+
+<div class="container">
+  <div class="card" id="mainCard">
+    <div class="q-meta">
+      <span class="q-badge" id="qBadge">Q1</span>
+      <span class="q-pts">2 points</span>
+    </div>
+    <div class="q-text" id="qText"></div>
+    <div class="choices" id="choicesContainer"></div>
+    <div class="feedback-box" id="feedbackBox">
+      <div class="fb-verdict" id="fbVerdict"></div>
+      <div class="fb-comment" id="fbComment"></div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-prev" id="btnPrev" onclick="goTo(current-1)">← Précédent</button>
+      <button class="btn btn-validate" id="btnValidate" onclick="validateAnswer()">Valider</button>
+      <button class="btn btn-next" id="btnNext" onclick="goTo(current+1)" style="display:none">Suivant →</button>
+    </div>
+  </div>
+  <div class="score-card" id="scoreCard">
+    <div class="big" id="scoreBig"></div>
+    <div class="sub">points sur 40</div>
+    <div class="mention" id="scoreMention"></div>
+    <div class="detail" id="scoreDetail"></div>
+    <button class="btn-restart" onclick="restart()">Recommencer</button>
+  </div>
+</div>
+
+<script>
+const rawQuestions = [
+  {
+    q: "Le commissionnaire de transport agit :",
+    choices: [
+      { text: "En son nom et pour le compte d'un donneur d'ordre", correct: true },
+      { text: "Au nom du donneur d'ordre et pour son compte", correct: false },
+      { text: "En son nom et pour son propre compte", correct: false },
+      { text: "Au nom et pour le compte du transporteur", correct: false }
+    ],
+    comment: "Le commissionnaire agit <strong>en son nom propre</strong> mais <strong>pour le compte</strong> de son client (le donneur d'ordre). C'est ce qui le distingue du mandataire qui agirait au nom du donneur d'ordre (art. 2 du contrat type)."
+  },
+  {
+    q: "Selon le contrat type, la « prise en charge » désigne :",
+    choices: [
+      { text: "La signature du contrat de commission", correct: false },
+      { text: "L'acceptation de la marchandise par le commissionnaire ou son substitué", correct: true },
+      { text: "La livraison au destinataire final", correct: false },
+      { text: "Le chargement du véhicule", correct: false }
+    ],
+    comment: "La prise en charge est définie à l'article 2.8 comme <strong>l'acceptation de la marchandise</strong> par le commissionnaire ou par son substitué. Elle marque le début de la responsabilité du commissionnaire sur la marchandise."
+  },
+  {
+    q: "Le délai maximum de paiement des prestations de commission est de :",
+    choices: [
+      { text: "15 jours", correct: false },
+      { text: "45 jours", correct: false },
+      { text: "30 jours", correct: true },
+      { text: "60 jours", correct: false }
+    ],
+    comment: "L'article 12.1 fixe un délai de paiement qui <strong>ne peut excéder 30 jours</strong> à compter de la date d'émission de la facture. Ce délai s'applique quel que soit le montant de la prestation."
+  },
+  {
+    q: "En cas de retard de paiement, les intérêts de retard sont équivalents à :",
+    choices: [
+      { text: "Le taux d'intérêt légal", correct: false },
+      { text: "Deux fois le taux d'intérêt légal", correct: false },
+      { text: "Trois fois le taux d'intérêt légal", correct: false },
+      { text: "Cinq fois le taux d'intérêt légal", correct: true }
+    ],
+    comment: "L'article 12.3 prévoit des intérêts de retard d'un montant équivalant à <strong>cinq fois le taux d'intérêt légal</strong>, exigibles dès le jour suivant la date de règlement figurant sur la facture, sans mise en demeure préalable."
+  },
+  {
+    q: "La prescription de toutes les actions issues du contrat de commission de transport est de :",
+    choices: [
+      { text: "1 an", correct: true },
+      { text: "2 ans", correct: false },
+      { text: "6 mois", correct: false },
+      { text: "3 ans", correct: false }
+    ],
+    comment: "L'article 14 dispose que toutes les actions auxquelles le contrat de commission peut donner lieu sont prescrites dans le <strong>délai d'un an</strong>. Ce délai court à compter du jour où la marchandise aurait dû être livrée (perte totale) ou du jour de la livraison."
+  },
+  {
+    q: "En cas de faute personnelle prouvée du commissionnaire, l'indemnité pour perte ou avarie est limitée à :",
+    choices: [
+      { text: "10 € par kg", correct: false },
+      { text: "20 € par kg", correct: true },
+      { text: "30 € par kg", correct: false },
+      { text: "50 € par kg", correct: false }
+    ],
+    comment: "L'article 13.2.1 plafonne l'indemnisation à <strong>20 € par kilogramme</strong> de poids brut de marchandise manquante ou avariée, sans pouvoir dépasser le résultat du poids brut de l'envoi (en tonnes) × 5 000 €."
+  },
+  {
+    q: "Le plafond global d'indemnisation pour perte ou avarie correspond au poids brut en tonnes multiplié par :",
+    choices: [
+      { text: "3 000 €", correct: false },
+      { text: "7 500 €", correct: false },
+      { text: "5 000 €", correct: true },
+      { text: "10 000 €", correct: false }
+    ],
+    comment: "L'article 13.2.1 fixe le plafond global à <strong>poids brut (en tonnes) × 5 000 €</strong>. Ces deux limites (20 €/kg et 5 000 €/tonne) s'appliquent cumulativement : c'est la plus basse qui est retenue."
+  },
+  {
+    q: "La livraison contre remboursement, dans le contrat de commission :",
+    choices: [
+      { text: "Vaut déclaration de valeur", correct: false },
+      { text: "Modifie les règles d'indemnisation en cas d'avarie", correct: false },
+      { text: "Est assimilée à une déclaration d'intérêt spécial", correct: false },
+      { text: "Ne vaut pas déclaration de valeur", correct: true }
+    ],
+    comment: "L'article 6.3 est explicite : la livraison contre remboursement <strong>ne vaut pas déclaration de valeur</strong> et ne modifie donc pas les règles d'indemnisation pour pertes et avaries. Elle obéit en revanche aux règles du mandat (art. 6.4)."
+  },
+  {
+    q: "Le commissionnaire de transport assume le choix de ses substitués :",
+    choices: [
+      { text: "Seul, sans avoir à recueillir l'accord du donneur d'ordre", correct: true },
+      { text: "Avec l'accord préalable écrit du donneur d'ordre", correct: false },
+      { text: "Sous réserve de validation par le destinataire", correct: false },
+      { text: "Uniquement pour les transports nationaux", correct: false }
+    ],
+    comment: "L'article 5.2.2 précise que le commissionnaire <strong>assume seul le choix</strong> de ses substitués et n'est pas tenu de recueillir l'accord du donneur d'ordre. Il n'est pas responsable des substitués qui lui ont été formellement imposés par le donneur d'ordre."
+  },
+  {
+    q: "En cas de litige, le tribunal compétent selon le contrat type est :",
+    choices: [
+      { text: "Le tribunal administratif de Paris", correct: false },
+      { text: "Le tribunal de commerce de Paris", correct: true },
+      { text: "Le tribunal civil du lieu de livraison", correct: false },
+      { text: "Le tribunal de commerce du lieu d'expédition", correct: false }
+    ],
+    comment: "L'article 16 attribue compétence exclusive au <strong>tribunal de commerce de Paris</strong>, même en cas de pluralité de défendeurs ou d'appels en garantie. Cette clause est valable entre professionnels."
+  },
+  {
+    q: "L'assurance marchandises souscrite par le commissionnaire de transport obéit aux règles :",
+    choices: [
+      { text: "Du contrat de commission de transport", correct: false },
+      { text: "Du contrat de transport stricto sensu", correct: false },
+      { text: "Du mandat", correct: true },
+      { text: "Du droit administratif", correct: false }
+    ],
+    comment: "L'article 6.4 précise que l'assurance marchandises obéit aux <strong>règles du mandat</strong>. Le commissionnaire agit ici comme mandataire du donneur d'ordre : il souscrit au nom et pour le compte de ce dernier."
+  },
+  {
+    q: "En cas de résiliation d'un contrat à durée indéterminée dont la relation dépasse un an, le préavis est de :",
+    choices: [
+      { text: "6 mois", correct: false },
+      { text: "1 mois", correct: false },
+      { text: "2 mois", correct: false },
+      { text: "3 mois", correct: true }
+    ],
+    comment: "L'article 15.1 prévoit trois paliers de préavis : <strong>1 mois</strong> si la relation est ≤ 6 mois, <strong>2 mois</strong> entre 6 mois et 1 an, et <strong>3 mois</strong> pour une relation d'un an et plus."
+  },
+  {
+    q: "La compensation unilatérale de dommages allégués sur le prix dû au commissionnaire est :",
+    choices: [
+      { text: "Interdite", correct: true },
+      { text: "Autorisée avec accord écrit", correct: false },
+      { text: "Possible uniquement pour les envois de moins de 500 kg", correct: false },
+      { text: "Réglementée par le Code de commerce", correct: false }
+    ],
+    comment: "L'article 12.2 interdit expressément la <strong>compensation unilatérale</strong>. Le donneur d'ordre ne peut pas déduire de lui-même un montant de dommages du prix dû au commissionnaire, même si ces dommages lui semblent établis."
+  },
+  {
+    q: "Le commissionnaire de transport est tenu d'une obligation générale :",
+    choices: [
+      { text: "De moyens", correct: false },
+      { text: "De résultat", correct: true },
+      { text: "De conseil uniquement", correct: false },
+      { text: "De diligence simple", correct: false }
+    ],
+    comment: "L'article 5.1 est sans ambiguïté : le commissionnaire est présumé responsable de la bonne fin du transport et est tenu d'une <strong>obligation générale de résultat</strong>. C'est une différence importante avec le commissionnaire d'achat ou de vente."
+  },
+  {
+    q: "En cas de préjudice prouvé résultant d'un retard à la livraison, l'indemnisation est limitée à :",
+    choices: [
+      { text: "20 € par kg de marchandise retardée", correct: false },
+      { text: "Deux fois le prix de la prestation de commission", correct: false },
+      { text: "Le prix de la prestation de commission de transport", correct: true },
+      { text: "5 000 € par tonne", correct: false }
+    ],
+    comment: "L'article 13.2.2 plafonne l'indemnisation pour retard au <strong>prix de la prestation de commission de transport</strong> (hors droits, taxes et frais divers). Le préjudice doit être prouvé ; la seule existence du retard ne suffit pas."
+  },
+  {
+    q: "L'indemnité forfaitaire pour frais de recouvrement en cas de retard de paiement est fixée à :",
+    choices: [
+      { text: "20 €", correct: false },
+      { text: "25 €", correct: false },
+      { text: "30 €", correct: false },
+      { text: "40 €", correct: true }
+    ],
+    comment: "L'article 12.3 fixe cette indemnité forfaitaire à <strong>40 €</strong> conformément à l'article D. 441-5 du Code de commerce. Elle est due de plein droit, sans mise en demeure, et s'ajoute aux intérêts de retard."
+  },
+  {
+    q: "En cas de modification du contrat en cours d'exécution à l'initiative du donneur d'ordre, les frais engagés par le commissionnaire sont :",
+    choices: [
+      { text: "À la charge du donneur d'ordre, sur présentation des justificatifs", correct: true },
+      { text: "Partagés à parts égales entre les parties", correct: false },
+      { text: "À la charge exclusive du commissionnaire", correct: false },
+      { text: "Remboursés par le substitué", correct: false }
+    ],
+    comment: "L'article 11.2 prévoit que le donneur d'ordre supporte les frais engagés par le commissionnaire lors d'une modification en cours d'exécution à son initiative, <strong>sur présentation des justificatifs</strong>. Le commissionnaire supporte en revanche les frais dus à son propre fait."
+  },
+  {
+    q: "La déclaration de valeur souscrite par le donneur d'ordre a pour effet de :",
+    choices: [
+      { text: "Doubler les plafonds d'indemnisation", correct: false },
+      { text: "Se substituer aux plafonds d'indemnité prévus au contrat", correct: true },
+      { text: "Réduire les plafonds d'indemnisation", correct: false },
+      { text: "Exclure toute indemnisation en cas de perte", correct: false }
+    ],
+    comment: "L'article 13.3 précise que la déclaration de valeur, fixée par le donneur d'ordre et acceptée par le commissionnaire, <strong>se substitue aux plafonds</strong> d'indemnité de l'article 13. Elle ouvre droit à une rémunération supplémentaire."
+  },
+  {
+    q: "En cas de perte totale, le délai de prescription court à compter :",
+    choices: [
+      { text: "Du jour de la conclusion du contrat", correct: false },
+      { text: "Du jour de l'émission de la facture", correct: false },
+      { text: "Du jour où la marchandise aurait dû être livrée", correct: true },
+      { text: "Du jour de la prise en charge", correct: false }
+    ],
+    comment: "L'article 14 précise que le délai d'un an court, en cas de <strong>perte totale</strong>, à compter du jour où la marchandise aurait dû être livrée ou offerte. Pour les autres cas (avarie, retard), il court à compter du jour de la livraison effective."
+  },
+  {
+    q: "Selon le contrat type, les prix des prestations de commission de transport sont établis :",
+    choices: [
+      { text: "Toutes taxes comprises", correct: false },
+      { text: "Avec TVA incluse sur option", correct: false },
+      { text: "Selon accord librement négocié incluant toutes taxes", correct: false },
+      { text: "Hors taxes", correct: true }
+    ],
+    comment: "L'article 10.3 dispose que tous les prix sont calculés <strong>hors taxes</strong>. Les droits, taxes, redevances et impôts (accises, droits d'entrée, etc.) sont facturés séparément en sus de la prestation principale (art. 10.1)."
+  }
+];
+
+const letters = ['A','B','C','D'];
+let shuffled = [];
+let current = 0;
+let answers = [];
+let validated = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function init() {
+  shuffled = rawQuestions.map(q => {
+    const mixed = shuffle(q.choices);
+    const correctIdx = mixed.findIndex(c => c.correct);
+    return { q: q.q, choices: mixed, correctIdx, comment: q.comment };
+  });
+  answers = new Array(shuffled.length).fill(null);
+  validated = new Array(shuffled.length).fill(false);
+  current = 0;
+  render();
+}
+
+function render() {
+  const item = shuffled[current];
+  document.getElementById('qBadge').textContent = `Q${current + 1}`;
+  document.getElementById('qText').textContent = item.q;
+
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+
+  item.choices.forEach((c, j) => {
+    const label = document.createElement('label');
+    label.className = 'choice-label' + (validated[current] ? ' locked' : '');
+    label.id = `c${j}`;
+
+    if (validated[current]) {
+      if (j === item.correctIdx) label.classList.add('correct');
+      else if (j === answers[current] && answers[current] !== item.correctIdx) label.classList.add('wrong');
+    } else if (answers[current] === j) {
+      label.classList.add('selected');
+    }
+
+    label.innerHTML = `<input type="radio" name="choice" value="${j}"><span class="choice-letter">${letters[j]}</span><span>${c.text}</span>`;
+    if (!validated[current]) {
+      label.addEventListener('click', () => selectChoice(j));
+    }
+    container.appendChild(label);
+  });
+
+  const fb = document.getElementById('feedbackBox');
+  if (validated[current]) {
+    const correct = answers[current] === item.correctIdx;
+    fb.style.display = 'block';
+    fb.className = 'feedback-box ' + (correct ? 'ok' : 'ko');
+    document.getElementById('fbVerdict').innerHTML = correct
+      ? `✓ Bonne réponse — ${letters[item.correctIdx]}`
+      : `✗ Mauvaise réponse — La bonne réponse était : <strong>${letters[item.correctIdx]}</strong>`;
+    document.getElementById('fbComment').innerHTML = item.comment;
+  } else {
+    fb.style.display = 'none';
+  }
+
+  const btnValidate = document.getElementById('btnValidate');
+  const btnNext = document.getElementById('btnNext');
+  const btnPrev = document.getElementById('btnPrev');
+
+  if (validated[current]) {
+    btnValidate.style.display = 'none';
+    btnNext.style.display = 'block';
+    btnNext.textContent = current < shuffled.length - 1 ? 'Suivant →' : 'Voir le score';
+  } else {
+    btnValidate.style.display = 'block';
+    btnValidate.disabled = answers[current] === null;
+    btnNext.style.display = 'none';
+  }
+
+  btnPrev.style.display = current > 0 ? 'block' : 'none';
+  updateProgress();
+}
+
+function selectChoice(j) {
+  if (validated[current]) return;
+  answers[current] = j;
+  render();
+}
+
+function validateAnswer() {
+  if (answers[current] === null) return;
+  validated[current] = true;
+  render();
+}
+
+function goTo(idx) {
+  if (idx < 0) return;
+  if (idx >= shuffled.length) { showScore(); return; }
+  current = idx;
+  render();
+}
+
+function updateProgress() {
+  const done = validated.filter(Boolean).length;
+  document.getElementById('progressFill').style.width = (done / shuffled.length * 100) + '%';
+  document.getElementById('progressLabel').textContent = `${done} / ${shuffled.length}`;
+}
+
+function showScore() {
+  let score = 0;
+  shuffled.forEach((item, i) => {
+    if (validated[i] && answers[i] === item.correctIdx) score += 2;
+  });
+  document.getElementById('mainCard').style.display = 'none';
+  const sc = document.getElementById('scoreCard');
+  sc.style.display = 'block';
+  document.getElementById('scoreBig').textContent = score;
+  const pct = Math.round(score / 40 * 100);
+  document.getElementById('scoreDetail').textContent = `${pct} % de bonnes réponses`;
+  let mention = '';
+  if (score >= 36) mention = '🏆 Excellent — Maîtrise parfaite !';
+  else if (score >= 28) mention = '✅ Bon niveau — Continue ainsi !';
+  else if (score >= 20) mention = '📘 Passable — Quelques révisions s\'imposent.';
+  else mention = '⚠️ Insuffisant — Relis le contrat type attentivement.';
+  document.getElementById('scoreMention').textContent = mention;
+  sc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function restart() {
+  document.getElementById('scoreCard').style.display = 'none';
+  document.getElementById('mainCard').style.display = 'block';
+  init();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+init();
+</script>
+</body>
+</html>
