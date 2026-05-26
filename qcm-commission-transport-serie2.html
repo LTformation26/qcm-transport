@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM – Contrat de commission de transport | Série 2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap');
+  :root {
+    --green-dark: #1a5c38; --green-mid: #2e7d52; --green-light: #e8f5ee;
+    --green-accent: #2ecc71; --red: #c0392b; --red-light: #fdecea;
+    --grey-bg: #f4f4f2; --grey-border: #ddd; --text: #1c1c1c; --white: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: var(--grey-bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--green-dark); color: var(--white);
+    padding: 22px 36px 18px; border-bottom: 4px solid var(--green-accent);
+  }
+  header .label { font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--green-accent); margin-bottom:5px; }
+  header h1 { font-family:'Barlow Condensed',sans-serif; font-size:23px; font-weight:700; }
+  header .meta { margin-top:6px; font-size:12px; color:rgba(255,255,255,0.6); }
+
+  .progress-wrap { background: var(--green-dark); padding: 12px 36px; display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .progress-track { flex:1; background:rgba(255,255,255,0.15); border-radius:4px; height:5px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--green-accent); border-radius:4px; transition:width 0.4s ease; }
+  .progress-label { font-family:'Barlow Condensed',sans-serif; font-size:13px; color:rgba(255,255,255,0.8); white-space:nowrap; min-width:70px; text-align:right; }
+
+  .container { max-width:740px; margin:36px auto; padding:0 20px 60px; }
+
+  .card {
+    background:var(--white); border-radius:12px; border:1px solid var(--grey-border);
+    padding:32px 36px; box-shadow:0 2px 12px rgba(0,0,0,0.06);
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .q-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .q-badge { background:var(--green-dark); color:var(--white); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; padding:3px 11px; border-radius:5px; }
+  .q-pts { font-size:12px; color:#999; }
+  .q-text { font-size:16px; font-weight:600; line-height:1.5; margin-bottom:22px; color:var(--text); }
+
+  .choices { display:flex; flex-direction:column; gap:9px; }
+  .choice-label {
+    display:flex; align-items:flex-start; gap:12px;
+    padding:11px 15px; border:1.5px solid var(--grey-border);
+    border-radius:8px; cursor:pointer; font-size:14.5px;
+    transition:border-color 0.15s, background 0.15s; line-height:1.4;
+  }
+  .choice-label:hover:not(.locked) { border-color:var(--green-mid); background:var(--green-light); }
+  .choice-label input { display:none; }
+  .choice-letter {
+    font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:13px;
+    color:var(--green-dark); background:var(--green-light);
+    border-radius:4px; padding:2px 8px; flex-shrink:0; margin-top:1px;
+  }
+  .choice-label.selected { border-color:var(--green-dark); background:var(--green-light); }
+  .choice-label.correct { border-color:var(--green-accent); background:#eafaf1; }
+  .choice-label.wrong   { border-color:var(--red); background:var(--red-light); }
+  .choice-label.correct .choice-letter { background:#c3efda; color:#1a7a3f; }
+  .choice-label.wrong   .choice-letter { background:#fadbd8; color:var(--red); }
+
+  .feedback-box {
+    display:none; margin-top:18px; padding:14px 16px; border-radius:8px; font-size:13.5px; line-height:1.55;
+  }
+  .feedback-box.ok { background:#eafaf1; border-left:4px solid var(--green-accent); color:#1a5c38; }
+  .feedback-box.ko { background:var(--red-light); border-left:4px solid var(--red); color:#8b1a1a; }
+  .feedback-box .fb-verdict { font-weight:700; font-size:14px; margin-bottom:5px; }
+  .feedback-box .fb-comment { color:#333; }
+
+  .nav { display:flex; justify-content:space-between; align-items:center; margin-top:26px; gap:10px; }
+  .btn {
+    font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700;
+    letter-spacing:1px; text-transform:uppercase; border:none;
+    border-radius:7px; padding:11px 22px; cursor:pointer; transition:background 0.2s, opacity 0.2s;
+  }
+  .btn-prev { background:#e8e8e4; color:#555; }
+  .btn-prev:hover { background:#d5d5ce; }
+  .btn-validate { background:var(--green-dark); color:var(--white); flex:1; }
+  .btn-validate:hover { background:var(--green-mid); }
+  .btn-validate:disabled { opacity:0.45; cursor:not-allowed; }
+  .btn-next { background:var(--green-dark); color:var(--white); }
+  .btn-next:hover { background:var(--green-mid); }
+
+  .score-card {
+    display:none; background:var(--green-dark); color:var(--white);
+    border-radius:12px; padding:40px 36px; text-align:center;
+    box-shadow:0 4px 20px rgba(26,92,56,0.2);
+  }
+  .score-card .big { font-family:'Barlow Condensed',sans-serif; font-size:72px; font-weight:700; color:var(--green-accent); line-height:1; }
+  .score-card .sub { font-size:14px; color:rgba(255,255,255,0.65); margin-top:6px; }
+  .score-card .mention { font-size:18px; font-weight:600; margin-top:18px; }
+  .score-card .detail { margin-top:10px; font-size:13px; color:rgba(255,255,255,0.6); }
+  .btn-restart { margin-top:22px; background:transparent; border:2px solid rgba(255,255,255,0.35); color:var(--white); font-family:'Barlow Condensed',sans-serif; font-size:14px; letter-spacing:1px; text-transform:uppercase; padding:10px 26px; border-radius:7px; cursor:pointer; }
+  .btn-restart:hover { border-color:var(--green-accent); color:var(--green-accent); }
+
+  @media(max-width:600px){
+    header { padding:18px 16px 14px; } header h1 { font-size:19px; }
+    .progress-wrap { padding:10px 16px; }
+    .container { padding:0 12px 48px; }
+    .card { padding:22px 18px; }
+    .q-text { font-size:15px; }
+    .choice-label { font-size:13.5px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">Capacité de Transport de Marchandises +3,5t</div>
+  <h1>Contrat de commission de transport — Série 2</h1>
+  <div class="meta">20 questions · 2 points chacune · Score max : 40 points</div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 20</div>
+</div>
+
+<div class="container">
+  <div class="card" id="mainCard">
+    <div class="q-meta">
+      <span class="q-badge" id="qBadge">Q1</span>
+      <span class="q-pts">2 points</span>
+    </div>
+    <div class="q-text" id="qText"></div>
+    <div class="choices" id="choicesContainer"></div>
+    <div class="feedback-box" id="feedbackBox">
+      <div class="fb-verdict" id="fbVerdict"></div>
+      <div class="fb-comment" id="fbComment"></div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-prev" id="btnPrev" onclick="goTo(current-1)">← Précédent</button>
+      <button class="btn btn-validate" id="btnValidate" onclick="validateAnswer()">Valider</button>
+      <button class="btn btn-next" id="btnNext" onclick="goTo(current+1)" style="display:none">Suivant →</button>
+    </div>
+  </div>
+  <div class="score-card" id="scoreCard">
+    <div class="big" id="scoreBig"></div>
+    <div class="sub">points sur 40</div>
+    <div class="mention" id="scoreMention"></div>
+    <div class="detail" id="scoreDetail"></div>
+    <button class="btn-restart" onclick="restart()">Recommencer</button>
+  </div>
+</div>
+
+<script>
+const rawQuestions = [
+  {
+    q: "La « livraison » dans le contrat de commission désigne :",
+    choices: [
+      { text: "La remise de la marchandise au commissionnaire", correct: false },
+      { text: "La remise physique de la marchandise au destinataire ou à son représentant qui l'accepte", correct: true },
+      { text: "Le chargement du véhicule de transport", correct: false },
+      { text: "La signature du bon de transport", correct: false }
+    ],
+    comment: "L'article 2.5 définit la livraison comme la <strong>remise physique de la marchandise au destinataire ou à son représentant qui l'accepte</strong>. L'acceptation du destinataire est un élément constitutif : sans elle, la livraison n'est pas réputée accomplie."
+  },
+  {
+    q: "Le donneur d'ordre qui demande un matériel d'un type particulier doit :",
+    choices: [
+      { text: "L'indiquer verbalement au commissionnaire", correct: false },
+      { text: "Choisir lui-même le véhicule auprès du transporteur", correct: false },
+      { text: "Le spécifier et confirmer sa demande par écrit ou moyen électronique", correct: true },
+      { text: "Adresser sa demande directement au substitué", correct: false }
+    ],
+    comment: "L'article 3.4 exige que le donneur d'ordre <strong>spécifie et confirme sa demande par écrit</strong> ou par tout moyen électronique de transmission et de conservation des données. La demande verbale n'est pas opposable en cas de litige."
+  },
+  {
+    q: "La déclaration d'intérêt spécial à la livraison constitue :",
+    choices: [
+      { text: "Une prestation accessoire au contrat de commission de transport", correct: true },
+      { text: "Une clause obligatoire du contrat", correct: false },
+      { text: "Une garantie légale automatique", correct: false },
+      { text: "Un document douanier", correct: false }
+    ],
+    comment: "L'article 2.7 liste les prestations accessoires au contrat de commission : la <strong>déclaration d'intérêt spécial à la livraison</strong> en fait partie, au même titre que la déclaration de valeur, la livraison contre remboursement, l'assurance marchandises et les opérations de douane."
+  },
+  {
+    q: "Le commissionnaire informe le donneur d'ordre des avantages et inconvénients des modes de transport :",
+    choices: [
+      { text: "Uniquement en cours d'exécution du contrat", correct: false },
+      { text: "Après la livraison de la marchandise", correct: false },
+      { text: "Sur demande écrite du donneur d'ordre uniquement", correct: false },
+      { text: "Préalablement à la conclusion du contrat de commission", correct: true }
+    ],
+    comment: "L'article 5.5.1 précise que le devoir de conseil s'exerce <strong>préalablement à la conclusion du contrat</strong> et dès que le commissionnaire est sollicité. Il doit informer sur les avantages et inconvénients de chaque mode de transport possible."
+  },
+  {
+    q: "En cas d'instructions incompatibles avec les réglementations en vigueur, le commissionnaire :",
+    choices: [
+      { text: "Les exécute sous réserve expresse", correct: false },
+      { text: "Doit refuser de les exécuter et en informe le donneur d'ordre", correct: true },
+      { text: "Les transmet au substitué pour exécution", correct: false },
+      { text: "Contacte directement le destinataire", correct: false }
+    ],
+    comment: "L'article 5.4.2 oblige le commissionnaire à <strong>refuser d'exécuter</strong> les instructions incompatibles avec les réglementations ou induisant un risque, sans que sa responsabilité puisse être engagée. Il doit en informer le donneur d'ordre par écrit."
+  },
+  {
+    q: "Lorsque des marchandises dangereuses sont en jeu, l'emballage et l'étiquetage doivent être conformes :",
+    choices: [
+      { text: "Aux instructions du commissionnaire de transport", correct: false },
+      { text: "Aux standards internes de l'entreprise expéditrice", correct: false },
+      { text: "Aux réglementations en vigueur", correct: true },
+      { text: "Aux directives du transporteur substitué", correct: false }
+    ],
+    comment: "L'article 4.5 est sans équivoque : pour les marchandises dangereuses, <strong>l'emballage et l'étiquetage doivent être conformes aux réglementations en vigueur</strong> (notamment l'ADR pour le transport routier). Cette obligation incombe au donneur d'ordre."
+  },
+  {
+    q: "Dans le cadre du contrat de commission, les « réserves » sont définies comme :",
+    choices: [
+      { text: "Toute contestation expresse, précise, motivée et significative relative à l'état ou la quantité de la marchandise", correct: true },
+      { text: "Une clause de limitation de responsabilité", correct: false },
+      { text: "Un dépôt de garantie financière", correct: false },
+      { text: "Une mention facultative sur la lettre de voiture", correct: false }
+    ],
+    comment: "L'article 2.9 définit les réserves comme le fait d'exprimer de façon <strong>expresse, précise, motivée et significative</strong> toute contestation relative à l'état et/ou la quantité de la marchandise lors de la prise en charge ou de la livraison, ou relative au délai d'acheminement."
+  },
+  {
+    q: "Sans ordre écrit du donneur d'ordre, le commissionnaire :",
+    choices: [
+      { text: "Souscrit automatiquement une assurance pour tout envoi", correct: false },
+      { text: "Souscrit une assurance sur décision unilatérale", correct: false },
+      { text: "Souscrit une assurance uniquement pour les envois supérieurs à 1 tonne", correct: false },
+      { text: "Ne souscrit aucune assurance marchandises", correct: true }
+    ],
+    comment: "L'article 7 est explicite : <strong>aucune assurance n'est souscrite</strong> par le commissionnaire sans ordre écrit (ou électronique) répété pour chaque envoi, précisant les risques à couvrir et les valeurs à garantir. En l'absence d'instructions précises, seuls les risques « ordinaires » sont couverts."
+  },
+  {
+    q: "En cas de modification du contrat de commission affectant sa substance, à l'initiative du donneur d'ordre :",
+    choices: [
+      { text: "Le contrat est automatiquement résilié", correct: false },
+      { text: "Les parties ont la faculté de renégocier les conditions tarifaires", correct: true },
+      { text: "Le commissionnaire peut exiger une indemnité forfaitaire", correct: false },
+      { text: "Les modifications sont sans effet sur le prix", correct: false }
+    ],
+    comment: "L'article 11.4 prévoit que si une modification affecte la <strong>substance du contrat</strong> à l'initiative du donneur d'ordre, les parties ont la faculté de renégocier les conditions tarifaires. En cas de désaccord, chacune peut mettre fin au contrat selon les conditions de l'article 15.1."
+  },
+  {
+    q: "La vérification des documents fournis par le donneur d'ordre ayant un lien direct avec l'organisation du transport est à la charge :",
+    choices: [
+      { text: "Du substitué uniquement", correct: false },
+      { text: "Du donneur d'ordre lui-même", correct: false },
+      { text: "Du commissionnaire de transport", correct: true },
+      { text: "Du destinataire final", correct: false }
+    ],
+    comment: "L'article 3.2 impose au <strong>commissionnaire</strong> de procéder à la vérification des documents fournis par le donneur d'ordre qui ont un lien direct avec l'organisation du transport. Pour les autres documents, il s'assure de leur conformité apparente avec la mission confiée."
+  },
+  {
+    q: "En cas d'empêchement au transport, en l'absence d'instructions du donneur d'ordre en temps utile, le commissionnaire :",
+    choices: [
+      { text: "Attend les instructions sans agir", correct: false },
+      { text: "Résilie immédiatement le contrat", correct: false },
+      { text: "Transfère la responsabilité au substitué", correct: false },
+      { text: "Prend les mesures qui lui paraissent les meilleures dans l'intérêt du donneur d'ordre", correct: true }
+    ],
+    comment: "L'article 9 prévoit qu'en l'absence de réponse du donneur d'ordre en temps utile, le commissionnaire <strong>prend les mesures qui lui paraissent les meilleures dans l'intérêt du donneur d'ordre</strong> pour la conservation ou l'acheminement de la marchandise. Les frais ainsi engagés sont répercutés au donneur d'ordre sur justificatifs."
+  },
+  {
+    q: "Les prix initialement convenus dans le contrat de commission sont renégociés :",
+    choices: [
+      { text: "À la date anniversaire du contrat", correct: true },
+      { text: "À chaque envoi", correct: false },
+      { text: "Tous les 6 mois automatiquement", correct: false },
+      { text: "Uniquement en cas de hausse du carburant", correct: false }
+    ],
+    comment: "L'article 10.2 prévoit que les prix initialement convenus sont renégociés à la <strong>date anniversaire du contrat</strong>. La renégociation peut également intervenir en cours d'année en cas de variations significatives des charges des substitués dues à des conditions extérieures."
+  },
+  {
+    q: "Lors de relations commerciales suivies faisant l'objet d'une convention écrite, chaque envoi est présumé :",
+    choices: [
+      { text: "Soumis à une renégociation tarifaire systématique", correct: false },
+      { text: "Exécuté aux conditions de cette convention", correct: true },
+      { text: "Soumis à une nouvelle cotation obligatoire", correct: false },
+      { text: "Accompagné d'une déclaration de valeur automatique", correct: false }
+    ],
+    comment: "L'article 1er dispose qu'en cas de relations commerciales suivies ayant fait l'objet d'une <strong>convention écrite</strong>, chaque envoi est présumé exécuté <strong>aux conditions de cette convention</strong>. Cela évite de renégocier les termes pour chaque opération."
+  },
+  {
+    q: "En cas de manquements répétés d'une partie à ses obligations, malgré un avertissement par LRAR, l'autre partie peut résilier le contrat :",
+    choices: [
+      { text: "Uniquement si le contrat est à durée indéterminée", correct: false },
+      { text: "Moyennant un préavis d'un mois minimum", correct: false },
+      { text: "Sans préavis ni indemnité", correct: true },
+      { text: "Avec le versement d'une indemnité compensatrice", correct: false }
+    ],
+    comment: "L'article 15.2 permet, en cas de manquements répétés malgré un avertissement par LRAR, de mettre fin au contrat <strong>sans préavis ni indemnité</strong>, qu'il soit à durée déterminée ou indéterminée. La résiliation se fait par envoi d'une lettre recommandée avec avis de réception."
+  },
+  {
+    q: "La renégociation du prix est possible en cas de :",
+    choices: [
+      { text: "Simple augmentation des tarifs du commissionnaire", correct: false },
+      { text: "Demande unilatérale du donneur d'ordre sans justification", correct: false },
+      { text: "Modification des horaires de livraison", correct: false },
+      { text: "Variations significatives des charges des substitués liées à des conditions extérieures", correct: true }
+    ],
+    comment: "L'article 10.2 limite le droit à renégociation aux cas de <strong>variations significatives des charges des substitués</strong> qui tiennent à des conditions <strong>extérieures</strong> à ceux-ci (ex. : hausse des péages, carburant, réglementation). Une simple décision tarifaire du commissionnaire ne suffit pas."
+  },
+  {
+    q: "En cas de résiliation d'un contrat à durée indéterminée dont la relation est comprise entre 6 mois et 1 an, le préavis est de :",
+    choices: [
+      { text: "2 mois", correct: true },
+      { text: "1 mois", correct: false },
+      { text: "3 mois", correct: false },
+      { text: "6 mois", correct: false }
+    ],
+    comment: "L'article 15.1 fixe trois paliers : <strong>1 mois</strong> si la relation ≤ 6 mois, <strong>2 mois</strong> si la relation est comprise entre 6 mois et 1 an, et <strong>3 mois</strong> si la relation est d'un an et plus. Le préavis court à partir de la réception de la LRAR."
+  },
+  {
+    q: "Une rémunération supplémentaire est due au commissionnaire lorsque le donneur d'ordre souscrit :",
+    choices: [
+      { text: "Uniquement une assurance marchandises", correct: false },
+      { text: "Une déclaration de valeur ou un intérêt spécial à la livraison", correct: true },
+      { text: "Une livraison contre remboursement", correct: false },
+      { text: "Une demande de délai de livraison prolongé", correct: false }
+    ],
+    comment: "Les articles 13.3 et 13.4 précisent que la <strong>déclaration de valeur</strong> et la <strong>déclaration d'intérêt spécial à la livraison</strong> font l'objet d'une rémunération supplémentaire, car elles élèvent les plafonds d'indemnisation au-delà des limites légales."
+  },
+  {
+    q: "Le commissionnaire de transport est présumé responsable des dommages résultant :",
+    choices: [
+      { text: "Uniquement de sa faute personnelle prouvée", correct: false },
+      { text: "Uniquement des actes de ses substitués", correct: false },
+      { text: "Du transport, de son organisation et de l'exécution des prestations accessoires", correct: true },
+      { text: "Exclusivement des retards à la livraison", correct: false }
+    ],
+    comment: "L'article 13 pose une présomption de responsabilité large : le commissionnaire répond des dommages résultant <strong>du transport, de son organisation, de l'exécution des prestations accessoires et des instructions spécifiques</strong>. Cette présomption s'applique indépendamment de la faute des substitués."
+  },
+  {
+    q: "Les droits, taxes et impôts douaniers dans le cadre du contrat de commission :",
+    choices: [
+      { text: "Sont inclus dans le prix forfaitaire de la prestation", correct: false },
+      { text: "Sont négociés librement entre les parties", correct: false },
+      { text: "Sont à la charge définitive du commissionnaire", correct: false },
+      { text: "Sont facturés séparément en sus de la prestation principale", correct: true }
+    ],
+    comment: "L'article 10.1 précise que les droits, taxes, redevances et impôts (accises, droits d'entrée…) <strong>ne sont pas compris</strong> dans le prix de la prestation et sont <strong>facturés séparément en sus</strong> de la prestation principale. Tous les prix sont calculés hors taxes (art. 10.3)."
+  },
+  {
+    q: "En cas de résiliation d'un contrat à durée indéterminée dont la relation n'excède pas six mois, le préavis est de :",
+    choices: [
+      { text: "1 mois", correct: true },
+      { text: "2 mois", correct: false },
+      { text: "3 mois", correct: false },
+      { text: "15 jours", correct: false }
+    ],
+    comment: "L'article 15.1 prévoit un préavis de <strong>1 mois</strong> lorsque le temps écoulé depuis le début d'exécution du contrat n'est pas supérieur à six mois. Ce préavis passe à 2 mois entre 6 mois et 1 an, et à 3 mois au-delà d'un an de relation."
+  }
+];
+
+const letters = ['A','B','C','D'];
+let shuffled = [];
+let current = 0;
+let answers = [];
+let validated = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function init() {
+  shuffled = rawQuestions.map(q => {
+    const mixed = shuffle(q.choices);
+    const correctIdx = mixed.findIndex(c => c.correct);
+    return { q: q.q, choices: mixed, correctIdx, comment: q.comment };
+  });
+  answers = new Array(shuffled.length).fill(null);
+  validated = new Array(shuffled.length).fill(false);
+  current = 0;
+  render();
+}
+
+function render() {
+  const item = shuffled[current];
+  document.getElementById('qBadge').textContent = `Q${current + 1}`;
+  document.getElementById('qText').textContent = item.q;
+
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+
+  item.choices.forEach((c, j) => {
+    const label = document.createElement('label');
+    label.className = 'choice-label' + (validated[current] ? ' locked' : '');
+    label.id = `c${j}`;
+
+    if (validated[current]) {
+      if (j === item.correctIdx) label.classList.add('correct');
+      else if (j === answers[current] && answers[current] !== item.correctIdx) label.classList.add('wrong');
+    } else if (answers[current] === j) {
+      label.classList.add('selected');
+    }
+
+    label.innerHTML = `<input type="radio" name="choice" value="${j}"><span class="choice-letter">${letters[j]}</span><span>${c.text}</span>`;
+    if (!validated[current]) {
+      label.addEventListener('click', () => selectChoice(j));
+    }
+    container.appendChild(label);
+  });
+
+  const fb = document.getElementById('feedbackBox');
+  if (validated[current]) {
+    const correct = answers[current] === item.correctIdx;
+    fb.style.display = 'block';
+    fb.className = 'feedback-box ' + (correct ? 'ok' : 'ko');
+    document.getElementById('fbVerdict').innerHTML = correct
+      ? `✓ Bonne réponse — ${letters[item.correctIdx]}`
+      : `✗ Mauvaise réponse — La bonne réponse était : <strong>${letters[item.correctIdx]}</strong>`;
+    document.getElementById('fbComment').innerHTML = item.comment;
+  } else {
+    fb.style.display = 'none';
+  }
+
+  const btnValidate = document.getElementById('btnValidate');
+  const btnNext = document.getElementById('btnNext');
+  const btnPrev = document.getElementById('btnPrev');
+
+  if (validated[current]) {
+    btnValidate.style.display = 'none';
+    btnNext.style.display = 'block';
+    btnNext.textContent = current < shuffled.length - 1 ? 'Suivant →' : 'Voir le score';
+  } else {
+    btnValidate.style.display = 'block';
+    btnValidate.disabled = answers[current] === null;
+    btnNext.style.display = 'none';
+  }
+
+  btnPrev.style.display = current > 0 ? 'block' : 'none';
+  updateProgress();
+}
+
+function selectChoice(j) {
+  if (validated[current]) return;
+  answers[current] = j;
+  render();
+}
+
+function validateAnswer() {
+  if (answers[current] === null) return;
+  validated[current] = true;
+  render();
+}
+
+function goTo(idx) {
+  if (idx < 0) return;
+  if (idx >= shuffled.length) { showScore(); return; }
+  current = idx;
+  render();
+}
+
+function updateProgress() {
+  const done = validated.filter(Boolean).length;
+  document.getElementById('progressFill').style.width = (done / shuffled.length * 100) + '%';
+  document.getElementById('progressLabel').textContent = `${done} / ${shuffled.length}`;
+}
+
+function showScore() {
+  let score = 0;
+  shuffled.forEach((item, i) => {
+    if (validated[i] && answers[i] === item.correctIdx) score += 2;
+  });
+  document.getElementById('mainCard').style.display = 'none';
+  const sc = document.getElementById('scoreCard');
+  sc.style.display = 'block';
+  document.getElementById('scoreBig').textContent = score;
+  const pct = Math.round(score / 40 * 100);
+  document.getElementById('scoreDetail').textContent = `${pct} % de bonnes réponses`;
+  let mention = '';
+  if (score >= 36) mention = '🏆 Excellent — Maîtrise parfaite !';
+  else if (score >= 28) mention = '✅ Bon niveau — Continue ainsi !';
+  else if (score >= 20) mention = '📘 Passable — Quelques révisions s\'imposent.';
+  else mention = '⚠️ Insuffisant — Relis le contrat type attentivement.';
+  document.getElementById('scoreMention').textContent = mention;
+  sc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function restart() {
+  document.getElementById('scoreCard').style.display = 'none';
+  document.getElementById('mainCard').style.display = 'block';
+  init();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+init();
+</script>
+</body>
+</html>
