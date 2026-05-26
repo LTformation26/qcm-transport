@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM – Transport maritime | Série 1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap');
+  :root { --green-dark:#1a5c38;--green-mid:#2e7d52;--green-light:#e8f5ee;--green-accent:#2ecc71;--red:#c0392b;--red-light:#fdecea;--grey-bg:#f4f4f2;--grey-border:#ddd;--text:#1c1c1c;--white:#fff; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Barlow',sans-serif;background:var(--grey-bg);color:var(--text);min-height:100vh;}
+  header{background:var(--green-dark);color:var(--white);padding:22px 36px 18px;border-bottom:4px solid var(--green-accent);}
+  header .label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--green-accent);margin-bottom:5px;}
+  header h1{font-family:'Barlow Condensed',sans-serif;font-size:23px;font-weight:700;}
+  header .meta{margin-top:6px;font-size:12px;color:rgba(255,255,255,0.6);}
+  .progress-wrap{background:var(--green-dark);padding:12px 36px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,0.1);}
+  .progress-track{flex:1;background:rgba(255,255,255,0.15);border-radius:4px;height:5px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--green-accent);border-radius:4px;transition:width 0.4s ease;}
+  .progress-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:rgba(255,255,255,0.8);white-space:nowrap;min-width:70px;text-align:right;}
+  .container{max-width:740px;margin:36px auto;padding:0 20px 60px;}
+  .card{background:var(--white);border-radius:12px;border:1px solid var(--grey-border);padding:32px 36px;box-shadow:0 2px 12px rgba(0,0,0,0.06);animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .q-badge{background:var(--green-dark);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;padding:3px 11px;border-radius:5px;}
+  .q-pts{font-size:12px;color:#999;}
+  .q-text{font-size:16px;font-weight:600;line-height:1.5;margin-bottom:22px;color:var(--text);}
+  .choices{display:flex;flex-direction:column;gap:9px;}
+  .choice-label{display:flex;align-items:flex-start;gap:12px;padding:11px 15px;border:1.5px solid var(--grey-border);border-radius:8px;cursor:pointer;font-size:14.5px;transition:border-color 0.15s,background 0.15s;line-height:1.4;}
+  .choice-label:hover:not(.locked){border-color:var(--green-mid);background:var(--green-light);}
+  .choice-label input{display:none;}
+  .choice-letter{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--green-dark);background:var(--green-light);border-radius:4px;padding:2px 8px;flex-shrink:0;margin-top:1px;}
+  .choice-label.selected{border-color:var(--green-dark);background:var(--green-light);}
+  .choice-label.correct{border-color:var(--green-accent);background:#eafaf1;}
+  .choice-label.wrong{border-color:var(--red);background:var(--red-light);}
+  .choice-label.correct .choice-letter{background:#c3efda;color:#1a7a3f;}
+  .choice-label.wrong .choice-letter{background:#fadbd8;color:var(--red);}
+  .feedback-box{display:none;margin-top:18px;padding:14px 16px;border-radius:8px;font-size:13.5px;line-height:1.55;}
+  .feedback-box.ok{background:#eafaf1;border-left:4px solid var(--green-accent);color:#1a5c38;}
+  .feedback-box.ko{background:var(--red-light);border-left:4px solid var(--red);color:#8b1a1a;}
+  .feedback-box .fb-verdict{font-weight:700;font-size:14px;margin-bottom:5px;}
+  .feedback-box .fb-comment{color:#333;}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:26px;gap:10px;}
+  .btn{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:7px;padding:11px 22px;cursor:pointer;transition:background 0.2s,opacity 0.2s;}
+  .btn-prev{background:#e8e8e4;color:#555;}.btn-prev:hover{background:#d5d5ce;}
+  .btn-validate{background:var(--green-dark);color:var(--white);flex:1;}.btn-validate:hover{background:var(--green-mid);}.btn-validate:disabled{opacity:0.45;cursor:not-allowed;}
+  .btn-next{background:var(--green-dark);color:var(--white);}.btn-next:hover{background:var(--green-mid);}
+  .score-card{display:none;background:var(--green-dark);color:var(--white);border-radius:12px;padding:40px 36px;text-align:center;box-shadow:0 4px 20px rgba(26,92,56,0.2);}
+  .score-card .big{font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:700;color:var(--green-accent);line-height:1;}
+  .score-card .sub{font-size:14px;color:rgba(255,255,255,0.65);margin-top:6px;}
+  .score-card .mention{font-size:18px;font-weight:600;margin-top:18px;}
+  .score-card .detail{margin-top:10px;font-size:13px;color:rgba(255,255,255,0.6);}
+  .btn-restart{margin-top:22px;background:transparent;border:2px solid rgba(255,255,255,0.35);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:1px;text-transform:uppercase;padding:10px 26px;border-radius:7px;cursor:pointer;}
+  .btn-restart:hover{border-color:var(--green-accent);color:var(--green-accent);}
+  @media(max-width:600px){header{padding:18px 16px 14px;}header h1{font-size:19px;}.progress-wrap{padding:10px 16px;}.container{padding:0 12px 48px;}.card{padding:22px 18px;}.q-text{font-size:15px;}.choice-label{font-size:13.5px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="label">Capacité de Transport de Marchandises +3,5t</div>
+  <h1>Transport maritime — Série 1</h1>
+  <div class="meta">20 questions · 2 points chacune · Score max : 40 points</div>
+</header>
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 20</div>
+</div>
+<div class="container">
+  <div class="card" id="mainCard">
+    <div class="q-meta"><span class="q-badge" id="qBadge">Q1</span><span class="q-pts">2 points</span></div>
+    <div class="q-text" id="qText"></div>
+    <div class="choices" id="choicesContainer"></div>
+    <div class="feedback-box" id="feedbackBox"><div class="fb-verdict" id="fbVerdict"></div><div class="fb-comment" id="fbComment"></div></div>
+    <div class="nav">
+      <button class="btn btn-prev" id="btnPrev" onclick="goTo(current-1)">← Précédent</button>
+      <button class="btn btn-validate" id="btnValidate" onclick="validateAnswer()">Valider</button>
+      <button class="btn btn-next" id="btnNext" onclick="goTo(current+1)" style="display:none">Suivant →</button>
+    </div>
+  </div>
+  <div class="score-card" id="scoreCard">
+    <div class="big" id="scoreBig"></div><div class="sub">points sur 40</div>
+    <div class="mention" id="scoreMention"></div><div class="detail" id="scoreDetail"></div>
+    <button class="btn-restart" onclick="restart()">Recommencer</button>
+  </div>
+</div>
+<script>
+const rawQuestions=[
+  {q:"Le fréteur est :",choices:[{text:"La personne qui fournit un navire pour en percevoir une rémunération (le fret)",correct:true},{text:"La personne qui conclut le contrat de transport avec le chargeur",correct:false},{text:"La personne habilitée à prendre livraison de la marchandise",correct:false},{text:"L'affréteur, le gérant ou le propriétaire exploitant un navire",correct:false}],comment:"Le <strong>fréteur</strong> est la personne qui fournit un navire pour en percevoir une rémunération appelée le fret. Il ne faut pas le confondre avec l'armateur (qui gère le navire et fournit le personnel) ni avec le transporteur (qui conclut le contrat avec le chargeur)."},
+  {q:"La loi française du 18 juin 1966 s'applique :",choices:[{text:"À tous les transports maritimes internationaux sans exception",correct:false},{text:"Aux transports effectués au départ ou à destination d'un port français, lorsqu'ils ne sont pas soumis à une convention internationale",correct:true},{text:"Uniquement aux transports entre deux ports français",correct:false},{text:"À tous les transports soumis à la Convention de Hambourg",correct:false}],comment:"La loi française du 18 juin 1966 s'applique aux transports effectués <strong>au départ ou à destination d'un port français</strong>, lorsqu'ils ne sont pas soumis à une convention internationale (Bruxelles ou Hambourg). Elle est subsidiaire par rapport aux conventions."},
+  {q:"La Convention de Bruxelles a été adoptée en :",choices:[{text:"1966",correct:false},{text:"1978",correct:false},{text:"1924",correct:true},{text:"1968",correct:false}],comment:"La Convention de Bruxelles a été adoptée en <strong>1924</strong> et ratifiée par 78 États. Elle a été amendée par un protocole en 1968 (règles de Visby, ratifié par 22 États) et un second protocole en 1979 remplaçant l'or par les DTS comme valeur étalon."},
+  {q:"La clause Paramount est :",choices:[{text:"Une clause d'exonération de responsabilité du transporteur maritime",correct:false},{text:"Une clause limitant l'indemnisation à la valeur déclarée de la marchandise",correct:false},{text:"Une clause permettant le chargement en pontée sans accord du chargeur",correct:false},{text:"La clause souveraine par laquelle les parties déterminent la loi ou convention applicable à leur contrat",correct:true}],comment:"La <strong>clause Paramount</strong> est une clause souveraine permettant aux parties de déterminer, lors de la conclusion du contrat, la loi ou la convention applicable à leur contrat de transport. Elle permet d'éviter les litiges sur le texte juridique applicable."},
+  {q:"Le connaissement maritime remplit :",choices:[{text:"Trois fonctions : reçu de la marchandise, contrat de transport, titre représentatif de possession",correct:true},{text:"Deux fonctions : reçu de la marchandise et contrat de transport uniquement",correct:false},{text:"Quatre fonctions : reçu, contrat, titre et document douanier",correct:false},{text:"Une seule fonction : titre représentatif de possession de la marchandise",correct:false}],comment:"Le connaissement maritime remplit <strong>trois fonctions</strong> : (1) reçu de la marchandise attestant le bon état apparent, (2) contrat de transport, (3) titre représentatif de possession de la marchandise conférant des droits à son porteur. C'est ce troisième rôle qui le distingue de la LTM."},
+  {q:"La limite d'indemnisation par colis prévue par la Convention de Bruxelles amendée est de :",choices:[{text:"835 DTS par colis",correct:false},{text:"666,67 DTS par colis",correct:true},{text:"500 DTS par colis",correct:false},{text:"1 000 DTS par colis",correct:false}],comment:"La Convention de Bruxelles amendée (et la loi française) fixent la limite à <strong>666,67 DTS par colis ou unité</strong>. La Convention de Hambourg prévoit une limite plus élevée : 835 DTS par colis. Il faut toujours retenir le plus grand des deux montants (par kg ou par colis)."},
+  {q:"La prescription pour les actions issues de la Convention de Bruxelles et de la loi française est de :",choices:[{text:"6 mois",correct:false},{text:"2 ans",correct:false},{text:"1 an",correct:true},{text:"3 ans",correct:false}],comment:"La prescription est de <strong>1 an</strong> pour la Convention de Bruxelles et la loi française, avec une action récursoire possible dans les 3 mois. La Convention de Hambourg prévoit une prescription de 2 ans (action récursoire : 90 jours)."},
+  {q:"Les conférences maritimes ont été supprimées en Europe le :",choices:[{text:"1er janvier 2004",correct:false},{text:"15 mars 2006",correct:false},{text:"1er juillet 2009",correct:false},{text:"18 octobre 2008",correct:true}],comment:"Les conférences maritimes ont été supprimées en Europe le <strong>18 octobre 2008</strong>, l'Union européenne les considérant contraires à la libre concurrence. Ces ententes entre armateurs permettaient d'établir des taux de fret communs sur des lignes maritimes définies."},
+  {q:"Le NVOCC (Non-Vessel Operating Common Carrier) est :",choices:[{text:"Un entrepreneur de transport maritime sans navire, qui réserve des cellules à conteneurs auprès des transporteurs",correct:true},{text:"Le propriétaire d'un navire porte-conteneurs de grande capacité",correct:false},{text:"Un organisme international de contrôle des frets maritimes",correct:false},{text:"Le gestionnaire administratif du port de destination",correct:false}],comment:"Le NVOCC <strong>ne possède pas de navire</strong>. Il réserve des cellules à conteneurs (slot charter) auprès des transporteurs maritimes dans le cadre de contrats sur des relations précises. Il peut émettre ses propres connaissements. En France, il est assimilé à un commissionnaire de transport."},
+  {q:"La lettre de transport maritime (LTM / Sea Way Bill) est :",choices:[{text:"Un titre négociable représentatif de la marchandise",correct:false},{text:"Un document non négociable permettant la livraison directe au destinataire mentionné",correct:true},{text:"Obligatoire pour tous les crédits documentaires",correct:false},{text:"Équivalente au connaissement pour tous les usages bancaires",correct:false}],comment:"La LTM est <strong>non négociable</strong>. Elle matérialise uniquement le contrat de transport et n'est pas un titre représentatif de possession. Elle permet la livraison directe au destinataire mentionné sur le document, sans présentation de titre — ce qui la distingue fondamentalement du connaissement."},
+  {q:"Pour les dommages non apparents, le délai de protestation prévu par la Convention de Hambourg est de :",choices:[{text:"3 jours",correct:false},{text:"7 jours",correct:false},{text:"15 jours",correct:true},{text:"21 jours",correct:false}],comment:"Pour les dommages non apparents, les délais de protestation sont : <strong>3 jours</strong> (Convention de Bruxelles), <strong>3 jours ouvrables</strong> (loi française), <strong>15 jours</strong> (Convention de Hambourg). Pour les retards sous convention de Hambourg : 60 jours."},
+  {q:"L'avarie commune est :",choices:[{text:"Une avarie résultant d'un acte involontaire du capitaine",correct:false},{text:"Une avarie touchant plusieurs navires simultanément",correct:false},{text:"Un dommage subi par la cargaison lors d'un naufrage",correct:false},{text:"Un acte délibéré et volontaire du capitaine consistant en un sacrifice pour assurer la sécurité commune du navire et de la cargaison",correct:true}],comment:"L'avarie commune est un <strong>acte délibéré et volontaire du capitaine</strong> (sacrifice en nature ou en argent) pour faire face à un risque mettant l'expédition en péril. Le coût est supporté proportionnellement par les propriétaires du navire et de la cargaison. Un dispacheur établit le compromis d'avarie."},
+  {q:"Le H B/L (House Bill of Lading) est émis par :",choices:[{text:"Le groupeur maritime",correct:true},{text:"Le transporteur maritime",correct:false},{text:"Le destinataire final à destination",correct:false},{text:"L'armateur au port de chargement",correct:false}],comment:"Le <strong>groupeur maritime</strong> émet en son nom le H B/L (House Bill of Lading) par envoi individuel, mentionnant le chargeur réel, la marchandise et le destinataire. Le transporteur maritime émet quant à lui le M B/L (Master Bill of Lading) pour l'ensemble du lot de groupage."},
+  {q:"En tarification maritime, l'unité payante (UP) est calculée :",choices:[{text:"Toujours au poids métrique uniquement",correct:false},{text:"À l'avantage du transporteur : tonne métrique ou m³, le plus élevé des deux est retenu",correct:true},{text:"À l'avantage du chargeur, le moins élevé des deux est retenu",correct:false},{text:"Selon la valeur déclarée de la marchandise",correct:false}],comment:"L'unité payante (UP) est toujours calculée <strong>à l'avantage du transporteur</strong>. Quand les taux sont exprimés à la tonne ou au m³, c'est le plus élevé des deux qui est retenu. Exemple : 3 m³ et 2 t → 3 UP ; 3 m³ et 4 t → 4 UP."},
+  {q:"Le CT B/L (Combined Transport Bill of Lading) offre :",choices:[{text:"Un régime juridique limité au seul parcours maritime",correct:false},{text:"Une couverture uniquement entre deux ports maritimes",correct:false},{text:"Un régime juridique unique de bout en bout (door to door) sans distinction des phases du transport",correct:true},{text:"Une couverture limitée au pré-acheminement terrestre uniquement",correct:false}],comment:"Le CT B/L offre un <strong>régime juridique unique de bout en bout (door to door)</strong> sans distinction des différentes phases du transport. Le transporteur maritime choisit ses substitués. En France, il agit en tant que commissionnaire. Très utilisé avec la conteneurisation en FCL-FCL."},
+  {q:"La surcharge BAF (Bunker Adjustment Factor) est :",choices:[{text:"Un correctif permanent lié au poids des colis lourds",correct:false},{text:"Une ristourne accordée aux chargeurs fidèles",correct:false},{text:"Une taxe portuaire perçue au déchargement",correct:false},{text:"Un correctif conjoncturel lié aux variations du prix du carburant marin",correct:true}],comment:"Le <strong>BAF (Bunker Adjustment Factor)</strong>, aussi appelé surcharge fuel, est un correctif conjoncturel qui s'ajuste en fonction des variations du prix des combustibles marins. Il fait partie des correctifs conjoncturels avec la surcharge monétaire (CAF) et la surcharge d'encombrement portuaire."},
+  {q:"Le connaissement « clean » (net de réserves) atteste que :",choices:[{text:"La marchandise a été chargée sans réserves relatives à un état défectueux apparent",correct:true},{text:"Le fret a été entièrement payé avant le départ",correct:false},{text:"La marchandise est exempte de matières dangereuses",correct:false},{text:"Le connaissement n'a fait l'objet d'aucun endossement",correct:false}],comment:"Le connaissement <strong>« clean »</strong> (net de réserves) atteste que la marchandise a été chargée sans réserves relatives à un état défectueux apparent. C'est généralement ce type de connaissement qui est exigé dans le cadre des crédits documentaires."},
+  {q:"La limite d'indemnisation par kg prévue par la Convention de Hambourg est de :",choices:[{text:"2 DTS par kg",correct:false},{text:"2,5 DTS par kg",correct:true},{text:"3 DTS par kg",correct:false},{text:"5 DTS par kg",correct:false}],comment:"La Convention de Hambourg prévoit une limite de <strong>2,5 DTS/kg</strong> et 835 DTS par colis ou unité (retenir le plus grand des deux). La Convention de Bruxelles et la loi française prévoient 2 DTS/kg et 666,67 DTS par colis."},
+  {q:"La cotation FIO (Free In, Free Out) signifie que :",choices:[{text:"Les opérations de manutention portuaire sont incluses dans le fret",correct:false},{text:"Le fret inclut uniquement le déchargement",correct:false},{text:"Les frais de chargement et de déchargement sont à la charge de la marchandise",correct:true},{text:"Le fret ne comprend que les opérations terrestres",correct:false}],comment:"<strong>FIO (Free In, Free Out)</strong> signifie que les frais de chargement et de déchargement sont à la charge de la marchandise (et non du navire). Le fret ne comprend alors que le transport maritime stricto sensu. Les variantes FIOS (+ arrimage) et FIOST (+ arrimage et nivellement) sont plus précises."},
+  {q:"Lors d'une avarie commune, le dispacheur est chargé de :",choices:[{text:"Fixer les taux de fret maritimes applicable à l'expédition",correct:false},{text:"Émettre les connaissements directs pour l'ensemble du lot",correct:false},{text:"Calculer les unités payantes applicables à chaque envoi",correct:false},{text:"Établir le compromis d'avarie et régler la contribution proportionnelle de chacun",correct:true}],comment:"Le <strong>dispacheur</strong> est l'expert chargé d'établir le compromis d'avarie lors d'une déclaration d'avarie commune. Il procède au classement des avaries, identifie la cargaison concernée et détermine les règles de contribution proportionnelle entre propriétaires du navire et de la cargaison."}
+];
+const letters=['A','B','C','D'];
+let shuffled=[],current=0,answers=[],validated=[];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function init(){shuffled=rawQuestions.map(q=>{const mixed=shuffle(q.choices);const correctIdx=mixed.findIndex(c=>c.correct);return{q:q.q,choices:mixed,correctIdx,comment:q.comment};});answers=new Array(shuffled.length).fill(null);validated=new Array(shuffled.length).fill(false);current=0;render();}
+function render(){const item=shuffled[current];document.getElementById('qBadge').textContent=`Q${current+1}`;document.getElementById('qText').textContent=item.q;const container=document.getElementById('choicesContainer');container.innerHTML='';item.choices.forEach((c,j)=>{const label=document.createElement('label');label.className='choice-label'+(validated[current]?' locked':'');if(validated[current]){if(j===item.correctIdx)label.classList.add('correct');else if(j===answers[current]&&answers[current]!==item.correctIdx)label.classList.add('wrong');}else if(answers[current]===j){label.classList.add('selected');}label.innerHTML=`<input type="radio" name="choice" value="${j}"><span class="choice-letter">${letters[j]}</span><span>${c.text}</span>`;if(!validated[current]){label.addEventListener('click',()=>selectChoice(j));}container.appendChild(label);});const fb=document.getElementById('feedbackBox');if(validated[current]){const correct=answers[current]===item.correctIdx;fb.style.display='block';fb.className='feedback-box '+(correct?'ok':'ko');document.getElementById('fbVerdict').innerHTML=correct?`✓ Bonne réponse — ${letters[item.correctIdx]}`:`✗ Mauvaise réponse — La bonne réponse était : <strong>${letters[item.correctIdx]}</strong>`;document.getElementById('fbComment').innerHTML=item.comment;}else{fb.style.display='none';}const btnValidate=document.getElementById('btnValidate');const btnNext=document.getElementById('btnNext');const btnPrev=document.getElementById('btnPrev');if(validated[current]){btnValidate.style.display='none';btnNext.style.display='block';btnNext.textContent=current<shuffled.length-1?'Suivant →':'Voir le score';}else{btnValidate.style.display='block';btnValidate.disabled=answers[current]===null;btnNext.style.display='none';}btnPrev.style.display=current>0?'block':'none';updateProgress();}
+function selectChoice(j){if(validated[current])return;answers[current]=j;render();}
+function validateAnswer(){if(answers[current]===null)return;validated[current]=true;render();}
+function goTo(idx){if(idx<0)return;if(idx>=shuffled.length){showScore();return;}current=idx;render();}
+function updateProgress(){const done=validated.filter(Boolean).length;document.getElementById('progressFill').style.width=(done/shuffled.length*100)+'%';document.getElementById('progressLabel').textContent=`${done} / ${shuffled.length}`;}
+function showScore(){let score=0;shuffled.forEach((item,i)=>{if(validated[i]&&answers[i]===item.correctIdx)score+=2;});document.getElementById('mainCard').style.display='none';const sc=document.getElementById('scoreCard');sc.style.display='block';document.getElementById('scoreBig').textContent=score;document.getElementById('scoreDetail').textContent=`${Math.round(score/40*100)} % de bonnes réponses`;let m='';if(score>=36)m='🏆 Excellent — Maîtrise parfaite !';else if(score>=28)m='✅ Bon niveau — Continue ainsi !';else if(score>=20)m='📘 Passable — Quelques révisions s\'imposent.';else m='⚠️ Insuffisant — Relis le chapitre attentivement.';document.getElementById('scoreMention').textContent=m;sc.scrollIntoView({behavior:'smooth',block:'center'});}
+function restart(){document.getElementById('scoreCard').style.display='none';document.getElementById('mainCard').style.display='block';init();window.scrollTo({top:0,behavior:'smooth'});}
+init();
+</script>
+</body>
+</html>
