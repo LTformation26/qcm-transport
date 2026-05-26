@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM – Transport aérien | Série 1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap');
+  :root {
+    --green-dark: #1a5c38; --green-mid: #2e7d52; --green-light: #e8f5ee;
+    --green-accent: #2ecc71; --red: #c0392b; --red-light: #fdecea;
+    --grey-bg: #f4f4f2; --grey-border: #ddd; --text: #1c1c1c; --white: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Barlow', sans-serif; background: var(--grey-bg); color: var(--text); min-height: 100vh; }
+  header { background: var(--green-dark); color: var(--white); padding: 22px 36px 18px; border-bottom: 4px solid var(--green-accent); }
+  header .label { font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--green-accent); margin-bottom:5px; }
+  header h1 { font-family:'Barlow Condensed',sans-serif; font-size:23px; font-weight:700; }
+  header .meta { margin-top:6px; font-size:12px; color:rgba(255,255,255,0.6); }
+  .progress-wrap { background: var(--green-dark); padding: 12px 36px; display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .progress-track { flex:1; background:rgba(255,255,255,0.15); border-radius:4px; height:5px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--green-accent); border-radius:4px; transition:width 0.4s ease; }
+  .progress-label { font-family:'Barlow Condensed',sans-serif; font-size:13px; color:rgba(255,255,255,0.8); white-space:nowrap; min-width:70px; text-align:right; }
+  .container { max-width:740px; margin:36px auto; padding:0 20px 60px; }
+  .card { background:var(--white); border-radius:12px; border:1px solid var(--grey-border); padding:32px 36px; box-shadow:0 2px 12px rgba(0,0,0,0.06); animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .q-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .q-badge { background:var(--green-dark); color:var(--white); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; padding:3px 11px; border-radius:5px; }
+  .q-pts { font-size:12px; color:#999; }
+  .q-text { font-size:16px; font-weight:600; line-height:1.5; margin-bottom:22px; color:var(--text); }
+  .choices { display:flex; flex-direction:column; gap:9px; }
+  .choice-label { display:flex; align-items:flex-start; gap:12px; padding:11px 15px; border:1.5px solid var(--grey-border); border-radius:8px; cursor:pointer; font-size:14.5px; transition:border-color 0.15s, background 0.15s; line-height:1.4; }
+  .choice-label:hover:not(.locked) { border-color:var(--green-mid); background:var(--green-light); }
+  .choice-label input { display:none; }
+  .choice-letter { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:13px; color:var(--green-dark); background:var(--green-light); border-radius:4px; padding:2px 8px; flex-shrink:0; margin-top:1px; }
+  .choice-label.selected { border-color:var(--green-dark); background:var(--green-light); }
+  .choice-label.correct { border-color:var(--green-accent); background:#eafaf1; }
+  .choice-label.wrong { border-color:var(--red); background:var(--red-light); }
+  .choice-label.correct .choice-letter { background:#c3efda; color:#1a7a3f; }
+  .choice-label.wrong .choice-letter { background:#fadbd8; color:var(--red); }
+  .feedback-box { display:none; margin-top:18px; padding:14px 16px; border-radius:8px; font-size:13.5px; line-height:1.55; }
+  .feedback-box.ok { background:#eafaf1; border-left:4px solid var(--green-accent); color:#1a5c38; }
+  .feedback-box.ko { background:var(--red-light); border-left:4px solid var(--red); color:#8b1a1a; }
+  .feedback-box .fb-verdict { font-weight:700; font-size:14px; margin-bottom:5px; }
+  .feedback-box .fb-comment { color:#333; }
+  .nav { display:flex; justify-content:space-between; align-items:center; margin-top:26px; gap:10px; }
+  .btn { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase; border:none; border-radius:7px; padding:11px 22px; cursor:pointer; transition:background 0.2s, opacity 0.2s; }
+  .btn-prev { background:#e8e8e4; color:#555; }
+  .btn-prev:hover { background:#d5d5ce; }
+  .btn-validate { background:var(--green-dark); color:var(--white); flex:1; }
+  .btn-validate:hover { background:var(--green-mid); }
+  .btn-validate:disabled { opacity:0.45; cursor:not-allowed; }
+  .btn-next { background:var(--green-dark); color:var(--white); }
+  .btn-next:hover { background:var(--green-mid); }
+  .score-card { display:none; background:var(--green-dark); color:var(--white); border-radius:12px; padding:40px 36px; text-align:center; box-shadow:0 4px 20px rgba(26,92,56,0.2); }
+  .score-card .big { font-family:'Barlow Condensed',sans-serif; font-size:72px; font-weight:700; color:var(--green-accent); line-height:1; }
+  .score-card .sub { font-size:14px; color:rgba(255,255,255,0.65); margin-top:6px; }
+  .score-card .mention { font-size:18px; font-weight:600; margin-top:18px; }
+  .score-card .detail { margin-top:10px; font-size:13px; color:rgba(255,255,255,0.6); }
+  .btn-restart { margin-top:22px; background:transparent; border:2px solid rgba(255,255,255,0.35); color:var(--white); font-family:'Barlow Condensed',sans-serif; font-size:14px; letter-spacing:1px; text-transform:uppercase; padding:10px 26px; border-radius:7px; cursor:pointer; }
+  .btn-restart:hover { border-color:var(--green-accent); color:var(--green-accent); }
+  @media(max-width:600px){ header { padding:18px 16px 14px; } header h1 { font-size:19px; } .progress-wrap { padding:10px 16px; } .container { padding:0 12px 48px; } .card { padding:22px 18px; } .q-text { font-size:15px; } .choice-label { font-size:13.5px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="label">Capacité de Transport de Marchandises +3,5t</div>
+  <h1>Transport aérien — Série 1</h1>
+  <div class="meta">20 questions · 2 points chacune · Score max : 40 points</div>
+</header>
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 20</div>
+</div>
+<div class="container">
+  <div class="card" id="mainCard">
+    <div class="q-meta"><span class="q-badge" id="qBadge">Q1</span><span class="q-pts">2 points</span></div>
+    <div class="q-text" id="qText"></div>
+    <div class="choices" id="choicesContainer"></div>
+    <div class="feedback-box" id="feedbackBox"><div class="fb-verdict" id="fbVerdict"></div><div class="fb-comment" id="fbComment"></div></div>
+    <div class="nav">
+      <button class="btn btn-prev" id="btnPrev" onclick="goTo(current-1)">← Précédent</button>
+      <button class="btn btn-validate" id="btnValidate" onclick="validateAnswer()">Valider</button>
+      <button class="btn btn-next" id="btnNext" onclick="goTo(current+1)" style="display:none">Suivant →</button>
+    </div>
+  </div>
+  <div class="score-card" id="scoreCard">
+    <div class="big" id="scoreBig"></div>
+    <div class="sub">points sur 40</div>
+    <div class="mention" id="scoreMention"></div>
+    <div class="detail" id="scoreDetail"></div>
+    <button class="btn-restart" onclick="restart()">Recommencer</button>
+  </div>
+</div>
+<script>
+const rawQuestions = [
+  { q: "En transport intérieur français, le contrat de transport aérien est régi par :", choices: [{ text: "Le Code de l'Aviation Civile et certaines dispositions de la Convention de Varsovie", correct: true },{ text: "La Convention de Montréal uniquement", correct: false },{ text: "Le Code des transports", correct: false },{ text: "La Convention de Genève", correct: false }], comment: "En transport intérieur, c'est le <strong>Code de l'Aviation Civile</strong> qui régit le contrat, avec certaines dispositions de la Convention de Varsovie. La Convention de Montréal s'applique au trafic international pour les États l'ayant ratifiée (dont la France depuis novembre 2003)." },
+  { q: "La limite d'indemnisation fixée par la Convention de Montréal (révisée 2019) en cas de perte ou avarie est de :", choices: [{ text: "16,5837 DTS par kg", correct: false },{ text: "22 DTS par kg", correct: true },{ text: "17 DTS par kg", correct: false },{ text: "30 DTS par kg", correct: false }], comment: "La Convention de Montréal fixe la limite à <strong>22 DTS/kg</strong> après révision ICAO de 2019. La Convention de Varsovie prévoit 16,5837 DTS/kg. Ces plafonds peuvent être écartés en cas de faute inexcusable du transporteur." },
+  { q: "En l'absence de réserves à la livraison, pour dommages non apparents sur marchandises, le destinataire doit protester au plus tard dans :", choices: [{ text: "7 jours", correct: false },{ text: "21 jours", correct: false },{ text: "14 jours", correct: true },{ text: "30 jours", correct: false }], comment: "Le délai de protestation pour les dommages non apparents sur marchandises est de <strong>14 jours</strong> à compter de la livraison (7 jours pour les bagages). En cas de retard, le délai est de 21 jours à compter de la mise à disposition." },
+  { q: "Le délai de prescription des actions en transport aérien international (Convention de Montréal) est de :", choices: [{ text: "6 mois", correct: false },{ text: "1 an", correct: false },{ text: "18 mois", correct: false },{ text: "2 ans", correct: true }], comment: "La Convention de Montréal (art. 35) fixe le délai de prescription à <strong>2 ans</strong> à compter de l'arrivée des marchandises à destination, ou de la date à laquelle l'aéronef aurait dû arriver." },
+  { q: "La LTA (Lettre de Transport Aérien) est composée de :", choices: [{ text: "3 originaux et au moins 6 copies", correct: true },{ text: "2 originaux et au moins 6 copies", correct: false },{ text: "3 originaux et au moins 4 copies", correct: false },{ text: "4 originaux et au moins 6 copies", correct: false }], comment: "La LTA comprend <strong>3 originaux</strong> (un pour le transporteur signé par l'expéditeur, un signé par les deux parties, un pour l'expéditeur signé par le transporteur acceptant la marchandise) et au moins <strong>6 copies</strong>." },
+  { q: "Le poids taxable en transport aérien repose sur la règle IATA :", choices: [{ text: "5 dm³ = 1 kg", correct: false },{ text: "6 dm³ = 1 kg", correct: true },{ text: "7 dm³ = 1 kg", correct: false },{ text: "6 dm³ = 1,5 kg", correct: false }], comment: "La règle IATA est <strong>6 dm³ = 1 kg</strong> (ou 1 tonne = 6 m³). Cette règle est issue des capacités des soutes : un appareil capable d'emporter 100 tonnes dispose d'environ 600 m³ de volume utile." },
+  { q: "Le vol camionné désigne :", choices: [{ text: "Un transport effectué uniquement par route", correct: false },{ text: "Un transport aérien sans escale", correct: false },{ text: "Une marchandise acheminée par la route entre deux aéroports par un transporteur aérien", correct: true },{ text: "Un vol charter pour marchandises volumineuses", correct: false }], comment: "Le vol camionné concerne une marchandise remise à un transporteur à un aéroport qui sera <strong>acheminée par la route entre deux aéroports</strong>. La Convention de Varsovie ne couvre que la partie strictement aérienne du transport." },
+  { q: "La LTA domestique (H AWB – House Air Way Bill) est émise par :", choices: [{ text: "Le transporteur aérien", correct: false },{ text: "Le destinataire", correct: false },{ text: "L'expéditeur réel", correct: false },{ text: "Le groupeur aérien", correct: true }], comment: "Le <strong>groupeur aérien</strong> émet en son nom la H AWB (House Air Way Bill) par envoi individuel, mentionnant l'expéditeur réel, la marchandise concernée (nature, quantité, poids) et le destinataire réel." },
+  { q: "L'absence de LTA :", choices: [{ text: "N'a aucune incidence sur la validité du contrat de transport", correct: true },{ text: "Rend le contrat nul et non avenu", correct: false },{ text: "Engage automatiquement la responsabilité du transporteur", correct: false },{ text: "Oblige à utiliser un autre mode de transport", correct: false }], comment: "La LTA matérialise le contrat mais son <strong>absence n'affecte pas la validité du contrat</strong> lui-même. Le contrat de transport aérien reste valide sans LTA. En revanche, l'absence de LTA peut compliquer la gestion des litiges." },
+  { q: "La LTA-Mère (M AWB – Master Air Way Bill) est émise par :", choices: [{ text: "Le groupeur aérien", correct: false },{ text: "Le transporteur aérien", correct: true },{ text: "Le dégroupeur à destination", correct: false },{ text: "Le destinataire final", correct: false }], comment: "Le <strong>transporteur aérien</strong> émet la M AWB (Master Air Way Bill) pour l'ensemble du lot de groupage, mentionnant le groupeur (consolidator), les aéroports d'embarquement et de débarquement, le dégroupeur (deconsolidator) et les quantités." },
+  { q: "La règle du « payant pour » en tarification aérienne signifie que :", choices: [{ text: "Le client paie toujours le tarif de la tranche supérieure", correct: false },{ text: "Le client paie en fonction du poids réel uniquement", correct: false },{ text: "La compagnie applique le tarif le plus avantageux pour le client", correct: true },{ text: "Le client paie un forfait indépendamment du poids", correct: false }], comment: "La compagnie applique le <strong>tarif le plus avantageux pour le client</strong>. Exemple : 430 kg à 1,90 € = 817 €, mais 500 kg à 1,60 € = 800 €. La compagnie facture donc 800 €. Le client peut même envoyer 70 kg supplémentaires sans surcoût." },
+  { q: "En cas de retard, les réserves doivent être adressées au transporteur dans un délai de :", choices: [{ text: "7 jours", correct: false },{ text: "14 jours", correct: false },{ text: "10 jours", correct: false },{ text: "21 jours", correct: true }], comment: "Pour les retards, les réserves peuvent être prises sur la LTA. À défaut, elles doivent être adressées au transporteur dans un délai de <strong>21 jours</strong> à compter de la date à laquelle la marchandise a été mise à la disposition du destinataire." },
+  { q: "La Convention de Montréal est entrée en vigueur pour la France en :", choices: [{ text: "Novembre 2003", correct: true },{ text: "Janvier 2000", correct: false },{ text: "Mars 2005", correct: false },{ text: "Juin 1999", correct: false }], comment: "La Convention de Montréal, signée en 1999, est entrée en vigueur en <strong>novembre 2003</strong> pour les États qui l'ont ratifiée, dont la France. Elle modernise et remplace progressivement la Convention de Varsovie (1929) pour le trafic international." },
+  { q: "Le poids volumétrique d'un envoi se calcule en divisant le volume (en cm³) par :", choices: [{ text: "5 000", correct: false },{ text: "6 000", correct: true },{ text: "7 000", correct: false },{ text: "10 000", correct: false }], comment: "Poids volumétrique = volume (cm³) ÷ <strong>6 000</strong>, arrondi au demi-kg supérieur. Cette règle découle du rapport IATA : 6 dm³ = 1 kg, soit 6 000 cm³ = 1 kg. Exemple : 12,3 kg → arrondi à 12,5 kg." },
+  { q: "La déclaration d'intérêts à la livraison permet à l'expéditeur de :", choices: [{ text: "Exonérer le transporteur de toute responsabilité", correct: false },{ text: "Réduire le délai de prescription", correct: false },{ text: "Élever le plafond d'indemnité à hauteur de la valeur déclarée", correct: true },{ text: "Obtenir une livraison prioritaire garantie", correct: false }], comment: "L'expéditeur peut souscrire une déclaration d'intérêts à la livraison pour <strong>élever le plafond légal d'indemnisation à hauteur de la valeur déclarée</strong>, dépassant ainsi les limites standard (22 DTS/kg sous Convention de Montréal)." },
+  { q: "Le tarif GCR (General Cargo Rate) est :", choices: [{ text: "Spécifique à une catégorie de marchandises", correct: false },{ text: "Calculé uniquement sur le volume de la marchandise", correct: false },{ text: "Identique pour tous les aéroports de départ", correct: false },{ text: "Indépendant de la nature des marchandises", correct: true }], comment: "Le GCR (General Cargo Rate) est établi pour une relation aéroport-aéroport précise et est <strong>indépendant de la nature des marchandises</strong>. Il est établi par tranches de poids avec un minimum de perception. La compagnie peut l'étendre au départ d'autres aéroports." },
+  { q: "Selon la Convention de Montréal, les dommages survenus lors d'un transport terrestre effectué dans l'exécution du transport aérien sont présumés :", choices: [{ text: "Résulter d'un fait survenu pendant le transport aérien", correct: true },{ text: "Être exclus de la couverture de la convention", correct: false },{ text: "Être à la charge exclusive de l'expéditeur", correct: false },{ text: "Relever du droit national uniquement", correct: false }], comment: "La Convention de Montréal prévoit une présomption : tout dommage survenu lors d'un transport terrestre effectué dans l'exécution du transport aérien est <strong>présumé résulter d'un fait survenu pendant le transport aérien</strong>, sauf preuve contraire." },
+  { q: "Le bordereau récapitulatif des envois établi par le groupeur aérien s'appelle :", choices: [{ text: "M AWB (Master Air Way Bill)", correct: false },{ text: "Packing list / manifeste cargo", correct: true },{ text: "H AWB (House Air Way Bill)", correct: false },{ text: "Lettre de voiture internationale CMR", correct: false }], comment: "Le groupeur aérien établit un bordereau récapitulatif appelé <strong>packing list (colisage) ou manifeste cargo</strong>, relatif à l'ensemble du lot de groupage. Ce document accompagne la LTA-Mère émise par le transporteur." },
+  { q: "La faute inexcusable du transporteur aérien permet au demandeur de :", choices: [{ text: "Obtenir une indemnisation automatiquement doublée", correct: false },{ text: "Invoquer la prescription quinquennale", correct: false },{ text: "Rejeter la limite légale d'indemnisation", correct: true },{ text: "Saisir directement le tribunal pénal", correct: false }], comment: "La faute inexcusable — acte commis avec l'intention de provoquer un dommage ou avec conscience qu'un dommage en résulterait — permet au demandeur de <strong>rejeter le plafond légal d'indemnisation</strong> prévu par les conventions internationales." },
+  { q: "En transport aérien, le poids taxable est :", choices: [{ text: "Toujours égal au poids réel de la marchandise", correct: false },{ text: "Toujours le poids volumétrique", correct: false },{ text: "La somme du poids réel et du poids volumétrique", correct: false },{ text: "Le plus élevé entre le poids réel et le poids volumétrique", correct: true }], comment: "Le poids taxable est <strong>le plus élevé entre le poids réel</strong> (poids brut avec emballage) <strong>et le poids volumétrique</strong> (volume ÷ 6 000). C'est ce poids qui est utilisé pour calculer le tarif de fret." }
+];
+const letters = ['A','B','C','D'];
+let shuffled = [], current = 0, answers = [], validated = [];
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function init() { shuffled=rawQuestions.map(q=>{const mixed=shuffle(q.choices);const correctIdx=mixed.findIndex(c=>c.correct);return{q:q.q,choices:mixed,correctIdx,comment:q.comment};}); answers=new Array(shuffled.length).fill(null); validated=new Array(shuffled.length).fill(false); current=0; render(); }
+function render() { const item=shuffled[current]; document.getElementById('qBadge').textContent=`Q${current+1}`; document.getElementById('qText').textContent=item.q; const container=document.getElementById('choicesContainer'); container.innerHTML=''; item.choices.forEach((c,j)=>{ const label=document.createElement('label'); label.className='choice-label'+(validated[current]?' locked':''); if(validated[current]){if(j===item.correctIdx)label.classList.add('correct');else if(j===answers[current]&&answers[current]!==item.correctIdx)label.classList.add('wrong');}else if(answers[current]===j){label.classList.add('selected');} label.innerHTML=`<input type="radio" name="choice" value="${j}"><span class="choice-letter">${letters[j]}</span><span>${c.text}</span>`; if(!validated[current]){label.addEventListener('click',()=>selectChoice(j));} container.appendChild(label);}); const fb=document.getElementById('feedbackBox'); if(validated[current]){const correct=answers[current]===item.correctIdx; fb.style.display='block'; fb.className='feedback-box '+(correct?'ok':'ko'); document.getElementById('fbVerdict').innerHTML=correct?`✓ Bonne réponse — ${letters[item.correctIdx]}`:`✗ Mauvaise réponse — La bonne réponse était : <strong>${letters[item.correctIdx]}</strong>`; document.getElementById('fbComment').innerHTML=item.comment;}else{fb.style.display='none';} const btnValidate=document.getElementById('btnValidate'); const btnNext=document.getElementById('btnNext'); const btnPrev=document.getElementById('btnPrev'); if(validated[current]){btnValidate.style.display='none';btnNext.style.display='block';btnNext.textContent=current<shuffled.length-1?'Suivant →':'Voir le score';}else{btnValidate.style.display='block';btnValidate.disabled=answers[current]===null;btnNext.style.display='none';} btnPrev.style.display=current>0?'block':'none'; updateProgress(); }
+function selectChoice(j){if(validated[current])return;answers[current]=j;render();}
+function validateAnswer(){if(answers[current]===null)return;validated[current]=true;render();}
+function goTo(idx){if(idx<0)return;if(idx>=shuffled.length){showScore();return;}current=idx;render();}
+function updateProgress(){const done=validated.filter(Boolean).length;document.getElementById('progressFill').style.width=(done/shuffled.length*100)+'%';document.getElementById('progressLabel').textContent=`${done} / ${shuffled.length}`;}
+function showScore(){let score=0;shuffled.forEach((item,i)=>{if(validated[i]&&answers[i]===item.correctIdx)score+=2;});document.getElementById('mainCard').style.display='none';const sc=document.getElementById('scoreCard');sc.style.display='block';document.getElementById('scoreBig').textContent=score;const pct=Math.round(score/40*100);document.getElementById('scoreDetail').textContent=`${pct} % de bonnes réponses`;let mention='';if(score>=36)mention='🏆 Excellent — Maîtrise parfaite !';else if(score>=28)mention='✅ Bon niveau — Continue ainsi !';else if(score>=20)mention='📘 Passable — Quelques révisions s\'imposent.';else mention='⚠️ Insuffisant — Relis le chapitre attentivement.';document.getElementById('scoreMention').textContent=mention;sc.scrollIntoView({behavior:'smooth',block:'center'});}
+function restart(){document.getElementById('scoreCard').style.display='none';document.getElementById('mainCard').style.display='block';init();window.scrollTo({top:0,behavior:'smooth'});}
+init();
+</script>
+</body>
+</html>
