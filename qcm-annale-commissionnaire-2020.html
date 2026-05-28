@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM Annale Commissionnaire – Octobre 2020</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap');
+:root{--gd:#1a5c38;--gm:#2e7d52;--gl:#e8f5ee;--ga:#2ecc71;--red:#c0392b;--rl:#fdecea;--bg:#f4f4f2;--bd:#ddd;--tx:#1c1c1c;--wh:#fff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
+header{background:var(--gd);color:var(--wh);padding:20px 32px 16px;border-bottom:4px solid var(--ga);}
+header .lb{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--ga);margin-bottom:4px;}
+header h1{font-family:'Barlow Condensed',sans-serif;font-size:21px;font-weight:700;}
+header .mt{margin-top:6px;font-size:12px;color:rgba(255,255,255,0.6);}
+.elim{display:inline-block;margin-left:8px;background:rgba(192,57,43,0.35);border:1px solid rgba(192,57,43,0.6);color:#ffbbbb;font-size:11px;padding:2px 8px;border-radius:4px;}
+.pw{background:var(--gd);padding:11px 32px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.pt{flex:1;background:rgba(255,255,255,0.15);border-radius:4px;height:5px;overflow:hidden;}
+.pf{height:100%;background:var(--ga);border-radius:4px;transition:width 0.4s ease;}
+.pl{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:rgba(255,255,255,0.8);white-space:nowrap;min-width:65px;text-align:right;}
+.wrap{max-width:740px;margin:32px auto;padding:0 18px 60px;}
+.card{background:var(--wh);border-radius:12px;border:1px solid var(--bd);padding:30px 34px;box-shadow:0 2px 12px rgba(0,0,0,0.06);animation:fi 0.22s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.qm{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.qb{background:var(--gd);color:var(--wh);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;padding:3px 11px;border-radius:5px;}
+.qp{font-size:12px;color:#999;}
+.qt{font-size:15px;font-weight:600;line-height:1.5;margin-bottom:20px;color:var(--tx);}
+.cs{display:flex;flex-direction:column;gap:8px;}
+.cl{display:flex;align-items:flex-start;gap:11px;padding:10px 14px;border:1.5px solid var(--bd);border-radius:8px;cursor:pointer;font-size:13.5px;transition:border-color 0.15s,background 0.15s;line-height:1.4;}
+.cl:hover:not(.lk){border-color:var(--gm);background:var(--gl);}
+.cl input{display:none;}
+.cl .lt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--gd);background:var(--gl);border-radius:4px;padding:2px 7px;flex-shrink:0;margin-top:1px;}
+.cl.sl{border-color:var(--gd);background:var(--gl);}
+.cl.ok{border-color:var(--ga);background:#eafaf1;}
+.cl.ko{border-color:var(--red);background:var(--rl);}
+.cl.ok .lt{background:#c3efda;color:#1a7a3f;}
+.cl.ko .lt{background:#fadbd8;color:var(--red);}
+.fb{display:none;margin-top:16px;padding:13px 15px;border-radius:8px;font-size:13px;line-height:1.55;}
+.fb.good{background:#eafaf1;border-left:4px solid var(--ga);color:#1a5c38;}
+.fb.bad{background:var(--rl);border-left:4px solid var(--red);color:#8b1a1a;}
+.fb .vd{font-weight:700;font-size:13.5px;margin-bottom:4px;}
+.fb .cm{color:#333;}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:10px;}
+.btn{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:7px;padding:11px 20px;cursor:pointer;transition:background 0.2s,opacity 0.2s;}
+.bp{background:#e8e8e4;color:#555;}.bp:hover{background:#d5d5ce;}
+.bv{background:var(--gd);color:var(--wh);flex:1;}.bv:hover{background:var(--gm);}.bv:disabled{opacity:0.4;cursor:not-allowed;}
+.bn{background:var(--gd);color:var(--wh);}.bn:hover{background:var(--gm);}
+.sc{display:none;background:var(--gd);color:var(--wh);border-radius:12px;padding:38px 34px;text-align:center;box-shadow:0 4px 20px rgba(26,92,56,0.2);}
+.sc .big{font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:700;color:var(--ga);line-height:1;}
+.sc .sub{font-size:14px;color:rgba(255,255,255,0.65);margin-top:5px;}
+.sc .mn{font-size:17px;font-weight:600;margin-top:16px;}
+.sc .dt{margin-top:8px;font-size:13px;color:rgba(255,255,255,0.6);}
+.sc .ew{margin-top:12px;padding:10px 14px;background:rgba(192,57,43,0.3);border-radius:8px;font-size:13px;color:#ffcccc;}
+.br{margin-top:20px;background:transparent;border:2px solid rgba(255,255,255,0.35);color:var(--wh);font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:1px;text-transform:uppercase;padding:9px 24px;border-radius:7px;cursor:pointer;}
+.br:hover{border-color:var(--ga);color:var(--ga);}
+@media(max-width:600px){header{padding:16px 14px 12px;}header h1{font-size:17px;}.pw{padding:9px 14px;}.wrap{padding:0 10px 48px;}.card{padding:20px 16px;}.qt{font-size:14px;}.cl{font-size:13px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="lb">Examen d'attestation de capacité — Commissionnaire de transport</div>
+  <h1>QCM Annale officielle — Session 7 octobre 2020</h1>
+  <div class="mt">50 questions · 2 points chacune · Score max : 100 points <span class="elim">⚠ Note éliminatoire &lt; 50/100</span></div>
+</header>
+<div class="pw">
+  <div class="pt"><div class="pf" id="pf"></div></div>
+  <div class="pl" id="pl">0 / 50</div>
+</div>
+<div class="wrap">
+  <div class="card" id="card">
+    <div class="qm"><span class="qb" id="qb">Q1</span><span class="qp">2 points</span></div>
+    <div class="qt" id="qt"></div>
+    <div class="cs" id="cs"></div>
+    <div class="fb" id="fb"><div class="vd" id="vd"></div><div class="cm" id="cm"></div></div>
+    <div class="nav">
+      <button class="btn bp" id="btnP" onclick="go(cur-1)">← Précédent</button>
+      <button class="btn bv" id="btnV" onclick="doVal()">Valider</button>
+      <button class="btn bn" id="btnN" onclick="go(cur+1)" style="display:none">Suivant →</button>
+    </div>
+  </div>
+  <div class="sc" id="sc">
+    <div class="big" id="sb"></div><div class="sub">points sur 100</div>
+    <div class="mn" id="sm"></div><div class="dt" id="sd"></div>
+    <div class="ew" id="ew" style="display:none">⚠ Score inférieur à la note éliminatoire de 50/100</div>
+    <button class="br" onclick="restart()">Recommencer</button>
+  </div>
+</div>
+<script>
+var Q=[
+{q:"Parmi les quatre mentions ci-dessous, une mention doit figurer obligatoirement dans les statuts d'une société :",
+c:["l'objet social de la société","le régime fiscal adopté par la société","le nombre de salariés","le nom du ou des gérants de la société"],
+r:0,
+x:"L'<strong>objet social</strong> est une mention obligatoire dans tout acte de société. Il définit l'activité exercée par la société. Les statuts doivent aussi mentionner la forme, la dénomination, le siège social et le capital. Le nom du gérant peut figurer dans les statuts mais n'y est pas obligatoirement."},
+
+{q:"La cessation de paiement d'une société commerciale est :",
+c:["l'impossibilité de faire face au passif exigible avec son actif disponible","la perte de la moitié de son capital social","une infraction imputable aux dirigeants de la société","la tenue d'une comptabilité irrégulière au regard des dispositions légales"],
+r:0,
+x:"La cessation de paiement est l'<strong>impossibilité de faire face au passif exigible avec l'actif disponible</strong>. C'est le critère légal pour l'ouverture d'une procédure collective (redressement ou liquidation judiciaire). Elle est distincte de la perte de capital."},
+
+{q:"Dans une SARL, les associés doivent répondre des dettes de la société :",
+c:["dans leur totalité, y compris sur leurs biens personnels","dans la limite de la moitié de leurs apports","sauf en cas de liquidation judiciaire","dans la limite de leurs apports"],
+r:3,
+x:"Dans une SARL (Société À Responsabilité Limitée), les associés ne répondent des dettes sociales qu'à concurrence de <strong>leurs apports</strong>. Leur patrimoine personnel est protégé. Cette limitation de responsabilité est la caractéristique essentielle de la SARL."},
+
+{q:"Dans le cadre d'une créance liée à un contrat de transport, l'injonction de payer doit toujours être faite devant le tribunal du domicile du :",
+c:["débiteur ou de l'un des débiteurs s'ils sont plusieurs","requérant","destinataire","transporteur obligatoirement"],
+r:0,
+x:"L'injonction de payer doit être déposée devant le tribunal du <strong>domicile du débiteur</strong> (ou de l'un des débiteurs s'ils sont plusieurs). Cette règle de compétence territoriale est d'ordre public en matière d'injonction de payer (Art. 1407 CPC)."},
+
+{q:"La lettre de change est un effet de commerce :",
+c:["dont le paiement est garanti à la date d'échéance figurant sur ce document","qui est rédigé par le tiré et adressé au tireur pour acceptation","qui est toujours à échéance indéterminée et escomptable","qui est rédigé par le tireur et adressé au tiré pour acceptation"],
+r:3,
+x:"La lettre de change est rédigée par le <strong>tireur</strong> (créancier/vendeur) et adressée au <strong>tiré</strong> (débiteur/acheteur) pour qu'il l'accepte. C'est l'inverse du billet à ordre. Son paiement n'est pas garanti : le tiré peut refuser de l'accepter."},
+
+{q:"Le mécanisme de la taxe sur la valeur ajoutée a une incidence sur :",
+c:["les résultats de l'entreprise","les coûts de revient de l'entreprise","la trésorerie de l'entreprise","les produits d'exploitation de l'entreprise"],
+r:2,
+x:"La TVA est un impôt neutre pour les entreprises assujetties (elle est récupérable). Son mécanisme impacte uniquement la <strong>trésorerie</strong> de l'entreprise : décalage entre TVA collectée (à reverser) et TVA déductible (à récupérer). Elle n'affecte pas les résultats ni les coûts."},
+
+{q:"Les disponibilités représentent :",
+c:["les sommes encaissées tout au long de l'exercice comptable","l'apport financier de l'entreprise ou des associés","les liquidités dont dispose l'entreprise à la date du bilan","le bénéfice net de l'entreprise"],
+r:2,
+x:"Les <strong>disponibilités</strong> sont les liquidités immédiates de l'entreprise à la date du bilan : soldes des comptes bancaires, caisse, valeurs mobilières de placement. Elles figurent à l'actif circulant du bilan et représentent la trésorerie immédiate."},
+
+{q:"Un conducteur qui a effectué 4 heures de travail le dimanche dans une entreprise de transport routier doit être rémunéré suivant :",
+c:["une majoration de 25 % des heures effectuées le dimanche","un paiement double des heures effectuées le dimanche","une récupération des heures effectuées le dimanche","une indemnité forfaitaire fixée par la convention collective en plus du paiement des heures effectuées le dimanche"],
+r:3,
+x:"Selon la convention collective nationale des transports routiers, le travail du dimanche donne droit à une <strong>indemnité forfaitaire spécifique fixée par la convention collective</strong>, en complément du paiement normal des heures effectuées. Le taux de majoration varie selon les accords de branche."},
+
+{q:"En cas de licenciement individuel pour motif économique, l'employeur doit informer l'administration :",
+c:["après l'entretien préalable","avant l'envoi de la lettre de licenciement","dans les 8 jours suivant l'envoi de la lettre de licenciement","avant la fin du délai congé"],
+r:2,
+x:"Pour un licenciement économique individuel, l'employeur doit notifier la DREETS (ex-DIRECCTE) <strong>dans les 8 jours suivant l'envoi de la lettre de licenciement</strong> (Art. L.1233-19 C.trav.). Cette notification est distincte de la notification au salarié."},
+
+{q:"Selon le règlement (CE) n° 561/2006, la durée de conduite journalière ne doit pas dépasser :",
+c:["4 heures 30","8 heures","10 heures, tout en pouvant être portée à 12 heures consécutives deux fois par semaine","9 heures ; elle peut toutefois être prolongée jusqu'à 10 heures maximum, mais pas plus de deux fois au cours de la semaine"],
+r:3,
+x:"Selon le règlement CE 561/2006, la durée de conduite journalière ne doit pas dépasser <strong>9 heures</strong>, avec possibilité d'extension jusqu'à <strong>10 heures maximum deux fois par semaine</strong>. La limite hebdomadaire est de 56 heures et la limite bihebdomadaire de 90 heures."},
+
+{q:"Selon le règlement (CE) n° 561/2006, un conducteur doit observer une pause d'au moins 45 minutes après un temps de conduite de :",
+c:["4 heures","4 heures 30 minutes","4 heures 45 minutes","5 heures"],
+r:1,
+x:"Après <strong>4h30 de conduite</strong>, le conducteur doit prendre une pause d'au moins 45 minutes. Cette pause peut être fractionnée en deux périodes : 15 min + 30 min (dans cet ordre seulement). Elle ne peut pas être prise pendant le temps de repos."},
+
+{q:"La lettre de voiture doit être conservée par l'entreprise de transport pour être présentée à toute réquisition des agents de l'Etat pendant :",
+c:["1 an","2 ans","3 ans","5 ans"],
+r:1,
+x:"La lettre de voiture doit être conservée pendant <strong>2 ans</strong> (Art. R.3243-1 C.transports). Ce délai correspond à la durée pendant laquelle les agents de contrôle peuvent demander à la consulter. Ce délai est distinct du délai de prescription de 1 an applicable aux actions."},
+
+{q:"Une lettre de voiture en transport national est :",
+c:["utilisée quels que soient les trafics effectués, le poids des envois et la distance parcourue","rédigée obligatoirement en 4 exemplaires","enregistrée sur un répertoire chez le transporteur","un document dont la forme et le fond sont libres"],
+r:0,
+x:"La lettre de voiture est <strong>obligatoire pour tout transport routier national</strong>, quels que soient le type de trafic, le poids des envois et la distance parcourue. Elle matérialise le contrat de transport et constitue la preuve de la prise en charge."},
+
+{q:"En application de l'article L.3222-5 du Code des transports, toute prestation annexe non prévue au contrat de transport :",
+c:["autorise le transporteur à renégocier son contrat de transport","n'ouvre aucun droit pour le transporteur à un complément de rémunération","ouvre droit pour le transporteur à mettre fin au contrat de transport","ouvre droit pour le transporteur à un complément de rémunération"],
+r:3,
+x:"L'article L.3222-5 du Code des transports dispose que toute prestation annexe non prévue dans le contrat de transport (chargement, déchargement, gardiennage...) <strong>ouvre droit à un complément de rémunération</strong> pour le transporteur."},
+
+{q:"En transport national, en cas de dommage, le destinataire confirme par écrit ses réserves (protestation motivée) :",
+c:["au transporteur qui a effectué la livraison","au commissionnaire qui a affrété le transporteur","à l'expéditeur qui a conclu le contrat de transport","à son assureur"],
+r:0,
+x:"Les réserves doivent être confirmées par lettre recommandée <strong>au transporteur qui a effectué la livraison</strong>, dans les 3 jours suivant la réception (non compris les jours fériés). C'est contre le transporteur que l'action en réparation est exercée."},
+
+{q:"Un transporteur non inscrit au registre des commissionnaires peut avoir recours à la sous-traitance en cas de surcharge temporaire, sans dépasser une limite du chiffre d'affaires annuel de :",
+c:["10 %","15 %","20 %","25 %"],
+r:1,
+x:"Un transporteur non inscrit au registre des commissionnaires peut sous-traiter dans la limite de <strong>15 % de son chiffre d'affaires annuel</strong> en transport routier (Art. L.3224-1 C.transports). Au-delà, il doit s'inscrire au registre des commissionnaires."},
+
+{q:"L'article L.3221-3 du Code des transports concernant les relations de sous-traitance s'applique au contrat conclu entre :",
+c:["un transporteur public routier de marchandises et un chargeur","un commissionnaire de transport et un chargeur","un loueur de véhicules sans conducteur et son locataire","un transporteur public routier de marchandises et un commissionnaire de transport"],
+r:3,
+x:"L'article L.3221-3 (ancien art. L.132-6 C.com.) régit spécifiquement les relations de <strong>sous-traitance entre un transporteur public routier et un commissionnaire de transport</strong>. Il définit les obligations réciproques et le contrat type applicable."},
+
+{q:"En transport international, l'indemnité pour retard à la livraison ne peut pas dépasser :",
+c:["la valeur de la marchandise","la valeur de la marchandise plus le prix du transport","le prix du transport","deux fois le prix du transport"],
+r:2,
+x:"Selon l'article 23.5 de la CMR, l'indemnité pour retard ne peut pas dépasser <strong>le prix du transport</strong> (frais de port). Cette limitation est indépendante du préjudice réel. Elle peut être dépassée uniquement si une déclaration d'intérêt spécial à la livraison a été souscrite."},
+
+{q:"Un transporteur français chargé de transporter des produits alimentaires de France en Pologne en transit par l'Allemagne devra détenir à bord :",
+c:["une copie certifiée conforme de la licence communautaire et une lettre de voiture","uniquement une autorisation bilatérale polonaise","une copie certifiée conforme de la licence communautaire et une autorisation bilatérale polonaise","un certificat d'inscription au registre des entreprises de transport et une lettre de voiture"],
+r:0,
+x:"Pour un transport intra-UE (France-Pologne via Allemagne), le transporteur communautaire doit détenir une <strong>copie certifiée conforme de la licence communautaire</strong> et la <strong>lettre de voiture</strong>. Aucune autorisation bilatérale n'est requise dans l'espace UE."},
+
+{q:"Sous couvert d'une autorisation FIT (ex CEMT), un transporteur français peut effectuer des transports :",
+c:["de cabotage","entre l'Espagne et les Pays-Bas","entre la France et la Russie","au Bénélux"],
+r:2,
+x:"Le carnet FIT (ex-CEMT) autorise les transports entre les pays membres de la CEMT (Conférence Européenne des Ministres des Transports). La <strong>Russie</strong> est membre de la CEMT, ce qui permet des transports France-Russie sous ce régime. Le cabotage n'est pas couvert par la FIT."},
+
+{q:"Parmi les documents de transport suivants, celui qui constitue un titre représentatif de la marchandise est :",
+c:["la lettre de transport aérien","la lettre de voiture CIM","la lettre de voiture internationale CMR","le connaissement maritime"],
+r:3,
+x:"Le <strong>connaissement maritime</strong> (Bill of Lading) est le seul document de transport qui constitue un <strong>titre représentatif de la marchandise</strong>. Sa possession confère des droits sur la marchandise. La LTA, la CMR et la CIM sont de simples documents de transport non négociables."},
+
+{q:"En terminologie douanière, les biens à double usage sont des biens qui peuvent être utilisés à :",
+c:["des fins personnelles et industrielles","des fins civiles et militaires","des fins industrielles et agricoles","des fins médicales et agricoles"],
+r:1,
+x:"Les biens à double usage (dual use goods) sont des produits pouvant être utilisés à des <strong>fins civiles et militaires</strong>. Leur exportation est soumise à autorisation (règlement UE 2021/821). Exemples : composants électroniques, logiciels de cryptographie, matériaux spéciaux."},
+
+{q:"Dans le cadre d'un contrat de vente internationale, la lettre de crédit stand by :",
+c:["est un moyen de paiement à terme émis par l'acheteur","est un crédit ouvert à l'acheteur par sa banque","est un moyen de paiement à terme émis par la banque de l'acheteur","est une garantie de paiement émise par la banque de l'acheteur"],
+r:3,
+x:"La lettre de crédit stand-by est une <strong>garantie de paiement émise par la banque de l'acheteur</strong>. Contrairement au crédit documentaire classique, elle n'est pas appelée lors d'un paiement normal mais seulement en cas de défaillance de l'acheteur. C'est avant tout une garantie, pas un moyen de paiement."},
+
+{q:"Les Incoterms® sont des règles du commerce international qui traitent :",
+c:["du transfert de propriété","du transfert des risques","des modalités de paiements","du prix de transport"],
+r:1,
+x:"Les Incoterms® définissent principalement le <strong>transfert des risques</strong> entre vendeur et acheteur, ainsi que la répartition des frais et obligations logistiques. Ils ne déterminent PAS le transfert de propriété (régi par le droit du contrat de vente) ni les modalités de paiement."},
+
+{q:"Le contrat type de commission de transport prévoit que le commissionnaire est tenu de procéder à la vérification des :",
+c:["documents fournis par le donneur d'ordre qui ont un lien direct avec l'organisation du transport","marchandises du donneur d'ordre qui ont un lien direct avec l'organisation du transport","lettres de voitures fournies par le donneur d'ordre qui ont un lien direct avec l'organisation du transport","documents douaniers fournis par le donneur d'ordre qui ont un lien direct avec l'organisation du transport"],
+r:0,
+x:"L'article 3.2 du contrat type impose au commissionnaire de vérifier les <strong>documents fournis par le donneur d'ordre ayant un lien direct avec l'organisation du transport</strong>. Pour les autres documents, il vérifie leur conformité apparente avec la mission confiée."},
+
+{q:"En cas de pertes et avaries de la marchandise, la déclaration de valeur a pour effet de :",
+c:["substituer le montant de cette déclaration aux plafonds d'indemnités légaux","dégager la responsabilité personnelle du commissionnaire de transport","réparer le préjudice subi sur les métaux précieux uniquement","indemniser selon les plafonds d'indemnités légaux"],
+r:0,
+x:"La déclaration de valeur (art. 13.3 contrat type commission) <strong>se substitue aux plafonds légaux d'indemnisation</strong>. Le montant déclaré par le donneur d'ordre et accepté par le commissionnaire remplace les plafonds standard. Elle donne lieu à une rémunération supplémentaire."},
+
+{q:"En matière d'assurance des marchandises, le commissionnaire de transport intervient en qualité de :",
+c:["mandataire","assureur","courtier","préposé"],
+r:0,
+x:"Lorsque le commissionnaire souscrit une assurance pour son client, il agit en qualité de <strong>mandataire</strong> (au nom et pour le compte du donneur d'ordre). C'est ce que précise l'article 6.4 du contrat type de commission. Il ne souscrit que sur ordre écrit du donneur d'ordre."},
+
+{q:"Un connaissement maritime \"en blanc\" signifie que :",
+c:["le destinataire le remplira lui-même","l'importateur le remplira lui-même","l'exportateur l'endossera au profit de qui il voudra","le connaissement est transféré par simple endos"],
+r:2,
+x:"Un connaissement <strong>en blanc</strong> est un connaissement dont la case destinataire est vide ou endossée en blanc. Cela signifie que <strong>l'exportateur peut l'endosser au profit de qui il voudra</strong> : banquier, acheteur final, endossataire... C'est un titre à ordre très utilisé dans le commerce international."},
+
+{q:"Le délai de prescription applicable à toute action fondée sur le contrat de commission de transport est de :",
+c:["un an","deux ans","trois ans","cinq ans"],
+r:0,
+x:"Toute action fondée sur le contrat type de commission de transport se prescrit dans le délai d'<strong>1 an</strong> (article 14 du contrat type). Ce délai court à compter du jour où la marchandise aurait dû être livrée (perte totale) ou du jour de la livraison effective."},
+
+{q:"Le contrat type de commission prévoit qu'en cas de retard, la réparation est limitée au prix de la prestation de commission :",
+c:["droits, taxes et frais divers exclus","droits, taxes et frais divers inclus","augmentée de l'indemnisation calculée du retard","augmentée d'une indemnisation forfaitaire du retard"],
+r:0,
+x:"L'article 13.2.2 du contrat type limite l'indemnisation pour retard au prix de la prestation de commission, <strong>droits, taxes et frais divers exclus</strong>. Seule la marge du commissionnaire sert de base, sans les débours (frais de transport payés aux substitués, taxes...)."},
+
+{q:"Le contrat type de commission stipule :",
+c:["l'obligation de retour des caisses endommagées","l'obligation d'assurance","l'obligation de résultat du commissionnaire","l'obligation de moyens"],
+r:2,
+x:"L'article 5.1 du contrat type dispose que le commissionnaire est présumé responsable de la bonne fin du transport et est tenu d'une <strong>obligation générale de résultat</strong>. Il ne peut s'exonérer qu'en prouvant une cause extérieure (vice propre, fait du donneur d'ordre...)."},
+
+{q:"Si la marchandise le nécessite, l'emballage et l'étiquetage des colis incombent :",
+c:["au transporteur","au commissionnaire","au manutentionnaire","à l'expéditeur"],
+r:3,
+x:"L'emballage, le marquage et l'étiquetage des colis incombent à l'<strong>expéditeur (donneur d'ordre)</strong>. C'est lui qui doit conditionner la marchandise de façon à supporter les conditions du transport. Le commissionnaire peut en informer le transporteur si des défauts sont constatés."},
+
+{q:"Le commettant n'est pas obligé de fournir au commissionnaire :",
+c:["la nature des marchandises à transporter","les coordonnées du destinataire","le colisage","le coût de fabrication des marchandises à transporter"],
+r:3,
+x:"Le <strong>coût de fabrication</strong> des marchandises est une information commerciale confidentielle que le donneur d'ordre n'est pas tenu de communiquer au commissionnaire. En revanche, la nature des marchandises, les coordonnées du destinataire et le colisage sont des informations nécessaires à l'organisation du transport."},
+
+{q:"La rédaction des documents de transport incombe :",
+c:["au vendeur","à l'acheteur","au transporteur","au déclarant en douane"],
+r:2,
+x:"La rédaction des documents de transport (lettre de voiture, connaissement...) incombe en principe au <strong>transporteur</strong>. En CMR (transport international routier), la lettre de voiture est établie par l'expéditeur ou le transporteur sous la responsabilité de l'expéditeur."},
+
+{q:"Le commissionnaire de transport n'est pas présumé responsable des dommages résultant :",
+c:["du transport","de l'organisation du transport","d'instructions spécifiques du donneur d'ordre","du vice propre"],
+r:3,
+x:"Le commissionnaire est présumé responsable du transport, de son organisation et des prestations accessoires. Cependant, il <strong>n'est pas présumé responsable des dommages résultant du vice propre</strong> de la marchandise, qui constitue une cause exonératoire lui étant extérieure."},
+
+{q:"Selon le contrat type de commission, les conséquences de déclarations ou documents faux, erronés, incomplets, inadaptés ou remis tardivement sont supportées par :",
+c:["le commissionnaire de transport","le donneur d'ordre","les transporteurs successifs","les transporteurs routiers du fait de la CMR"],
+r:1,
+x:"L'article 3.5 du contrat type dispose que le <strong>donneur d'ordre</strong> supporte les conséquences résultant de déclarations ou documents faux, erronés, incomplets, inadaptés ou remis tardivement, sous réserve des obligations du commissionnaire en matière de vérification."},
+
+{q:"Le commissionnaire de transport est un intermédiaire entre :",
+c:["l'expéditeur et le transporteur","le transitaire et le transporteur","le transporteur et le destinataire","le courtier de fret et le transitaire"],
+r:0,
+x:"Le commissionnaire de transport est l'intermédiaire qui organise le transport entre <strong>l'expéditeur (donneur d'ordre/commettant) et le transporteur</strong>. Il agit en son nom propre, contrairement au transitaire-mandataire qui agit au nom de son client."},
+
+{q:"Le contrat type de commission définit les conditions dans lesquelles un commissionnaire organise :",
+c:["en son nom et pour son compte le déplacement de marchandises","au nom de son client et pour le compte d'un commettant le déplacement de marchandises","en son nom et pour le compte d'un commettant le déplacement de marchandises","au nom d'un tiers et pour le compte d'un commettant le déplacement de marchandises"],
+r:2,
+x:"Le commissionnaire agit <strong>en son nom propre</strong> (il contracte directement avec les transporteurs) <strong>mais pour le compte d'un commettant</strong> (donneur d'ordre). Cette définition le distingue du mandataire qui agit au nom de son mandant."},
+
+{q:"L'ADR réglemente le transport des marchandises dangereuses par la voie :",
+c:["aérienne","maritime","routière","ferroviaire"],
+r:2,
+x:"L'<strong>ADR</strong> (Accord européen relatif au transport international des marchandises Dangereuses par Route) réglemente le transport routier. Pour les autres modes : IATA DGR (aérien), IMDG (maritime), RID (ferroviaire), ADN (fluvial)."},
+
+{q:"Le statut d'OEA (Opérateur Economique Agréé) permet :",
+c:["d'être dispensé de l'accomplissement des formalités douanières","de ne pas payer de droits de douane à l'importation","de bénéficier de garanties bancaires","de bénéficier de procédures de contrôle (douane et/ou sûreté) allégées"],
+r:3,
+x:"L'OEA permet à l'opérateur certifié de <strong>bénéficier de procédures de contrôle allégées</strong> (moins de contrôles physiques, accès à des procédures simplifiées de dédouanement). Il ne dispense pas des formalités douanières ni du paiement des droits."},
+
+{q:"Un agent de fret aérien agréé IATA peut émettre :",
+c:["des billets d'avion pour des passagers","des LTA pour le compte de toutes les compagnies aériennes","des LTA pour le compte seulement des compagnies aériennes adhérentes à IATA","des déclarations d'expéditions de marchandises dangereuses"],
+r:1,
+x:"Un agent de fret agréé IATA est autorisé à émettre des <strong>LTA (Lettres de Transport Aérien) pour le compte de toutes les compagnies aériennes</strong>, qu'elles soient membres ou non de l'IATA. Cet agrément est reconnu mondialement dans le secteur du fret aérien."},
+
+{q:"Dans le cadre du crédit documentaire, la banque est tenue de vérifier la conformité entre les exigences du crédit documentaire et :",
+c:["les documents présentés par le vendeur","les marchandises transportées","l'habilitation du commissionnaire","les modalités d'acheminement"],
+r:0,
+x:"La banque contrôle strictement la <strong>conformité documentaire</strong> : elle vérifie que les documents présentés par le vendeur (bénéficiaire) sont conformes aux exigences du crédit. Elle ne vérifie <strong>pas</strong> les marchandises physiques (RUU 600, article 5)."},
+
+{q:"La valeur en douane à l'exportation est la valeur de la marchandise à :",
+c:["la sortie du territoire national","la sortie du territoire européen","la sortie des locaux du fabricant","l'arrivée au terminal du pays de destination"],
+r:0,
+x:"La valeur en douane à l'exportation correspond à la valeur de la marchandise à la <strong>sortie du territoire national</strong> (frontière française). C'est la base de calcul des statistiques du commerce extérieur. Elle est généralement égale à la valeur franco frontière."},
+
+{q:"L'affacturage (ou factoring) international consiste :",
+c:["en l'obtention d'une avance en devises auprès d'une banque","en l'acquisition auprès de sa banque du montant de sa créance en escomptant une traite","en la cession des créances commerciales à une société financière qui se charge de leur recouvrement moyennant des frais et commissions","en l'obtention d'un prêt à court terme auprès de sa banque"],
+r:2,
+x:"L'<strong>affacturage</strong> consiste à céder ses créances commerciales à un factor (société d'affacturage) qui se charge de leur recouvrement, moyennant des frais et commissions. Le cédant reçoit immédiatement le montant de ses créances, ce qui améliore sa trésorerie."},
+
+{q:"Un conteneur maritime est du \"LCL/FCL\" lorsqu'il contient la marchandise :",
+c:["de plusieurs fournisseurs pour un seul destinataire","d'un seul fournisseur pour un seul destinataire","de plusieurs fournisseurs pour plusieurs destinataires","d'un seul fournisseur pour plusieurs destinataires"],
+r:0,
+x:"<strong>LCL/FCL</strong> (Less Container Load / Full Container Load) désigne un groupage à l'exportation consolidé, livré à un seul destinataire. La marchandise de <strong>plusieurs fournisseurs</strong> est groupée dans un même conteneur destiné à <strong>un seul destinataire</strong>."},
+
+{q:"Lorsque le temps écoulé depuis le début d'exécution du contrat de commission à durée indéterminée est inférieur à six mois, le préavis de résiliation est fixé à :",
+c:["1 mois","2 mois","3 mois","4 mois"],
+r:0,
+x:"L'article 15.1 du contrat type de commission prévoit <strong>1 mois de préavis</strong> pour les relations de moins de 6 mois. Les paliers sont : 1 mois (< 6 mois), 2 mois (entre 6 mois et 1 an), 3 mois (1 an et plus)."},
+
+{q:"Un document issu d'une convention internationale facilite l'importation et l'exportation temporaire ainsi que le transit de marchandises en franchise de droits et taxes. Il s'agit du :",
+c:["le DAU","le carnet TIR","le carnet ATA","le carnet IATA"],
+r:2,
+x:"Le <strong>carnet ATA</strong> (Admission Temporaire / Temporary Admission) est un document international permettant l'importation temporaire et le transit de marchandises (échantillons commerciaux, matériel professionnel, objets d'exposition) en franchise de droits et taxes."},
+
+{q:"Quand on emploie le terme \"S.W.I.F.T\", on fait référence à :",
+c:["un incoterm","un moyen de paiement","un document de transport","un document douanier"],
+r:1,
+x:"<strong>SWIFT</strong> (Society for Worldwide Interbank Financial Telecommunication) est le réseau international de messagerie bancaire utilisé pour les <strong>virements bancaires internationaux</strong>. C'est le principal réseau de transfert de fonds entre banques dans le monde."},
+
+{q:"En vente \"FOB\", le vendeur remplit ses obligations lorsque :",
+c:["la livraison des marchandises concernées a été faite sur un lieu désigné par l'acheteur au pays d'arrivée","les marchandises sont chargées à bord du navire dans le port de départ","le capitaine du navire signe le connaissement","la douane a visé la facture pro forma"],
+r:1,
+x:"En <strong>FOB (Free On Board)</strong>, le vendeur remplit ses obligations quand les <strong>marchandises sont chargées à bord du navire dans le port de départ</strong> désigné. C'est à ce moment que le risque se transfère à l'acheteur. Le vendeur a aussi effectué les formalités douanières d'export."},
+
+{q:"La règle Incoterms® la plus contraignante pour le vendeur est :",
+c:["FAS","FOB","FCA","DDP"],
+r:3,
+x:"<strong>DDP (Delivered Duty Paid)</strong> est l'Incoterm le plus contraignant pour le vendeur : il prend en charge TOUS les frais y compris le transport jusqu'à destination, le dédouanement import et les droits et taxes au pays de l'acheteur. C'est l'opposé de EXW."}
+];
+
+var L=["a","b","c","d"];
+var cur=0,ans=new Array(Q.length).fill(-1),val_=new Array(Q.length).fill(false);
+function render(){
+  var item=Q[cur];
+  document.getElementById("qb").textContent="Question "+(cur+1);
+  document.getElementById("qt").textContent=item.q;
+  var cs=document.getElementById("cs");cs.innerHTML="";
+  for(var j=0;j<4;j++){
+    var lb=document.createElement("label");
+    lb.className="cl"+(val_[cur]?" lk":"");
+    if(val_[cur]){if(j===item.r)lb.classList.add("ok");else if(j===ans[cur]&&ans[cur]!==item.r)lb.classList.add("ko");}
+    else if(ans[cur]===j)lb.classList.add("sl");
+    lb.innerHTML='<input type="radio" name="ch" value="'+j+'"><span class="lt">'+L[j]+'</span><span>'+item.c[j]+'</span>';
+    if(!val_[cur]){(function(jj){lb.addEventListener("click",function(){pick(jj);});})(j);}
+    cs.appendChild(lb);
+  }
+  var fb=document.getElementById("fb");
+  if(val_[cur]){
+    fb.style.display="block";fb.className="fb "+(ans[cur]===item.r?"good":"bad");
+    document.getElementById("vd").innerHTML=(ans[cur]===item.r)?"✓ Bonne réponse — "+L[item.r]:"✗ Mauvaise réponse — La bonne réponse était : <strong>"+L[item.r]+"</strong>";
+    document.getElementById("cm").innerHTML=item.x;
+  }else{fb.style.display="none";}
+  var bv=document.getElementById("btnV"),bn=document.getElementById("btnN"),bp=document.getElementById("btnP");
+  if(val_[cur]){bv.style.display="none";bn.style.display="block";bn.textContent=cur<Q.length-1?"Suivant →":"Voir le score";}
+  else{bv.style.display="block";bv.disabled=(ans[cur]===-1);bn.style.display="none";}
+  bp.style.display=cur>0?"block":"none";prog();
+}
+function pick(j){if(val_[cur])return;ans[cur]=j;render();}
+function doVal(){if(ans[cur]===-1)return;val_[cur]=true;render();}
+function go(i){if(i<0)return;if(i>=Q.length){showScore();return;}cur=i;render();}
+function prog(){var d=0;for(var i=0;i<val_.length;i++)if(val_[i])d++;document.getElementById("pf").style.width=(d/Q.length*100)+"%";document.getElementById("pl").textContent=d+" / "+Q.length;}
+function showScore(){
+  var s=0;for(var i=0;i<Q.length;i++)if(val_[i]&&ans[i]===Q[i].r)s+=2;
+  document.getElementById("card").style.display="none";var sc=document.getElementById("sc");sc.style.display="block";
+  document.getElementById("sb").textContent=s;document.getElementById("sd").textContent=Math.round(s/2)+" questions correctes sur 50";
+  var m="";if(s>=90)m="🏆 Excellent !";else if(s>=70)m="✅ Bon niveau.";else if(s>=50)m="📘 Passable — Des révisions s'imposent.";else m="⚠️ Score insuffisant — Révisions intensives nécessaires.";
+  document.getElementById("sm").textContent=m;document.getElementById("ew").style.display=s<50?"block":"none";sc.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function restart(){ans=new Array(Q.length).fill(-1);val_=new Array(Q.length).fill(false);cur=0;document.getElementById("sc").style.display="none";document.getElementById("card").style.display="block";render();window.scrollTo({top:0,behavior:"smooth"});}
+render();
+</script>
+</body>
+</html>
