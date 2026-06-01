@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Crédit Documentaire | LicenceTransport</title>
+<style>
+  :root {
+    --green: #1a5c38;
+    --green-light: #eaf5ee;
+    --blue: #1F4E79;
+    --orange: #C47A0A;
+    --orange-light: #fff8e7;
+    --red: #c0392b;
+    --red-light: #fdf0ef;
+    --gray: #f5f5f5;
+    --border: #ddd;
+    --text: #1a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f0f0f0; color: var(--text); font-size: 15px; }
+
+  header {
+    background: var(--green);
+    color: white;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 { font-size: 1.3rem; font-weight: bold; }
+  header span { font-size: 0.85rem; opacity: 0.8; }
+
+  .tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 3px solid var(--green);
+    padding: 0 20px;
+    gap: 4px;
+  }
+  .tab-btn {
+    padding: 12px 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+  .tab-btn:hover { color: var(--green); }
+
+  .container { max-width: 860px; margin: 24px auto; padding: 0 16px 40px; }
+
+  .serie-panel { display: none; }
+  .serie-panel.active { display: block; }
+
+  .progress-bar-wrap { background: #ddd; border-radius: 8px; height: 8px; margin-bottom: 6px; }
+  .progress-bar { background: var(--green); height: 8px; border-radius: 8px; transition: width 0.4s; }
+  .progress-info { display: flex; justify-content: space-between; font-size: 0.82rem; color: #666; margin-bottom: 20px; }
+
+  .question-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .question-num {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    font-weight: bold;
+    font-size: 0.82rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .question-text { font-weight: bold; font-size: 1rem; margin-bottom: 16px; line-height: 1.5; }
+
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: #fafafa;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.93rem;
+    transition: all 0.2s;
+    line-height: 1.45;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--green); background: var(--green-light); }
+  .option-btn .letter {
+    min-width: 28px; height: 28px;
+    background: #e0e0e0;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .option-btn.selected { border-color: var(--blue); background: #e8f0f8; }
+  .option-btn.selected .letter { background: var(--blue); color: white; }
+  .option-btn.correct { border-color: var(--green); background: var(--green-light); }
+  .option-btn.correct .letter { background: var(--green); color: white; }
+  .option-btn.wrong { border-color: var(--red); background: var(--red-light); }
+  .option-btn.wrong .letter { background: var(--red); color: white; }
+  .option-btn:disabled { cursor: default; }
+
+  .note-box {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: var(--orange-light);
+    border-left: 4px solid var(--orange);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.88rem;
+    color: #5a3e00;
+    display: none;
+    line-height: 1.5;
+  }
+  .note-box.visible { display: block; }
+  .note-box strong { color: var(--orange); }
+
+  .nav-btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    gap: 12px;
+  }
+  .btn {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.92rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #145030; }
+  .btn-outline { background: white; color: var(--green); border: 2px solid var(--green); }
+  .btn-outline:hover { background: var(--green-light); }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* Résultats */
+  .result-panel {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 32px;
+    text-align: center;
+    display: none;
+  }
+  .result-panel.visible { display: block; }
+  .score-circle {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-weight: bold;
+  }
+  .score-circle .big { font-size: 2.2rem; }
+  .score-circle .small { font-size: 0.85rem; }
+  .score-msg { font-size: 1.05rem; font-weight: bold; margin-bottom: 20px; }
+  .result-detail { text-align: left; border-top: 1px solid #eee; margin-top: 20px; padding-top: 20px; }
+  .result-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+  .badge { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; flex-shrink: 0; }
+  .badge-ok { background: var(--green); color: white; }
+  .badge-ko { background: var(--red); color: white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📄 QCM — Crédit Documentaire</h1>
+  <span>LicenceTransport.fr — CTM 2026</span>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchSerie(0)">Série 1</button>
+  <button class="tab-btn" onclick="switchSerie(1)">Série 2</button>
+</div>
+
+<div class="container" id="app"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DONNÉES
+// Série 1 — bonnes réponses : A B C D B C A D C A D B A D B C D A C B
+// Série 2 — bonnes réponses : C A D B C D A B D C B A C B D A B D C A
+// Chaque lettre apparaît exactement 5 fois par série.
+// ═══════════════════════════════════════════════════
+
+const SERIES = [
+  {
+    titre: "Série 1",
+    questions: [
+      // 1 → A
+      {
+        q: "Depuis quelle date les RUU 600 de la CCI sont-ils en vigueur ?",
+        opts: ["1er juillet 2007","1er janvier 2006","1er juillet 2010","1er janvier 2000"],
+        rep: 0,
+        note: "RUU 600 = publication n°600 de la CCI, entrée en vigueur le 1er juillet 2007."
+      },
+      // 2 → B
+      {
+        q: "Dans un crédit documentaire, qui est le donneur d'ordre ?",
+        opts: ["Le vendeur (exportateur)","L'acheteur (importateur)","La banque émettrice","La banque notificatrice"],
+        rep: 1,
+        note: "Le donneur d'ordre est l'acheteur qui donne les instructions d'ouverture du crédit à sa banque."
+      },
+      // 3 → C
+      {
+        q: "Quelle est la principale caractéristique d'un crédit documentaire irrévocable ?",
+        opts: ["Il peut être annulé à tout moment par l'acheteur","Il peut être modifié par la banque sans accord du vendeur","Il ne peut être annulé ou modifié sans l'accord de toutes les parties","Il garantit uniquement la qualité des marchandises"],
+        rep: 2,
+        note: "Irrévocable = ne peut être annulé ni modifié sans l'accord du donneur d'ordre, de la banque émettrice et du bénéficiaire."
+      },
+      // 4 → D
+      {
+        q: "Quel message SWIFT est utilisé pour l'émission d'un crédit documentaire ?",
+        opts: ["MT 103","MT 202","MT 999","MT 700"],
+        rep: 3,
+        note: "Le message SWIFT MT 700 est le message standard d'émission d'un crédit documentaire."
+      },
+      // 5 → B
+      {
+        q: "Dans un crédit documentaire confirmé, combien de banques s'engagent à payer ?",
+        opts: ["Aucune banque ne s'engage","Deux banques s'engagent","Trois banques s'engagent","Une seule banque s'engage"],
+        rep: 1,
+        note: "Confirmé = banque émettrice + banque confirmatrice. Deux engagements bancaires distincts."
+      },
+      // 6 → C
+      {
+        q: "Quel est le délai maximum accordé à une banque pour examiner les documents selon les RUU 600 ?",
+        opts: ["2 jours ouvrés bancaires","10 jours calendaires","5 jours ouvrés bancaires","7 jours calendaires"],
+        rep: 2,
+        note: "RUU 600, article 14b : délai maximum de 5 jours ouvrés bancaires pour examiner les documents."
+      },
+      // 7 → A
+      {
+        q: "Un crédit documentaire « Red Clause » permet au vendeur de :",
+        opts: ["Recevoir une avance avant l'expédition des marchandises","Transférer le crédit à un sous-traitant","Renouveler automatiquement le crédit après utilisation","Obtenir deux garanties bancaires simultanées"],
+        rep: 0,
+        note: "Red clause = clause spéciale autorisant une avance au bénéficiaire AVANT expédition, contre engagement de présenter les documents."
+      },
+      // 8 → D
+      {
+        q: "Dans un crédit documentaire réalisable par paiement différé, comment le vendeur est-il payé ?",
+        opts: ["À vue dès présentation des documents","Par escompte d'une traite acceptée","Par négociation de documents","À une échéance fixe déterminée dans le crédit"],
+        rep: 3,
+        note: "Paiement différé = paiement à terme fixe, sans traite, à une date déterminée dans les conditions du crédit."
+      },
+      // 9 → C
+      {
+        q: "La vérification des documents par la banque dans un crédit documentaire porte sur :",
+        opts: ["La qualité réelle des marchandises livrées","La solvabilité de l'acheteur","La stricte conformité des documents aux termes du crédit","Le respect des délais de livraison contractuels"],
+        rep: 2,
+        note: "La banque vérifie les DOCUMENTS, pas la marchandise. La conformité documentaire est la seule condition."
+      },
+      // 10 → A
+      {
+        q: "La banque notificatrice a-t-elle un engagement de paiement dans un crédit non confirmé ?",
+        opts: ["Non, elle informe seulement le bénéficiaire de l'ouverture du crédit","Oui, elle s'engage à payer dès présentation des documents","Oui, mais seulement pour 50 % du montant","Oui, mais uniquement en cas de défaillance de la banque émettrice"],
+        rep: 0,
+        note: "Sans confirmation, la banque notificatrice n'a aucun engagement de paiement — elle transmet l'information uniquement."
+      },
+      // 11 → D
+      {
+        q: "Dans un crédit documentaire transférable, combien de fois le crédit peut-il être transféré ?",
+        opts: ["Autant de fois que nécessaire","Deux fois maximum","Trois fois maximum selon les RUU 600","Une seule fois"],
+        rep: 3,
+        note: "Un crédit transférable ne peut être transféré qu'une seule fois selon les RUU 600."
+      },
+      // 12 → B
+      {
+        q: "Quel crédit documentaire se reconstitue automatiquement après chaque utilisation ?",
+        opts: ["Le crédit transférable","Le crédit revolving","Le crédit red clause","Le crédit back to back"],
+        rep: 1,
+        note: "Revolving = le montant se reconstitue automatiquement après chaque utilisation selon la cadence prévue."
+      },
+      // 13 → A
+      {
+        q: "Le crédit documentaire « back to back » se distingue du crédit transférable car :",
+        opts: ["Il implique deux crédits distincts et indépendants","Il ne nécessite pas l'intervention d'une banque","Il permet un transfert direct sans nouvel engagement bancaire","Il est régi par des règles différentes des RUU 600"],
+        rep: 0,
+        note: "Back to back = 2 crédits distincts. Le premier sert de garantie pour ouvrir le second. Contrairement au transférable qui est 1 seul crédit modifié."
+      },
+      // 14 → D
+      {
+        q: "Qui est le bénéficiaire dans un crédit documentaire ?",
+        opts: ["La banque émettrice","L'acheteur (importateur)","La banque notificatrice","Le vendeur (exportateur) en faveur duquel le crédit est ouvert"],
+        rep: 3,
+        note: "Le bénéficiaire est le vendeur (exportateur) en faveur duquel le crédit documentaire est ouvert."
+      },
+      // 15 → B
+      {
+        q: "Dans quel cas recommande-t-on un crédit documentaire irrévocable ET confirmé ?",
+        opts: ["Pour toute transaction nationale","Quand le pays de l'acheteur présente un risque politique ou bancaire élevé","Quand l'acheteur est une grande entreprise connue","Uniquement pour les transactions inférieures à 10 000 €"],
+        rep: 1,
+        note: "La confirmation protège contre le risque pays et le risque de défaillance de la banque émettrice étrangère."
+      },
+      // 16 → C
+      {
+        q: "Quelle publication de la CCI régit le crédit documentaire classique en vigueur ?",
+        opts: ["Publication n°522","Publication n°458","Publication n°600","Publication n°400"],
+        rep: 2,
+        note: "RUU 600 = Règles et Usances Uniformes relatives aux crédits documentaires, publication n°600 de la CCI."
+      },
+      // 17 → D
+      {
+        q: "Dans la réalisation d'un crédit documentaire réalisable par acceptation, sur qui le bénéficiaire tire-t-il une traite ?",
+        opts: ["Sur l'acheteur directement","Sur la douane du pays importateur","Sur le transporteur maritime","Sur la banque émettrice ou confirmatrice"],
+        rep: 3,
+        note: "Dans la réalisation par acceptation, la traite est tirée sur la banque (émettrice ou confirmatrice) qui l'accepte."
+      },
+      // 18 → A
+      {
+        q: "La lettre de crédit stand-by (SBLC) est principalement utilisée comme :",
+        opts: ["Garantie de bonne exécution appelée en cas de défaillance","Moyen de paiement ordinaire au quotidien","Instrument de financement court terme","Substitut du virement SWIFT"],
+        rep: 0,
+        note: "La SBLC est une garantie à première demande — elle n'est mise en jeu qu'en cas de défaillance du débiteur."
+      },
+      // 19 → C
+      {
+        q: "Lequel de ces risques subsiste même avec un crédit documentaire irrévocable et confirmé ?",
+        opts: ["Le risque de non-paiement de l'acheteur","Le risque pays de l'acheteur","Le risque de faillite de la banque confirmatrice","Le risque de modification unilatérale du crédit"],
+        rep: 2,
+        note: "Le risque résiduel ultime est la faillite bancaire (banque confirmatrice). Il ne peut pas être éliminé par un crédoc."
+      },
+      // 20 → B
+      {
+        q: "La SBLC est régie par :",
+        opts: ["Les règles Incoterms® 2020 uniquement","Les RUU 600 ou les ISP 98 (International Standby Practices)","Le Code civil français uniquement","Les RUE 522 de la CCI"],
+        rep: 1,
+        note: "La SBLC relève des RUU 600 ou des ISP 98 — règles spécifiques aux crédits stand-by."
+      },
+    ]
+  },
+  {
+    titre: "Série 2",
+    questions: [
+      // 1 → C
+      {
+        q: "Quelle organisation internationale édicte les règles encadrant le crédit documentaire ?",
+        opts: ["L'Organisation Mondiale du Commerce (OMC)","La Banque Mondiale","La Chambre de Commerce Internationale (CCI)","L'Union Européenne"],
+        rep: 2,
+        note: "Le crédit documentaire est régi par les RUU de la CCI (Chambre de Commerce Internationale / ICC)."
+      },
+      // 2 → A
+      {
+        q: "Quelle est la banque qui émet le crédit documentaire à la demande de l'acheteur ?",
+        opts: ["La banque émettrice","La banque notificatrice","La banque confirmatrice","La banque présentatrice"],
+        rep: 0,
+        note: "La banque émettrice est la banque de l'acheteur — c'est elle qui s'engage en premier."
+      },
+      // 3 → D
+      {
+        q: "Dans un crédit documentaire réalisable par négociation, que fait la banque négociatrice ?",
+        opts: ["Elle expédie les marchandises pour le vendeur","Elle envoie les documents directement à l'acheteur","Elle vérifie la qualité des marchandises","Elle achète ou escompte les traites ou documents présentés par le bénéficiaire"],
+        rep: 3,
+        note: "Réalisation par négociation = la banque avance les fonds au vendeur en achetant ses documents ou traites."
+      },
+      // 4 → B
+      {
+        q: "Que signifie « RUU 600 » ?",
+        opts: ["Règlement Unifié de l'Union Européenne n°600","Règles et Usances Uniformes relatives aux crédits documentaires, publication n°600","Registre Unifié des Usages commerciaux n°600","Règles d'Utilisation Universelle des lettres de crédit n°600"],
+        rep: 1,
+        note: "RUU 600 = Règles et Usances Uniformes relatives aux crédits documentaires — publication n°600 de la CCI."
+      },
+      // 5 → C
+      {
+        q: "Le crédit documentaire protège le vendeur contre quel type de risque principal ?",
+        opts: ["Le risque de perte physique des marchandises","Le risque de retard de livraison","Le risque de crédit (non-paiement de l'acheteur)","Le risque de douane à l'importation"],
+        rep: 2,
+        note: "Le crédoc élimine pratiquement au complet le risque de crédit pour le vendeur — la banque s'engage à sa place."
+      },
+      // 6 → D
+      {
+        q: "Dans la phase d'ouverture d'un crédit documentaire, que fait la banque notificatrice ?",
+        opts: ["Elle paie immédiatement le vendeur","Elle reçoit les marchandises","Elle débite le compte de l'acheteur","Elle avise le vendeur (bénéficiaire) de l'ouverture du crédit"],
+        rep: 3,
+        note: "La banque notificatrice notifie = informe le bénéficiaire que le crédit a été ouvert en sa faveur."
+      },
+      // 7 → A
+      {
+        q: "Quel document est typiquement exigé dans un crédit documentaire pour un transport maritime ?",
+        opts: ["Le connaissement maritime (Bill of Lading — B/L)","Le contrat de vente original","La carte grise du véhicule","Le passeport du capitaine du navire"],
+        rep: 0,
+        note: "Le B/L (Bill of Lading / connaissement) est le titre de propriété de la marchandise — document clé en crédoc maritime."
+      },
+      // 8 → B
+      {
+        q: "Quel crédit documentaire est le plus adapté à un contrat prévoyant 12 livraisons mensuelles identiques ?",
+        opts: ["Le crédit transférable","Le crédit revolving","Le crédit back to back","Le crédit red clause"],
+        rep: 1,
+        note: "Le crédit revolving se reconstitue automatiquement après chaque utilisation — idéal pour les livraisons répétitives."
+      },
+      // 9 → D
+      {
+        q: "Dans un crédit documentaire, la banque s'engage à payer contre :",
+        opts: ["La livraison physique des marchandises à l'acheteur","La signature du contrat commercial","L'accord verbal de l'acheteur","La remise de documents strictement conformes aux termes du crédit"],
+        rep: 3,
+        note: "Le crédit documentaire est un engagement documentaire — seule la conformité des documents déclenche le paiement."
+      },
+      // 10 → C
+      {
+        q: "Quelle est la différence principale entre un crédit documentaire et une remise documentaire ?",
+        opts: ["La remise documentaire implique un engagement bancaire ferme de paiement","Il n'y a aucune différence entre ces deux instruments","Le crédit documentaire implique un engagement bancaire ferme de paiement, pas la remise documentaire","La remise documentaire est plus sécurisée pour le vendeur"],
+        rep: 2,
+        note: "Différence fondamentale : le crédoc = engagement bancaire. La remise documentaire = pas d'engagement bancaire, la banque transmet seulement."
+      },
+      // 11 → B
+      {
+        q: "Qu'est-ce qu'une réserve documentaire dans un crédit documentaire ?",
+        opts: ["Un dépôt de garantie versé par l'acheteur","Une non-conformité relevée par la banque sur les documents présentés","Un acompte versé au vendeur avant expédition","Un montant bloqué par la banque centrale"],
+        rep: 1,
+        note: "Une réserve = discordance ou non-conformité relevée sur un document. La banque peut refuser de payer si elle lève une réserve."
+      },
+      // 12 → A
+      {
+        q: "Le crédit red clause tire son nom du fait que :",
+        opts: ["La clause d'avance était à l'origine imprimée en rouge pour attirer l'attention","Il est réservé aux pays à risque élevé","Il implique un taux d'intérêt élevé","Il est soumis à des règles d'urgence spéciales"],
+        rep: 0,
+        note: "Historiquement, cette clause spéciale d'avance était rédigée à l'encre rouge pour la distinguer du reste du crédit."
+      },
+      // 13 → C
+      {
+        q: "Dans un crédit transférable, qui peut demander le transfert du crédit ?",
+        opts: ["La banque émettrice uniquement","L'acheteur (donneur d'ordre)","Le premier bénéficiaire (vendeur intermédiaire)","La banque confirmatrice"],
+        rep: 2,
+        note: "Seul le premier bénéficiaire peut demander à la banque autorisée de transférer le crédit à un second bénéficiaire."
+      },
+      // 14 → B
+      {
+        q: "Sous quelle condition un crédit documentaire est-il considéré comme confirmé ?",
+        opts: ["Lorsque l'acheteur signe une deuxième fois le contrat","Lorsque la banque notificatrice ajoute son propre engagement de paiement","Lorsque la douane valide les documents","Lorsque la banque émettrice envoie un deuxième message SWIFT"],
+        rep: 1,
+        note: "La confirmation = la banque notificatrice s'engage personnellement à payer si les documents sont conformes."
+      },
+      // 15 → D
+      {
+        q: "Quel est le principal risque résiduel dans un crédit documentaire pour le vendeur, même après confirmation ?",
+        opts: ["Que l'acheteur refuse la marchandise à la livraison","Que les marchandises soient endommagées en transit","Que la douane bloque les marchandises","Que la banque confirmatrice fasse faillite"],
+        rep: 3,
+        note: "Après confirmation, le seul risque résiduel est la faillite de la banque confirmatrice — inéliminable."
+      },
+      // 16 → A
+      {
+        q: "Dans le circuit final du crédit documentaire, qui remet les documents à l'acheteur ?",
+        opts: ["La banque émettrice","Le vendeur directement","La douane","Le transitaire"],
+        rep: 0,
+        note: "Circuit final : banque confirmatrice → banque émettrice → acheteur. C'est la banque émettrice qui remet les documents."
+      },
+      // 17 → B
+      {
+        q: "Quel est le principal avantage du crédit revolving par rapport à l'ouverture de plusieurs crédits distincts ?",
+        opts: ["Il supprime tout risque documentaire","Il permet de ne pas ouvrir un nouveau crédit pour chaque livraison","Il garantit la qualité des marchandises livrées","Il est gratuit car sans commission bancaire"],
+        rep: 1,
+        note: "Le revolving évite de répéter la procédure d'ouverture à chaque livraison — gain de temps et de coût."
+      },
+      // 18 → D
+      {
+        q: "Dans un crédit back to back, le premier crédit sert de :",
+        opts: ["Document douanier à la frontière","Titre de propriété de la marchandise","Moyen de paiement direct au transporteur","Garantie pour obtenir l'émission d'un second crédit en faveur du fournisseur"],
+        rep: 3,
+        note: "Back to back : le bénéficiaire utilise le crédit reçu comme garantie pour faire ouvrir un second crédit en faveur de son propre fournisseur."
+      },
+      // 19 → C
+      {
+        q: "Lors de l'ouverture d'un crédit documentaire, quelles informations clés doivent figurer dans les instructions de l'acheteur ?",
+        opts: ["Uniquement le montant et le nom du vendeur","Le nom du capitaine et le numéro de la cale","Les documents requis, le montant, l'Incoterms®, les délais et le mode de réalisation","Le prix du bateau et les coordonnées GPS du port"],
+        rep: 2,
+        note: "Les instructions d'ouverture doivent être précises : documents exigés, montant, devise, Incoterms®, délai d'expédition, délai de présentation, mode de réalisation."
+      },
+      // 20 → A
+      {
+        q: "Dans un crédit documentaire réalisable par acceptation, que peut faire le vendeur avec la traite acceptée par la banque ?",
+        opts: ["L'escompter pour obtenir des liquidités avant terme","La remettre directement à l'acheteur","La déposer en douane comme garantie","La transférer à un autre fournisseur"],
+        rep: 0,
+        note: "La traite acceptée par la banque peut être escomptée par le vendeur — il obtient ainsi des liquidités avant l'échéance."
+      },
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// ÉTAT
+// ═══════════════════════════════════════════════════
+let currentSerie = 0;
+let state = SERIES.map(s => ({
+  answers: new Array(s.questions.length).fill(null),
+  current: 0,
+  done: false
+}));
+
+function switchSerie(idx) {
+  currentSerie = idx;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  render();
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const s = SERIES[currentSerie];
+  const st = state[currentSerie];
+
+  if (st.done) { renderResult(app); return; }
+
+  const q = s.questions[st.current];
+  const total = s.questions.length;
+  const answered = st.answers.filter(a=>a!==null).length;
+  const pct = Math.round((answered/total)*100);
+
+  let html = `
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+    <div class="progress-info"><span>${answered} / ${total} répondues</span><span>${pct}%</span></div>
+    <div class="question-card">
+      <span class="question-num">Question ${st.current+1} / ${total}</span>
+      <div class="question-text">${q.q}</div>
+      <div class="options">
+  `;
+
+  const letters = ['A','B','C','D'];
+  const userAns = st.answers[st.current];
+  q.opts.forEach((opt,i)=>{
+    let cls = 'option-btn';
+    let disabled = '';
+    if (userAns !== null) {
+      disabled = 'disabled';
+      if (i === q.rep) cls += ' correct';
+      else if (i === userAns && i !== q.rep) cls += ' wrong';
+    } else if (i === userAns) cls += ' selected';
+    html += `<button class="${cls}" ${disabled} onclick="answer(${i})">
+      <span class="letter">${letters[i]}</span><span>${opt}</span>
+    </button>`;
+  });
+
+  const noteVisible = userAns !== null ? 'visible' : '';
+  html += `</div>
+    <div class="note-box ${noteVisible}"><strong>📌 Note :</strong> ${q.note}</div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-outline" onclick="go(-1)" ${st.current===0?'disabled':''}>← Précédent</button>
+    <span style="color:#999;font-size:0.85rem">${st.current+1} / ${total}</span>`;
+
+  if (st.current < total-1) {
+    html += `<button class="btn btn-green" onclick="go(1)">Suivant →</button>`;
+  } else {
+    const allDone = st.answers.every(a=>a!==null);
+    html += `<button class="btn btn-green" onclick="finish()" ${allDone?'':'disabled'}>Voir les résultats ✓</button>`;
+  }
+  html += `</div>`;
+
+  app.innerHTML = html;
+}
+
+function answer(idx) {
+  const st = state[currentSerie];
+  if (st.answers[st.current] !== null) return;
+  st.answers[st.current] = idx;
+  render();
+}
+
+function go(dir) {
+  const st = state[currentSerie];
+  st.current = Math.max(0, Math.min(SERIES[currentSerie].questions.length-1, st.current+dir));
+  render();
+}
+
+function finish() {
+  state[currentSerie].done = true;
+  render();
+}
+
+function renderResult(app) {
+  const s = SERIES[currentSerie];
+  const st = state[currentSerie];
+  const total = s.questions.length;
+  const ok = st.answers.filter((a,i)=>a===s.questions[i].rep).length;
+  const pct = Math.round((ok/total)*100);
+
+  let color, msg;
+  if (pct >= 80) { color='#1a5c38'; msg='Excellent ! Maîtrise solide du crédit documentaire.'; }
+  else if (pct >= 60) { color='#C47A0A'; msg='Bon niveau. Quelques points à revoir.'; }
+  else { color='#c0392b'; msg='Des révisions sont nécessaires. Relisez le cours.'; }
+
+  let detail = '';
+  s.questions.forEach((q,i)=>{
+    const userOk = st.answers[i]===q.rep;
+    const letters=['A','B','C','D'];
+    detail += `<div class="result-row">
+      <span class="badge ${userOk?'badge-ok':'badge-ko'}">${userOk?'✓':'✗'}</span>
+      <span style="flex:1"><strong>Q${i+1}.</strong> ${q.q}</span>
+      <span style="color:${userOk?'#1a5c38':'#c0392b'};font-weight:bold;min-width:40px;text-align:right">
+        ${letters[st.answers[i]??-1]??'—'} ${userOk?'✓':'→ '+letters[q.rep]}
+      </span>
+    </div>`;
+  });
+
+  app.innerHTML = `
+    <div class="result-panel visible">
+      <div class="score-circle" style="background:${color}20;border:4px solid ${color}">
+        <span class="big" style="color:${color}">${ok}/${total}</span>
+        <span class="small" style="color:${color}">${pct}%</span>
+      </div>
+      <div class="score-msg" style="color:${color}">${msg}</div>
+      <button class="btn btn-outline" onclick="restart()">🔄 Recommencer</button>
+      <div class="result-detail">${detail}</div>
+    </div>`;
+}
+
+function restart() {
+  state[currentSerie] = { answers: new Array(SERIES[currentSerie].questions.length).fill(null), current:0, done:false };
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
