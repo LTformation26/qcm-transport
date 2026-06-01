@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM – Échanges intra-communautaires | LicenceTransport</title>
+<style>
+  :root {
+    --green: #1a5c38;
+    --green-light: #e8f3ed;
+    --green-mid: #2ecc71;
+    --white: #ffffff;
+    --gray-bg: #f5f5f3;
+    --gray-border: #e0e0da;
+    --text: #1a1a18;
+    --muted: #666660;
+    --correct-bg: #eaf6ee;
+    --correct-border: #27ae60;
+    --correct-text: #1a5c38;
+    --wrong-bg: #fdecea;
+    --wrong-border: #e74c3c;
+    --wrong-text: #922b21;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gray-bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+  header { background: var(--green); color: white; padding: 18px 24px; display: flex; align-items: center; gap: 14px; }
+  header h1 { font-size: 18px; font-weight: 600; }
+  header span { font-size: 13px; opacity: 0.75; }
+  .tabs { display: flex; gap: 0; background: white; border-bottom: 2px solid var(--gray-border); padding: 0 24px; }
+  .tab { padding: 12px 24px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .tab:hover:not(.active) { color: var(--text); }
+  .main { max-width: 760px; margin: 0 auto; padding: 24px 16px; }
+  .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .btn { padding: 8px 18px; border-radius: 6px; border: 1.5px solid var(--gray-border); background: white; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text); transition: all 0.15s; }
+  .btn:hover { background: var(--gray-bg); border-color: #bbb; }
+  .btn.primary { background: var(--green); color: white; border-color: var(--green); }
+  .btn.primary:hover { background: #154d2f; }
+  .mode-group { display: flex; border: 1.5px solid var(--gray-border); border-radius: 6px; overflow: hidden; }
+  .mode-btn { padding: 7px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: white; color: var(--muted); transition: all 0.15s; }
+  .mode-btn.active { background: var(--green); color: white; }
+  .progress-wrap { background: var(--gray-border); border-radius: 4px; height: 5px; margin-bottom: 16px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 4px; transition: width 0.3s; }
+  .scoreline { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; font-size: 13px; color: var(--muted); }
+  .pill { padding: 3px 12px; border-radius: 20px; font-weight: 600; font-size: 13px; }
+  .pill.ok { background: var(--correct-bg); color: var(--correct-text); }
+  .pill.ko { background: var(--wrong-bg); color: var(--wrong-text); }
+  .q-card { background: white; border: 1.5px solid var(--gray-border); border-radius: 10px; padding: 20px 22px; margin-bottom: 14px; }
+  .q-num { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .q-text { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 14px; line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 7px; border: 1.5px solid var(--gray-border); cursor: pointer; font-size: 14px; color: var(--text); line-height: 1.45; background: white; transition: all 0.15s; user-select: none; }
+  .opt:hover:not(.locked) { border-color: var(--green); background: var(--green-light); }
+  .opt.selected-wrong { border-color: var(--wrong-border); background: var(--wrong-bg); color: var(--wrong-text); }
+  .opt.show-correct { border-color: var(--correct-border); background: var(--correct-bg); color: var(--correct-text); font-weight: 500; }
+  .opt.locked { cursor: default; }
+  .opt-letter { font-weight: 700; min-width: 18px; flex-shrink: 0; }
+  .expl { margin-top: 12px; padding: 10px 14px; background: #f0f7f3; border-left: 4px solid var(--green); border-radius: 0 6px 6px 0; font-size: 13px; color: #2c5f42; line-height: 1.55; }
+  .nav { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+  .result-screen { text-align: center; padding: 3rem 1rem; }
+  .result-big { font-size: 56px; font-weight: 700; color: var(--green); line-height: 1; }
+  .result-sub { font-size: 16px; color: var(--muted); margin-top: 6px; margin-bottom: 24px; }
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 280px; margin: 0 auto 24px; }
+  .result-cell { padding: 14px; border-radius: 8px; font-weight: 600; font-size: 22px; }
+  .result-cell.ok { background: var(--correct-bg); color: var(--correct-text); }
+  .result-cell.ko { background: var(--wrong-bg); color: var(--wrong-text); }
+  .result-cell-label { font-size: 12px; font-weight: 400; opacity: 0.8; display: block; }
+  @media (max-width: 500px) { header h1 { font-size: 15px; } .main { padding: 14px 10px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🚛 LicenceTransport — QCM Formation</h1>
+    <span>Échanges intra-communautaires · 2 séries × 20 questions</span>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchSerie(0)">Série 1</button>
+  <button class="tab" onclick="switchSerie(1)">Série 2</button>
+</div>
+
+<div class="main">
+  <div class="controls">
+    <div class="mode-group">
+      <button class="mode-btn active" onclick="setMode('one')">Question par question</button>
+      <button class="mode-btn" onclick="setMode('all')">Toutes les questions</button>
+    </div>
+    <button class="btn" onclick="resetSerie()">Recommencer cette série</button>
+  </div>
+  <div id="quiz-area"></div>
+</div>
+
+<script>
+// Chaque question : { q, correctText, wrongTexts: [3 mauvaises réponses], exp }
+// On mélange les 4 options avec une graine fixe par index pour distribution déterministe
+const rawSeries = [
+  // === SÉRIE 1 ===
+  [
+    { q: "Depuis quelle date les échanges intra-communautaires se font-ils sans formalités douanières ?",
+      correctText: "1er janvier 1993",
+      wrongTexts: ["1er janvier 1990", "1er janvier 2010", "1er janvier 2021"],
+      exp: "C'est l'Acte unique européen, entré en vigueur le 1er janvier 1993, qui a supprimé les formalités douanières entre les États membres." },
+
+    { q: "Dans les échanges intra-communautaires, quel terme remplace le mot « exportation » ?",
+      correctText: "Expédition",
+      wrongTexts: ["Livraison", "Introduction", "Mise en libre pratique"],
+      exp: "Le vocabulaire intra-UE utilise « expédition » à la place d'exportation, et « introduction » à la place d'importation." },
+
+    { q: "Dans les échanges intra-communautaires, quel terme remplace le mot « importation » ?",
+      correctText: "Introduction",
+      wrongTexts: ["Expédition", "Acquisition", "Mise à la consommation"],
+      exp: "Dans les échanges intra-UE, « introduction » remplace le mot importation." },
+
+    { q: "Combien de pays composent l'Union Européenne depuis 2021 ?",
+      correctText: "27 États membres",
+      wrongTexts: ["25 États membres", "26 États membres", "28 États membres"],
+      exp: "L'Union Européenne est composée de 27 États membres depuis la sortie du Royaume-Uni le 1er janvier 2021." },
+
+    { q: "Depuis le 1er janvier 2021, quel est le statut du Royaume-Uni vis-à-vis de l'UE ?",
+      correctText: "Il est hors de l'UE, les formalités douanières sont rétablies",
+      wrongTexts: ["Il fait toujours partie de l'UE", "Il bénéficie d'une dérogation sans formalités jusqu'en 2025", "Il fait partie de l'espace Schengen uniquement"],
+      exp: "Depuis le 1er janvier 2021, le Royaume-Uni a quitté l'UE. Le droit de l'Union européenne a cessé de s'appliquer. Les formalités douanières sont rétablies." },
+
+    { q: "Qu'est-ce que la « mise en libre pratique » ?",
+      correctText: "L'opération qui confère à une marchandise importée d'un pays tiers le statut douanier communautaire",
+      wrongTexts: ["L'opération qui permet la vente d'une marchandise sur le marché français", "La suppression des droits de douane entre États membres", "Le dédouanement à l'exportation"],
+      exp: "La mise en libre pratique confère à une marchandise importée d'un pays tiers à l'UE le statut douanier communautaire, par liquidation des droits de douane communautaires." },
+
+    { q: "Qu'est-ce que la « mise à la consommation » ?",
+      correctText: "L'opération par laquelle un importateur acquitte les taxes intérieures pour commercialiser la marchandise sur le marché intérieur",
+      wrongTexts: ["La procédure qui donne le statut douanier européen à une marchandise", "La déclaration statistique des échanges", "L'exonération de TVA pour les ventes intracommunautaires"],
+      exp: "La mise à la consommation permet à l'importateur de commercialiser la marchandise sur le marché intérieur après paiement des taxes intérieures (TVA, accises, taxes parafiscales)." },
+
+    { q: "Dans la grande majorité des cas, la mise en libre pratique et la mise à la consommation se font :",
+      correctText: "Simultanément, en une seule déclaration en douane",
+      wrongTexts: ["En deux déclarations distinctes séparées de 30 jours", "La MLP d'abord, puis la MAC dans les 6 mois", "Uniquement à l'initiative de la douane"],
+      exp: "Dans la grande majorité des cas, les deux opérations se font simultanément, en une seule déclaration en douane." },
+
+    { q: "Le numéro de TVA intracommunautaire français est composé de :",
+      correctText: "FR + 2 caractères (clé) + numéro SIREN à 9 chiffres",
+      wrongTexts: ["FR + 9 chiffres SIREN uniquement", "2 lettres + numéro SIRET à 14 chiffres", "EU + numéro SIREN à 9 chiffres"],
+      exp: "En France, le numéro d'identification TVA est composé des 2 lettres FR, d'une clé informatique à 2 caractères, et du numéro SIREN à 9 chiffres." },
+
+    { q: "Dans les échanges intra-UE, c'est le vendeur qui :",
+      correctText: "Facture en exonération de TVA et déclare le CA exonéré",
+      wrongTexts: ["Auto-liquide la TVA du pays de l'acheteur", "Facture avec TVA française systématiquement", "Perçoit la TVA pour le compte de l'acheteur"],
+      exp: "Le vendeur (expéditeur) facture en exonération de TVA et doit déclarer le chiffre d'affaires des marchandises expédiées en exonération de TVA (document CA en France)." },
+
+    { q: "Qui doit auto-liquider la TVA lors d'une acquisition intracommunautaire ?",
+      correctText: "L'acheteur (destinataire) auprès de ses propres services fiscaux",
+      wrongTexts: ["Le vendeur étranger auprès du Trésor public français", "La douane française", "L'État membre du vendeur"],
+      exp: "L'acquéreur doit déclarer ses acquisitions et auto-liquider la TVA auprès de ses propres services fiscaux (document CA3 en France)." },
+
+    { q: "Quel est le seuil à partir duquel une déclaration DEB détaillée est obligatoire à l'introduction ?",
+      correctText: "460 000 €",
+      wrongTexts: ["100 000 €", "230 000 €", "1 000 000 €"],
+      exp: "Le seuil de 460 000 € détermine l'obligation de déclaration détaillée, tant pour les introductions que pour les expéditions." },
+
+    { q: "En dessous du seuil de 460 000 € à l'expédition, l'opérateur doit :",
+      correctText: "Établir une déclaration fiscale simplifiée (données limitées)",
+      wrongTexts: ["Ne rien déclarer du tout", "Établir une déclaration détaillée complète", "Déposer une DES à la place de la DEB"],
+      exp: "En dessous de 460 000 €, l'expéditeur doit établir une déclaration fiscale simplifiée (N° TVA vendeur, N° TVA acquéreur, montant HT, régime)." },
+
+    { q: "Quel est l'élément déclencheur d'une DEB ?",
+      correctText: "Le flux physique de la marchandise",
+      wrongTexts: ["L'émission de la facture", "Le paiement de la marchandise", "La signature du contrat de vente"],
+      exp: "C'est le flux physique qui détermine l'existence d'une DEB et non les flux financiers ou l'émission de factures." },
+
+    { q: "Au plus tard quand doit être déposée la DEB ?",
+      correctText: "Le 10ème jour ouvrable du mois suivant le mois de référence",
+      wrongTexts: ["Le 5ème jour ouvrable du mois suivant", "Le 15 du mois suivant", "Le dernier jour du mois de référence"],
+      exp: "La DEB doit être établie au plus tard le 10ème jour ouvrable qui suit le mois de référence." },
+
+    { q: "Quel est le taux de TVA normal en France ?",
+      correctText: "20 %",
+      wrongTexts: ["19 %", "21 %", "23 %"],
+      exp: "Le taux de TVA normal en France est de 20 % (tableau en vigueur au 1er janvier 2021 dans le document de cours)." },
+
+    { q: "Quel est le taux de TVA normal au Luxembourg ?",
+      correctText: "17 %",
+      wrongTexts: ["19 %", "20 %", "21 %"],
+      exp: "Le Luxembourg applique un taux normal de TVA de 17 %, le plus bas de l'UE selon le tableau du document." },
+
+    { q: "Quel est le taux de TVA normal en Hongrie ?",
+      correctText: "27 %",
+      wrongTexts: ["23 %", "24 %", "25 %"],
+      exp: "La Hongrie applique le taux de TVA normal le plus élevé de l'UE avec 27 %." },
+
+    { q: "La DES (Déclaration Européenne de Services) est obligatoire depuis :",
+      correctText: "1er janvier 2010",
+      wrongTexts: ["1er janvier 1993", "1er janvier 2005", "1er janvier 2021"],
+      exp: "Depuis le 1er janvier 2010, les entreprises françaises fournissant des services à des sociétés établies dans d'autres États membres doivent établir une DES." },
+
+    { q: "Lors d'une prestation de service facturée à une entreprise établie en UE (B to B), quelle règle TVA s'applique ?",
+      correctText: "La prestation est exonérée de TVA, la TVA est due par le preneur dans son État membre",
+      wrongTexts: ["On facture avec la TVA française au taux normal", "On facture au taux TVA du pays du preneur", "Aucune TVA ne s'applique dans aucun pays"],
+      exp: "Lorsque le preneur (client) est établi en UE, la prestation est exonérée de TVA. La facture est établie hors TVA et la TVA est due par le preneur dans son État membre." },
+  ],
+  // === SÉRIE 2 ===
+  [
+    { q: "Qu'est-ce que l'« origine » d'une marchandise ?",
+      correctText: "Le lieu de fabrication ou de transformation substantielle de la marchandise",
+      wrongTexts: ["Le pays de départ de la marchandise", "Le pays d'immatriculation du transporteur", "Le pays de l'acheteur final"],
+      exp: "L'origine concerne le lieu de fabrication ou de transformation substantielle. La provenance, elle, concerne le dernier pays d'expédition." },
+
+    { q: "Qu'est-ce que la « provenance » d'une marchandise ?",
+      correctText: "Le dernier pays d'expédition à destination du pays importateur",
+      wrongTexts: ["Le pays de fabrication de la marchandise", "Le pays où la transformation substantielle a été réalisée", "Le pays de l'entrepôt douanier de stockage"],
+      exp: "La provenance concerne le dernier pays d'expédition de la marchandise à destination du pays où elle est importée ou introduite." },
+
+    { q: "Une marchandise est considérée comme « communautaire » si elle est :",
+      correctText: "Entièrement obtenue dans un État de l'UE, ou importée d'un pays tiers et mise en libre pratique",
+      wrongTexts: ["Transportée par un transporteur européen agréé", "Facturée en euros par un vendeur de l'UE", "Assurée par une compagnie d'assurance européenne"],
+      exp: "La marchandise communautaire est soit entièrement obtenue dans un État de l'UE, soit importée d'un pays tiers après mise en libre pratique, soit obtenue dans l'UE à partir de marchandises mises en libre pratique après transformation substantielle." },
+
+    { q: "Les échanges avec la Guadeloupe sont traités comme :",
+      correctText: "Des exportations avec formalités douanières classiques",
+      wrongTexts: ["Des échanges intra-communautaires classiques sans formalités", "Des échanges soumis à la DEB détaillée obligatoire", "Des échanges exonérés de toute formalité et de toute taxe"],
+      exp: "Les DOM (Guadeloupe, Martinique, Guyane, Réunion, Mayotte) ne font pas partie du territoire fiscal communautaire. Les échanges avec ces territoires sont traités comme des exportations avec formalités douanières." },
+
+    { q: "Pour les factures en devises autres que l'euro, quel taux de change est utilisé pour l'auto-liquidation de TVA ?",
+      correctText: "Le taux de l'avant-dernier mercredi du mois précédant le mois de l'auto-liquidation",
+      wrongTexts: ["Le taux du jour de la facture", "Le taux fixé par la BCE le 1er du mois", "Le taux moyen mensuel publié par la Banque de France"],
+      exp: "Pour les factures en devises, le taux de change devise-euro est celui de l'avant-dernier mercredi du mois précédant le mois de l'auto-liquidation." },
+
+    { q: "Quel est le code pays de l'Espagne dans la DEB ?",
+      correctText: "ES",
+      wrongTexts: ["SP", "EP", "EX"],
+      exp: "Le code pays de l'Espagne dans la DEB est ES, conformément à la codification des États membres de l'UE." },
+
+    { q: "Quel est le code pays de l'Italie dans la DEB ?",
+      correctText: "IT",
+      wrongTexts: ["IA", "IL", "IE"],
+      exp: "Le code pays de l'Italie est IT. IE correspond à l'Irlande." },
+
+    { q: "Dans la DEB, quel code numérique correspond au transport par route ?",
+      correctText: "3",
+      wrongTexts: ["1", "2", "4"],
+      exp: "Dans la codification des modes de transport de la DEB : 1 = maritime, 2 = chemin de fer, 3 = route, 4 = air." },
+
+    { q: "Dans la DEB, quel code numérique correspond au transport maritime ?",
+      correctText: "1",
+      wrongTexts: ["2", "5", "7"],
+      exp: "Le code 1 correspond au transport maritime dans la nomenclature des modes de transport de la DEB." },
+
+    { q: "Dans l'exemple de l'achat en Allemagne (35 000 €, DAP usine Lyon, transport français 300 €), quelle est la valeur statistique ?",
+      correctText: "34 700 €",
+      wrongTexts: ["35 000 €", "35 300 €", "34 000 €"],
+      exp: "Valeur statistique = valeur à la frontière française. L'incoterm DAP Lyon inclut le transport jusqu'en France. On retire la partie française (300 €) : 35 000 – 300 = 34 700 €." },
+
+    { q: "Dans l'exemple de la vente en Irlande (17 000 €, FOB Le Havre, transport français 200 €), quelle est la valeur statistique ?",
+      correctText: "17 000 €",
+      wrongTexts: ["16 800 €", "17 200 €", "17 500 €"],
+      exp: "FOB Le Havre : le vendeur paye le transport jusqu'au port du Havre (frontière française). Le prix de 17 000 € inclut donc déjà le transport jusqu'à la frontière. Valeur statistique = 17 000 €." },
+
+    { q: "Dans l'exemple de l'achat en Allemagne à 35 000 €, quel est le montant de la TVA à auto-liquider en France ?",
+      correctText: "7 000 €",
+      wrongTexts: ["6 940 €", "7 060 €", "5 250 €"],
+      exp: "TVA à auto-liquider = 35 000 × 20 % = 7 000 €. On applique le taux français (20 %) sur la valeur facturée." },
+
+    { q: "Quelle mention obligatoire doit figurer sur une facture de prestation de service intracommunautaire B to B ?",
+      correctText: "TVA due par le preneur en application des articles 44 et 196 de la Directive 2006/112 du 28/11/2006",
+      wrongTexts: ["TVA incluse au taux du pays de destination", "Exonération de TVA article 293 B du CGI", "Opération hors champ TVA – non soumise"],
+      exp: "La mention obligatoire est : « TVA due par le preneur en application des articles 44 et 196 de la Directive 2006/112 du 28/11/2006 »." },
+
+    { q: "La DES doit être produite au plus tard :",
+      correctText: "Le 10ème jour ouvrable du mois suivant la période de référence",
+      wrongTexts: ["Le 5ème jour ouvrable du mois suivant", "Le dernier jour du mois de référence", "Le 15 du mois suivant la période de référence"],
+      exp: "La DES doit être produite au plus tard le dixième jour ouvrable du mois qui suit la période de référence." },
+
+    { q: "Parmi les prestations suivantes, laquelle est exclue de la DES ?",
+      correctText: "Les prestations de transport de passagers",
+      wrongTexts: ["Le transport de marchandises international", "La location de matériel de transport longue durée", "Les conseils juridiques en droit des transports"],
+      exp: "Parmi les services exclus de la DES figurent notamment les prestations de transport de passagers, les services des agences de voyage, les services se rattachant à un immeuble..." },
+
+    { q: "Le code Brexit pour l'Irlande du Nord est :",
+      correctText: "XI",
+      wrongTexts: ["XU", "IRN", "UK"],
+      exp: "Code XI = Irlande du Nord. Code XU = Royaume-Uni hors Irlande du Nord, depuis le 1er janvier 2021." },
+
+    { q: "Quel document fiscal l'acheteur français remplit-il pour déclarer ses acquisitions intracommunautaires ?",
+      correctText: "Document CA3 (déclaration périodique de TVA)",
+      wrongTexts: ["Document CA (déclaration du vendeur)", "DEB simplifiée", "Formulaire CERFA 10096"],
+      exp: "L'acheteur français déclare ses acquisitions intracommunautaires via le document CA3 et y auto-liquide la TVA." },
+
+    { q: "Quel est le taux de TVA normal en Irlande ?",
+      correctText: "23 %",
+      wrongTexts: ["20 %", "21 %", "22 %"],
+      exp: "Le taux de TVA normal en Irlande est de 23 % selon le tableau du document." },
+
+    { q: "La nomenclature du produit dans la DEB est codifiée sur :",
+      correctText: "8 chiffres (nomenclature combinée communautaire)",
+      wrongTexts: ["4 chiffres", "6 chiffres", "10 chiffres"],
+      exp: "La nomenclature du produit dans la DEB correspond au code de la nomenclature combinée communautaire à 8 chiffres." },
+
+    { q: "Pour les entreprises bénéficiant du régime de la franchise en base, la DES peut être déposée :",
+      correctText: "Sur support papier (via formulaire CERFA)",
+      wrongTexts: ["Uniquement par voie électronique via le télé-service DES", "Via leur expert-comptable uniquement", "Elle n'est pas obligatoire pour ces entreprises"],
+      exp: "La faculté de déposer une DES sur support papier est réservée aux sociétés bénéficiant du régime de la franchise en base. Les autres assujettis doivent utiliser le télé-service DES." },
+  ]
+];
+
+// Distribution déterministe : répartit les bonnes réponses sur A/B/C/D de façon équilibrée
+// Série 1 : positions cibles pour les 20 questions (5 de chaque)
+// Série 2 : idem
+const targetPositions = [
+  [2, 0, 3, 1, 0, 3, 2, 1, 0, 3, 2, 1, 3, 0, 2, 1, 3, 0, 2, 1], // série 1 → A=0,B=1,C=2,D=3
+  [1, 3, 0, 2, 3, 1, 0, 2, 3, 0, 1, 2, 0, 3, 1, 2, 0, 3, 2, 1]  // série 2
+];
+
+function buildSeries(rawSeries) {
+  return rawSeries.map((rawQs, si) =>
+    rawQs.map((rq, qi) => {
+      const pos = targetPositions[si][qi];
+      const opts = [...rq.wrongTexts];
+      opts.splice(pos, 0, rq.correctText);
+      return { q: rq.q, opts, ans: pos, exp: rq.exp };
+    })
+  );
+}
+
+const series = buildSeries(rawSeries);
+
+let currentSerie = 0;
+let mode = 'one';
+let states = [Array(20).fill(null), Array(20).fill(null)];
+let current = [0, 0];
+
+function switchSerie(i) {
+  currentSerie = i;
+  document.querySelectorAll('.tab').forEach((t, idx) => t.classList.toggle('active', idx === i));
+  render();
+}
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && m === 'one') || (i === 1 && m === 'all')));
+  render();
+}
+
+function resetSerie() {
+  states[currentSerie] = Array(20).fill(null);
+  current[currentSerie] = 0;
+  render();
+}
+
+function selectOpt(qIdx, optIdx) {
+  if (states[currentSerie][qIdx] !== null) return;
+  states[currentSerie][qIdx] = optIdx;
+  render();
+}
+
+function getScore(s) {
+  return states[s].reduce((acc, v, i) => acc + (v === series[s][i].ans ? 1 : 0), 0);
+}
+
+const letters = ['A', 'B', 'C', 'D'];
+
+function renderCard(q, qi, sc) {
+  const answered = sc[qi] !== null;
+  const optsHtml = q.opts.map((o, i) => {
+    let cls = 'opt';
+    if (answered) {
+      cls += ' locked';
+      if (i === q.ans) cls += ' show-correct';
+      else if (i === sc[qi]) cls += ' selected-wrong';
+    }
+    return `<div class="${cls}" onclick="selectOpt(${qi},${i})">
+      <span class="opt-letter">${letters[i]}.</span><span>${o}</span>
+    </div>`;
+  }).join('');
+  const expl = answered ? `<div class="expl">💡 ${q.exp}</div>` : '';
+  return `<div class="q-card">
+    <div class="q-num">Question ${qi + 1} / 20</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">${optsHtml}</div>
+    ${expl}
+  </div>`;
+}
+
+function render() {
+  const area = document.getElementById('quiz-area');
+  const s = currentSerie;
+  const qs = series[s];
+  const sc = states[s];
+  const answeredCount = sc.filter(v => v !== null).length;
+  const score = getScore(s);
+
+  const progressHtml = `
+    <div class="scoreline">
+      <span>${answeredCount}/20 répondues</span>
+      <span class="pill ok">✓ ${score} correcte${score > 1 ? 's' : ''}</span>
+      <span class="pill ko">✗ ${answeredCount - score} incorrecte${(answeredCount - score) > 1 ? 's' : ''}</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" style="width:${(answeredCount / 20) * 100}%"></div></div>`;
+
+  if (mode === 'one') {
+    const qi = current[s];
+    if (qi >= qs.length) {
+      area.innerHTML = `<div class="result-screen">
+        <div class="result-big">${score}/20</div>
+        <div class="result-sub">Résultat série ${s + 1}</div>
+        <div class="result-grid">
+          <div class="result-cell ok">${score}<span class="result-cell-label">correctes</span></div>
+          <div class="result-cell ko">${20 - score}<span class="result-cell-label">incorrectes</span></div>
+        </div>
+        <button class="btn primary" onclick="resetSerie()">Recommencer cette série</button>
+      </div>`;
+      return;
+    }
+    const answered = sc[qi] !== null;
+    area.innerHTML = progressHtml + renderCard(qs[qi], qi, sc) +
+      `<div class="nav">
+        ${qi > 0 ? `<button class="btn" onclick="current[${s}]--;render()">← Précédente</button>` : ''}
+        ${answered ? `<button class="btn primary" onclick="current[${s}]++;render()">${qi === 19 ? 'Voir résultat' : 'Suivante →'}</button>` : ''}
+      </div>`;
+  } else {
+    let html = progressHtml;
+    qs.forEach((q, qi) => { html += renderCard(q, qi, sc); });
+    area.innerHTML = html;
+  }
+}
+
+render();
+</script>
+</body>
+</html>
