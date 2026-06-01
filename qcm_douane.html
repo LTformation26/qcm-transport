@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Régimes Douaniers | LicenceTransport</title>
+<style>
+  :root {
+    --green: #1a5c38;
+    --green-light: #eaf5ee;
+    --blue: #1F4E79;
+    --orange: #C47A0A;
+    --orange-light: #fff8e7;
+    --red: #c0392b;
+    --red-light: #fdf0ef;
+    --gray: #f5f5f5;
+    --border: #ddd;
+    --text: #1a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f0f0f0; color: var(--text); font-size: 15px; }
+  header { background: var(--green); color: white; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 1.3rem; font-weight: bold; }
+  header span { font-size: 0.85rem; opacity: 0.8; }
+  .tabs { display: flex; background: #fff; border-bottom: 3px solid var(--green); padding: 0 20px; gap: 4px; }
+  .tab-btn { padding: 12px 24px; border: none; background: none; cursor: pointer; font-size: 0.95rem; font-weight: bold; color: #666; border-bottom: 3px solid transparent; margin-bottom: -3px; transition: all 0.2s; }
+  .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+  .tab-btn:hover { color: var(--green); }
+  .container { max-width: 860px; margin: 24px auto; padding: 0 16px 40px; }
+  .serie-panel { display: none; }
+  .serie-panel.active { display: block; }
+  .progress-bar-wrap { background: #ddd; border-radius: 8px; height: 8px; margin-bottom: 6px; }
+  .progress-bar { background: var(--green); height: 8px; border-radius: 8px; transition: width 0.4s; }
+  .progress-info { display: flex; justify-content: space-between; font-size: 0.82rem; color: #666; margin-bottom: 20px; }
+  .question-card { background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 24px; margin-bottom: 16px; }
+  .question-num { display: inline-block; background: var(--green); color: white; font-weight: bold; font-size: 0.82rem; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+  .question-text { font-weight: bold; font-size: 1rem; margin-bottom: 16px; line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option-btn { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; background: #fafafa; cursor: pointer; text-align: left; font-size: 0.93rem; transition: all 0.2s; line-height: 1.45; }
+  .option-btn:hover:not(:disabled) { border-color: var(--green); background: var(--green-light); }
+  .option-btn .letter { min-width: 28px; height: 28px; background: #e0e0e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; flex-shrink: 0; }
+  .option-btn.correct { border-color: var(--green); background: var(--green-light); }
+  .option-btn.correct .letter { background: var(--green); color: white; }
+  .option-btn.wrong { border-color: var(--red); background: var(--red-light); }
+  .option-btn.wrong .letter { background: var(--red); color: white; }
+  .option-btn:disabled { cursor: default; }
+  .note-box { margin-top: 14px; padding: 10px 14px; background: var(--orange-light); border-left: 4px solid var(--orange); border-radius: 0 6px 6px 0; font-size: 0.88rem; color: #5a3e00; display: none; line-height: 1.5; }
+  .note-box.visible { display: block; }
+  .note-box strong { color: var(--orange); }
+  .nav-btns { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; gap: 12px; }
+  .btn { padding: 10px 22px; border: none; border-radius: 6px; font-size: 0.92rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #145030; }
+  .btn-outline { background: white; color: var(--green); border: 2px solid var(--green); }
+  .btn-outline:hover { background: var(--green-light); }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .result-panel { background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 32px; text-align: center; display: none; }
+  .result-panel.visible { display: block; }
+  .score-circle { width: 110px; height: 110px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; font-weight: bold; }
+  .score-circle .big { font-size: 2.2rem; }
+  .score-circle .small { font-size: 0.85rem; }
+  .score-msg { font-size: 1.05rem; font-weight: bold; margin-bottom: 20px; }
+  .result-detail { text-align: left; border-top: 1px solid #eee; margin-top: 20px; padding-top: 20px; }
+  .result-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+  .badge { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; flex-shrink: 0; }
+  .badge-ok { background: var(--green); color: white; }
+  .badge-ko { background: var(--red); color: white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📋 QCM — Régimes Douaniers (Fiche n°76)</h1>
+  <span>LicenceTransport.fr — CTM 2026</span>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchSerie(0)">Série 1</button>
+  <button class="tab-btn" onclick="switchSerie(1)">Série 2</button>
+</div>
+
+<div class="container" id="app"></div>
+
+<script>
+// Série 1 bonnes réponses : D B A C B D C A D C B A C D A B C A D B
+// Vérif : A=6(pos 3,8,12,15,18) → 5A ; B=6... recalcul :
+// pos: 1D 2B 3A 4C 5B 6D 7C 8A 9D 10C 11B 12A 13C 14D 15A 16B 17C 18A 19D 20B
+// A: 3,8,12,15,18 = 5 ✓  B: 2,5,11,16,20 = 5 ✓  C: 4,7,10,13,17 = 5 ✓  D: 1,6,9,14,19 = 5 ✓
+
+// Série 2 bonnes réponses : A C B D C B D A B C A D D A C B A D B C
+// pos: 1A 2C 3B 4D 5C 6B 7D 8A 9B 10C 11A 12D 13D 14A 15C 16B 17A 18D 19B 20C
+// A: 1,8,11,14,17 = 5 ✓  B: 3,6,9,16,19 = 5 ✓  C: 2,5,10,15,20 = 5 ✓  D: 4,7,12,13,18 = 5 ✓
+
+const SERIES = [
+  {
+    titre: "Série 1",
+    questions: [
+      // 1 → D
+      { q: "Qu'est-ce qu'un régime douanier ?",
+        opts: ["Une procédure de contrôle physique des marchandises en frontière","Un document de transport accompagnant la marchandise","Une taxe perçue par l'administration des douanes","L'attribution d'un statut juridique pour une marchandise"],
+        rep: 3, note: "Un régime douanier est l'attribution d'un statut juridique pour une marchandise. Plusieurs régimes sont proposés par l'administration des douanes." },
+      // 2 → B
+      { q: "Les exportations définitives de marchandises communautaires sont :",
+        opts: ["Soumises aux droits de douane uniquement","Exonérées de TVA et de droits de douane (DD)","Soumises à la TVA française uniquement","Soumises à une déclaration de valeur obligatoire"],
+        rep: 1, note: "Les exportations définitives (marchandises communautaires destinées à être consommées hors du territoire douanier) : toutes opérations exonérées de TVA et de DD." },
+      // 3 → A
+      { q: "La MLP (Mise en Libre Pratique) correspond au paiement de :",
+        opts: ["Les droits de douane pour une marchandise tierce entrant sur le territoire communautaire","La TVA française sur les marchandises importées","Les frais de transit dans les pays de l'AELE","La garantie financière pour l'entrepôt d'importation"],
+        rep: 0, note: "La MLP = paiement des droits de douane. La marchandise tierce entre sur le territoire communautaire." },
+      // 4 → C
+      { q: "La MAC (Mise à la Consommation) correspond au paiement de :",
+        opts: ["Les droits de douane sur les marchandises tierces","Les frais d'entreposage en entrepôt douanier","La TVA française, car la TVA est une taxe sur la consommation","Les restitutions agricoles de la PAC"],
+        rep: 2, note: "La MAC = paiement de la TVA française. La TVA est une taxe sur la consommation." },
+      // 5 → B
+      { q: "Combien de valeurs doit préciser le déclarant lors d'une importation définitive ?",
+        opts: ["Une seule valeur : la valeur commerciale","Trois valeurs : VD, VS, VPD","Deux valeurs : valeur statistique et valeur en douane","Quatre valeurs dont la valeur assurance"],
+        rep: 1, note: "Le déclarant doit préciser les trois valeurs de la déclaration de valeur : VD (valeur en douane), VS (valeur statistique), VPD (valeur à destination)." },
+      // 6 → D
+      { q: "Les régimes temporaires ou suspensifs permettent de :",
+        opts: ["Exonérer définitivement les marchandises de droits et taxes","Accélérer le passage en frontière sans formalité","Bénéficier d'un taux réduit de droits de douane","Réaliser une opération en suspension de droits et taxes"],
+        rep: 3, note: "Les régimes temporaires ou suspensifs permettent de réaliser une opération en suspension de droits et taxes." },
+      // 7 → C
+      { q: "Le sigle T2 identifie quel régime de transit ?",
+        opts: ["Le transit international routier","Le transit communautaire externe","Le transit communautaire interne","Le transit simplifié domicilié"],
+        rep: 2, note: "Le titre de transit communautaire interne est identifié par le sigle T2 figurant en troisième sous-case de la case 1 du DAU." },
+      // 8 → A
+      { q: "Le transit communautaire interne (T2) couvre :",
+        opts: ["Les marchandises d'origine communautaire (ou tiers en MLP) circulant dans la communauté avec passage dans un pays de l'AELE","Les marchandises d'origine pays tiers non mises en libre pratique","Les marchandises circulant entre pays de l'UE et pays de l'AELE uniquement","Les marchandises transportées sous carnet TIR en mode routier"],
+        rep: 0, note: "T2 couvre l'acheminement de marchandises d'origine communautaire (ou tiers en MLP), circulant dans la communauté avec passage dans un pays de l'AELE et les échanges avec les DOM." },
+      // 9 → D
+      { q: "Le sigle T1 identifie quel régime de transit ?",
+        opts: ["Le transit communautaire interne","Le transit commun entre UE et AELE","Le transit international routier","Le transit communautaire externe"],
+        rep: 3, note: "Le transit communautaire externe est identifié par le sigle T1. Il couvre les marchandises d'origine pays tiers non mises en libre pratique." },
+      // 10 → C
+      { q: "Depuis quelle date le NSTI (Nouveau Système de Transit Informatisé) est-il en application ?",
+        opts: ["1er janvier 2000","1er juillet 2007","1er avril 2004","1er janvier 2010"],
+        rep: 2, note: "Depuis le 1er avril 2004, la mise sous transit s'effectue à l'aide d'une procédure informatique." },
+      // 11 → B
+      { q: "Le transit communautaire simplifié-domicilié permet de transporter :",
+        opts: ["Des marchandises communautaires entre pays de l'UE sans formalité","Des marchandises tierces non dédouanées entre deux points du territoire douanier national","Des marchandises sous TIR entre pays membres de la convention","Des marchandises agricoles soumises aux restitutions de la PAC"],
+        rep: 1, note: "Le transit communautaire simplifié-domicilié permet de transporter des marchandises tierces non dédouanées entre deux points du territoire douanier national." },
+      // 12 → A
+      { q: "Le transit commun concerne l'acheminement entre :",
+        opts: ["Les pays de l'UE et les pays de l'AELE","Les pays de l'UE et les pays tiers en général","Les DOM et la métropole uniquement","Les pays signataires du carnet ATA"],
+        rep: 0, note: "Le transit commun = acheminement d'une marchandise entre les pays de l'UE et les pays de l'AELE. Ce régime est facultatif." },
+      // 13 → C
+      { q: "Combien de pays maximum le carnet TIR permet-il de traverser ?",
+        opts: ["5 pays","20 pays","10 pays","15 pays"],
+        rep: 2, note: "Le passage d'une douane nécessite 2 feuillets. Le carnet TIR comporte maximum 20 feuillets → permet de franchir 10 pays adhérents." },
+      // 14 → D
+      { q: "Un carnet TIR ne peut couvrir :",
+        opts: ["Que les transports routiers internationaux de moins de 1000 km","Que les marchandises d'un poids inférieur à une tonne","Que les transports entre pays de la Communauté","Qu'une seule opération de transport"],
+        rep: 3, note: "Un transport TIR est réalisé par l'utilisation d'un « carnet TIR », carnet ne pouvant couvrir qu'une seule opération." },
+      // 15 → A
+      { q: "Dans le régime de l'entrepôt d'importation, quelle est la durée de séjour autorisée ?",
+        opts: ["Illimitée","6 mois maximum","2 ans maximum","3 ans maximum"],
+        rep: 0, note: "Durée du séjour dans l'entrepôt d'importation : illimitée." },
+      // 16 → B
+      { q: "Le régime de l'entrepôt d'exportation permet de considérer les marchandises comme exportées :",
+        opts: ["Uniquement après leur départ physique du territoire","Même si elles sont encore physiquement sur le territoire","À condition qu'elles aient été dédouanées à l'export","Uniquement pour les marchandises de la PAC"],
+        rep: 1, note: "Les produits placés sous le régime de l'entrepôt d'exportation sont considérés comme exportés, même s'ils sont encore physiquement sur le territoire." },
+      // 17 → C
+      { q: "Le régime de préfinancement des restitutions est réservé :",
+        opts: ["Aux entreprises importatrices de matières premières","Aux exportateurs de produits industriels vers les pays tiers","Aux produits de la PAC (Politique Agricole Commune)","Aux marchandises sous régime ATA"],
+        rep: 2, note: "Ce régime est réservé aux produits de la PAC. Durée maximale : six mois." },
+      // 18 → A
+      { q: "L'admission temporaire en exonération totale s'applique à :",
+        opts: ["Des matériels professionnels, marchandises pour foires/expositions, matériels pédagogiques et scientifiques","Toutes les marchandises tierces importées provisoirement","Les marchandises concurrençant des produits communautaires identiques","Les produits agricoles destinés à la transformation"],
+        rep: 0, note: "Exemples d'exonération totale : matériels professionnels, marchandises pour foires/expositions, matériels pédagogiques et scientifiques, emballages, films, etc." },
+      // 19 → D
+      { q: "Dans l'admission temporaire en exonération partielle, le droit de douane est calculé à raison de :",
+        opts: ["5 % par mois d'utilisation","1 % par mois d'utilisation","10 % par mois d'utilisation","3 % par mois ou fraction de mois d'utilisation"],
+        rep: 3, note: "L'imposition est calculée à raison de 3 % — par mois ou fraction de mois (prorata temporis) d'utilisation — du droit normalement exigible en cas de MLP." },
+      // 20 → B
+      { q: "La taxation différentielle dans le perfectionnement passif correspond à :",
+        opts: ["La TVA calculée sur la valeur totale du produit réimporté","Les DD sur le produit compensateur moins les DD qui auraient été perçus sur le produit exporté","Les droits de douane sur la totalité de la valeur en douane du produit fini","Les frais de transport retour majorés des droits de douane"],
+        rep: 1, note: "Taxation différentielle = DD applicables au produit compensateur − DD qui auraient été perçus sur le produit exporté, s'il avait été importé du pays tiers où a eu lieu le perfectionnement." },
+    ]
+  },
+  {
+    titre: "Série 2",
+    questions: [
+      // 1 → A
+      { q: "Quelles sont les deux grandes familles de régimes douaniers ?",
+        opts: ["Les régimes de droit commun (directs/définitifs) et les régimes temporaires ou suspensifs","Les régimes d'importation et les régimes d'exportation","Les régimes communautaires et les régimes internationaux","Les régimes fiscaux et les régimes douaniers"],
+        rep: 0, note: "Il existe deux grandes familles : les régimes de droit commun (directs/définitifs) et les régimes temporaires ou suspensifs." },
+      // 2 → C
+      { q: "Lors d'une exportation définitive, que doit présenter le déclarant ?",
+        opts: ["Le paiement des droits de douane","Une garantie financière auprès de la douane","La valeur statistique de la marchandise","La déclaration de valeur en douane (VD, VS, VPD)"],
+        rep: 2, note: "Lors d'une exportation définitive, le déclarant doit présenter la valeur statistique de la marchandise." },
+      // 3 → B
+      { q: "Quel est l'objectif principal du transit communautaire interne T2 ?",
+        opts: ["Permettre le transport de marchandises tierces sans dédouanement","Éviter la saturation des postes frontières des pays de l'AELE","Faciliter les échanges avec les pays tiers non membres de l'UE","Permettre le stockage temporaire en entrepôt douanier"],
+        rep: 1, note: "Objectif du T2 : éviter la saturation des postes frontières des pays de l'AELE." },
+      // 4 → D
+      { q: "Le transit communautaire externe T1 couvre :",
+        opts: ["Les marchandises communautaires transitant par la Suisse","Les marchandises agricoles de la PAC exportées temporairement","Les marchandises sous carnet TIR en mode routier","Les marchandises d'origine pays tiers non mises en libre pratique, circulant entre deux points de l'UE"],
+        rep: 3, note: "T1 couvre l'acheminement de marchandises d'origine pays tiers non mises en libre pratique (non MLP), circulant entre deux points situés dans la communauté." },
+      // 5 → C
+      { q: "Quel document le NSTI remplace-t-il lors de la mise sous transit ?",
+        opts: ["La lettre de voiture CMR","Le carnet TIR","Le DAU (Document Administratif Unique)","La facture commerciale"],
+        rep: 2, note: "Le NSTI permet l'édition d'un Document d'Accompagnement qui se substitue au DAU." },
+      // 6 → B
+      { q: "Le transit communautaire simplifié utilise à la place du DAU :",
+        opts: ["Le carnet TIR","Un document commercial ou de transport","La déclaration en douane simplifiée (DES)","Le carnet ATA"],
+        rep: 1, note: "Cette formule allégée de transit permet l'utilisation d'un document commercial ou de transport à la place du DAU." },
+      // 7 → D
+      { q: "Sous quelle forme le transit commun peut-il revêtir ?",
+        opts: ["Uniquement T1 pour les marchandises tierces","Uniquement T2 pour les marchandises communautaires","Uniquement sous carnet TIR","T1 (marchandise tierce) ou T2 (marchandise communautaire ou MLP)"],
+        rep: 3, note: "Le transit commun peut revêtir la forme d'un T1 (marchandise tierce) ou d'un T2 (marchandise communautaire ou MLP)." },
+      // 8 → A
+      { q: "Le régime TIR s'applique aux transports de marchandises :",
+        opts: ["Par routes ou intermodaux dont une partie est en mode routier, sans rupture de charge","Uniquement par route entre pays de l'UE","Uniquement entre pays signataires de la Convention de Genève","Par voie aérienne et maritime exclusivement"],
+        rep: 0, note: "Le régime TIR s'applique à tous les transports par routes ou intermodaux dont une partie est en mode routier." },
+      // 9 → B
+      { q: "De combien de feuillets le carnet TIR se compose-t-il au maximum ?",
+        opts: ["10 feuillets","20 feuillets","30 feuillets","15 feuillets"],
+        rep: 1, note: "Le carnet TIR se compose d'un maximum de 20 feuillets." },
+      // 10 → C
+      { q: "Pour quel motif une entreprise peut-elle placer ses marchandises sous le régime de l'entrepôt d'importation ?",
+        opts: ["Pour exporter ses marchandises sans payer la TVA","Pour anticiper le chiffre d'affaires export","Pour éviter de payer immédiatement les droits et taxes lors d'une importation","Pour bénéficier des restitutions agricoles de la PAC"],
+        rep: 2, note: "L'entrepôt d'importation permet, suite à une importation, d'éviter de payer les droits et taxes immédiatement, contre dépôt d'une garantie financière." },
+      // 11 → A
+      { q: "La garantie financière pour l'entrepôt d'importation s'élève à :",
+        opts: ["10 % des DD pour une marchandise tierce et 5 % de TVA pour les marchandises communautaires","5 % des DD pour une marchandise tierce et 10 % de TVA pour les marchandises communautaires","20 % des DD et 20 % de TVA pour toutes les marchandises","3 % des DD par mois d'utilisation"],
+        rep: 0, note: "Garantie financière : 10 % des DD pour une marchandise tierce, 5 % de TVA pour les marchandises communautaires." },
+      // 12 → D
+      { q: "Quelle est la durée maximale d'entreposage dans le régime de l'entrepôt d'exportation ?",
+        opts: ["6 mois","1 an","Illimitée","2 ans"],
+        rep: 3, note: "La durée maximale d'entreposage dans l'entrepôt d'exportation est de deux ans." },
+      // 13 → D
+      { q: "Le régime ATA est garanti par :",
+        opts: ["La Banque Centrale Européenne","L'administration des douanes française","La Chambre de Commerce Internationale (CCI)","Le BICC (Bureau International des Chambres de Commerce)"],
+        rep: 3, note: "Le régime ATA fonctionne sous la garantie d'un cautionnement international assuré par le BICC (bureau international des chambres de commerce)." },
+      // 14 → A
+      { q: "Dans le régime de l'exportation temporaire, la réimportation se fait :",
+        opts: ["En franchise de droits de douane, mais reste assujettie à la TVA","En franchise totale de droits de douane et de TVA","Avec paiement de droits de douane mais exonération de TVA","Avec paiement de la taxation différentielle"],
+        rep: 0, note: "La réimportation se fait en franchise de droits de douane, mais reste assujettie à la TVA." },
+      // 15 → C
+      { q: "Le perfectionnement passif permet d'exporter temporairement des marchandises communautaires pour :",
+        opts: ["Les stocker en entrepôt étranger avant réexpédition","Les présenter dans des foires et expositions internationales","Les perfectionner à l'étranger et les réimporter sous forme de produits compensateurs","Les vendre définitivement à l'étranger avec exonération de TVA"],
+        rep: 2, note: "Le perfectionnement passif permet d'exporter temporairement des marchandises communautaires vers un pays tiers pour les perfectionner, et de les réimporter sous forme de produits compensateurs." },
+      // 16 → B
+      { q: "Dans le perfectionnement actif système 'rembours', que se passe-t-il si les produits compensateurs sont réexportés ?",
+        opts: ["Les droits deviennent exigibles rétroactivement avec intérêts","L'opérateur est remboursé des DD et TVA injustement réglés","L'opérateur bénéficie d'une exonération totale dès l'importation","Aucun remboursement n'est possible"],
+        rep: 1, note: "Dans le système rembours, si les produits compensateurs sont réexportés vers un pays tiers, l'opérateur sera remboursé des DD et TVA injustement réglés." },
+      // 17 → A
+      { q: "Dans le perfectionnement actif système 'suspendu', que se passe-t-il si les réexportations ne se font pas vers des pays tiers ?",
+        opts: ["Les droits et taxes deviennent exigibles rétroactivement, majorés d'intérêts compensatoires","L'opérateur bénéficie d'un délai supplémentaire de 6 mois","Les marchandises sont automatiquement mises en libre pratique","L'opérateur paie uniquement la TVA sans droits de douane"],
+        rep: 0, note: "Dans le système suspendu, si les réexportations ne se font pas dans les pays tiers, les droits et taxes deviennent exigibles rétroactivement, majorés d'intérêts compensatoires." },
+      // 18 → D
+      { q: "La TVA dans le perfectionnement passif est calculée sur :",
+        opts: ["La valeur totale du produit compensateur reimporté","La valeur des marchandises exportées uniquement","Les droits de douane différentiels uniquement","La valeur ajoutée étrangère = prestation + frais de transport retour + DD"],
+        rep: 3, note: "La TVA est calculée sur la valeur ajoutée étrangère, c'est-à-dire l'ensemble des achats de biens et services étrangers (facture du prestataire étranger) majoré des frais de transport retour et des DD." },
+      // 19 → B
+      { q: "La transformation sous douane a été conçue pour :",
+        opts: ["Permettre l'exportation temporaire de marchandises communautaires","Pallier l'incidence négative de certaines anomalies tarifaires","Faciliter le stockage de marchandises tierces sur le territoire communautaire","Simplifier les formalités de transit international"],
+        rep: 1, note: "La transformation sous douane a été conçue pour pallier l'incidence négative de certaines anomalies tarifaires." },
+      // 20 → C
+      { q: "Dans la transformation sous douane, les produits résultant des opérations sont appelés :",
+        opts: ["Produits compensateurs","Marchandises communautaires transformées","Produits transformés","Produits réexportés"],
+        rep: 2, note: "L'article 130 du Code des douanes communautaire : les produits résultant des opérations sont appelés « produits transformés »." },
+    ]
+  }
+];
+
+let currentSerie = 0;
+let state = SERIES.map(s => ({ answers: new Array(s.questions.length).fill(null), current: 0, done: false }));
+
+function switchSerie(idx) {
+  currentSerie = idx;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  render();
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const s = SERIES[currentSerie];
+  const st = state[currentSerie];
+  if (st.done) { renderResult(app); return; }
+  const q = s.questions[st.current];
+  const total = s.questions.length;
+  const answered = st.answers.filter(a => a !== null).length;
+  const pct = Math.round((answered/total)*100);
+  const letters = ['A','B','C','D'];
+  const userAns = st.answers[st.current];
+
+  let html = `
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+    <div class="progress-info"><span>${answered} / ${total} répondues</span><span>${pct}%</span></div>
+    <div class="question-card">
+      <span class="question-num">Question ${st.current+1} / ${total}</span>
+      <div class="question-text">${q.q}</div>
+      <div class="options">`;
+
+  q.opts.forEach((opt, i) => {
+    let cls = 'option-btn';
+    let disabled = '';
+    if (userAns !== null) {
+      disabled = 'disabled';
+      if (i === q.rep) cls += ' correct';
+      else if (i === userAns) cls += ' wrong';
+    }
+    html += `<button class="${cls}" ${disabled} onclick="answer(${i})">
+      <span class="letter">${letters[i]}</span><span>${opt}</span>
+    </button>`;
+  });
+
+  const noteVisible = userAns !== null ? 'visible' : '';
+  html += `</div>
+    <div class="note-box ${noteVisible}"><strong>📌 Note :</strong> ${q.note}</div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-outline" onclick="go(-1)" ${st.current===0?'disabled':''}>← Précédent</button>
+    <span style="color:#999;font-size:0.85rem">${st.current+1} / ${total}</span>`;
+
+  if (st.current < total-1) {
+    html += `<button class="btn btn-green" onclick="go(1)">Suivant →</button>`;
+  } else {
+    const allDone = st.answers.every(a => a !== null);
+    html += `<button class="btn btn-green" onclick="finish()" ${allDone?'':'disabled'}>Voir les résultats ✓</button>`;
+  }
+  html += `</div>`;
+  app.innerHTML = html;
+}
+
+function answer(idx) {
+  const st = state[currentSerie];
+  if (st.answers[st.current] !== null) return;
+  st.answers[st.current] = idx;
+  render();
+}
+
+function go(dir) {
+  const st = state[currentSerie];
+  st.current = Math.max(0, Math.min(SERIES[currentSerie].questions.length-1, st.current+dir));
+  render();
+}
+
+function finish() {
+  state[currentSerie].done = true;
+  render();
+}
+
+function renderResult(app) {
+  const s = SERIES[currentSerie];
+  const st = state[currentSerie];
+  const total = s.questions.length;
+  const ok = st.answers.filter((a,i) => a === s.questions[i].rep).length;
+  const pct = Math.round((ok/total)*100);
+  let color, msg;
+  if (pct >= 80) { color='#1a5c38'; msg='Excellent ! Maîtrise solide des régimes douaniers.'; }
+  else if (pct >= 60) { color='#C47A0A'; msg='Bon niveau. Quelques points à revoir.'; }
+  else { color='#c0392b'; msg='Des révisions sont nécessaires. Relisez la fiche n°76.'; }
+
+  let detail = '';
+  const letters = ['A','B','C','D'];
+  s.questions.forEach((q,i) => {
+    const userOk = st.answers[i] === q.rep;
+    detail += `<div class="result-row">
+      <span class="badge ${userOk?'badge-ok':'badge-ko'}">${userOk?'✓':'✗'}</span>
+      <span style="flex:1"><strong>Q${i+1}.</strong> ${q.q}</span>
+      <span style="color:${userOk?'#1a5c38':'#c0392b'};font-weight:bold;min-width:40px;text-align:right">
+        ${letters[st.answers[i]??-1]??'—'} ${userOk?'✓':'→ '+letters[q.rep]}
+      </span>
+    </div>`;
+  });
+
+  app.innerHTML = `
+    <div class="result-panel visible">
+      <div class="score-circle" style="background:${color}20;border:4px solid ${color}">
+        <span class="big" style="color:${color}">${ok}/${total}</span>
+        <span class="small" style="color:${color}">${pct}%</span>
+      </div>
+      <div class="score-msg" style="color:${color}">${msg}</div>
+      <button class="btn btn-outline" onclick="restart()">🔄 Recommencer</button>
+      <div class="result-detail">${detail}</div>
+    </div>`;
+}
+
+function restart() {
+  state[currentSerie] = { answers: new Array(SERIES[currentSerie].questions.length).fill(null), current:0, done:false };
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
