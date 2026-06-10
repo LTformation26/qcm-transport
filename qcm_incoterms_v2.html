@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM Incoterms</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #222; padding: 20px; font-size: 15px; }
+  h1.page-title { text-align: center; font-size: 22px; color: #1a5c38; margin-bottom: 24px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+  .tab-btn { padding: 8px 18px; border: 2px solid #1a5c38; background: #fff; color: #1a5c38; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+  .tab-btn:hover, .tab-btn.active { background: #1a5c38; color: #fff; }
+  .serie { display: none; max-width: 820px; margin: 0 auto; }
+  .serie.active { display: block; }
+  .serie-header { background: linear-gradient(135deg, #1a5c38, #2e8b57); color: #fff; border-radius: 10px 10px 0 0; padding: 16px 24px; }
+  .serie-header h2 { font-size: 18px; font-weight: 700; }
+  .serie-header p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+  .questions-block { background: #fff; border-radius: 0 0 10px 10px; padding: 20px 24px; border: 1px solid #dde3ec; border-top: none; }
+  .question { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #eef0f4; }
+  .question:last-of-type { border-bottom: none; margin-bottom: 16px; }
+  .q-label { display: inline-block; background: #1a5c38; color: #fff; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 10px; margin-bottom: 10px; }
+  .q-text { font-size: 15px; font-weight: 600; color: #1a1a2e; margin-bottom: 12px; line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: 7px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 9px 14px; border-radius: 7px; border: 1.5px solid #dde3ec; cursor: pointer; transition: all 0.15s; font-size: 14px; line-height: 1.4; }
+  .option:hover { border-color: #1a5c38; background: #f0faf4; }
+  .option input[type="radio"] { margin-top: 2px; flex-shrink: 0; accent-color: #1a5c38; }
+  .option-letter { font-weight: 700; color: #1a5c38; min-width: 18px; }
+  .option.correct-answer { border-color: #2e7d32 !important; background: #e8f5e9 !important; }
+  .option.wrong-answer { border-color: #c62828 !important; background: #fce4ec !important; }
+  .correction-note { display: none; margin-top: 10px; padding: 10px 14px; background: #fffbe6; border-left: 4px solid #e6a817; border-radius: 0 6px 6px 0; font-size: 13px; color: #444; line-height: 1.6; }
+  .serie-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 10px; padding-top: 16px; border-top: 1px solid #eef0f4; }
+  .btn { padding: 10px 24px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: #1a5c38; color: #fff; }
+  .btn-primary:hover { background: #145030; }
+  .btn-secondary { background: #fff; color: #1a5c38; border: 2px solid #1a5c38; }
+  .btn-secondary:hover { background: #f0faf4; }
+  .score-box { display: none; background: linear-gradient(135deg, #1a5c38, #2e8b57); color: #fff; border-radius: 10px; padding: 20px 24px; text-align: center; margin-top: 16px; }
+  .score-box h3 { font-size: 20px; margin-bottom: 6px; }
+  .score-value { font-size: 42px; font-weight: 700; margin: 8px 0; }
+  .score-mention { font-size: 16px; font-weight: 600; margin-top: 4px; }
+  @media (max-width: 600px) { body { padding: 12px; } .questions-block { padding: 14px; } }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Les Incoterms</h1>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showSerie(1)">Série 1</button>
+  <button class="tab-btn" onclick="showSerie(2)">Série 2</button>
+  <button class="tab-btn" onclick="showSerie(3)">Série 3</button>
+  <button class="tab-btn" onclick="showSerie(4)">Série 4</button>
+  <button class="tab-btn" onclick="showSerie(5)">Série 5</button>
+</div>
+
+<!-- ===== SÉRIE 1 — Bonnes réponses : A B C D A B C D A B C D A B C D A B C D ===== -->
+<div class="serie active" id="serie-1">
+  <div class="serie-header"><h2>Les Incoterms — Série 1</h2><p>20 questions — 1 seule bonne réponse</p></div>
+  <div class="questions-block">
+
+    <div class="question" id="s1q1">
+      <span class="q-label">Q1</span>
+      <p class="q-text">Que signifie l'acronyme « Incoterms » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q1" value="A"><span class="option-letter">A</span>International Commercial Terms</label>
+        <label class="option"><input type="radio" name="s1q1" value="B"><span class="option-letter">B</span>International Contract Terms</label>
+        <label class="option"><input type="radio" name="s1q1" value="C"><span class="option-letter">C</span>International Customs Terms</label>
+        <label class="option"><input type="radio" name="s1q1" value="D"><span class="option-letter">D</span>Internal Commerce Terms</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Incoterms est la contraction d'« International Commercial Terms », soit « termes commerciaux internationaux ». Ce ne sont pas des termes douaniers ni contractuels au sens juridique, mais des règles commerciales standardisées.</div>
+    </div>
+
+    <div class="question" id="s1q2">
+      <span class="q-label">Q2</span>
+      <p class="q-text">Quel Incoterm désigne une vente « à l'usine » où le vendeur met simplement la marchandise à disposition dans ses locaux ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q2" value="A"><span class="option-letter">A</span>FCA</label>
+        <label class="option"><input type="radio" name="s1q2" value="B"><span class="option-letter">B</span>EXW</label>
+        <label class="option"><input type="radio" name="s1q2" value="C"><span class="option-letter">C</span>DAP</label>
+        <label class="option"><input type="radio" name="s1q2" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — EXW (Ex Works / À l'usine) est l'Incoterm avec le minimum d'obligations pour le vendeur : il emballe et met à disposition. L'acheteur assume tout le reste, y compris le chargement et le dédouanement à l'export.</div>
+    </div>
+
+    <div class="question" id="s1q3">
+      <span class="q-label">Q3</span>
+      <p class="q-text">Combien d'Incoterms sont spécifiquement réservés au transport maritime ou fluvial dans la version 2020 ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q3" value="A"><span class="option-letter">A</span>3</label>
+        <label class="option"><input type="radio" name="s1q3" value="B"><span class="option-letter">B</span>5</label>
+        <label class="option"><input type="radio" name="s1q3" value="C"><span class="option-letter">C</span>4</label>
+        <label class="option"><input type="radio" name="s1q3" value="D"><span class="option-letter">D</span>7</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Les 4 Incoterms maritimes/fluviaux sont : FAS, FOB, CFR, CIF. Les 7 autres sont multimodaux (EXW, FCA, CPT, CIP, DAP, DPU, DDP). Total : 11.</div>
+    </div>
+
+    <div class="question" id="s1q4">
+      <span class="q-label">Q4</span>
+      <p class="q-text">Sous l'Incoterm CPT, à quel moment précis le risque est-il transféré à l'acheteur ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q4" value="A"><span class="option-letter">A</span>À l'arrivée des marchandises au lieu de destination convenu</label>
+        <label class="option"><input type="radio" name="s1q4" value="B"><span class="option-letter">B</span>Quand le vendeur paie le fret au transporteur</label>
+        <label class="option"><input type="radio" name="s1q4" value="C"><span class="option-letter">C</span>Quand les marchandises franchissent la frontière</label>
+        <label class="option"><input type="radio" name="s1q4" value="D"><span class="option-letter">D</span>À la remise des marchandises au premier transporteur au lieu de départ</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Sous CPT, il y a une dissociation : le risque est transféré dès la remise au 1er transporteur au départ, mais le vendeur paie les frais jusqu'à destination. L'acheteur voyage donc aux risques dès l'expédition, même si le vendeur assume le coût du transport.</div>
+    </div>
+
+    <div class="question" id="s1q5">
+      <span class="q-label">Q5</span>
+      <p class="q-text">Un exportateur français vend des pièces mécaniques à un acheteur japonais sous Incoterm CIF port de Tokyo. Qui supporte le risque de perte de la marchandise pendant la traversée maritime ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q5" value="A"><span class="option-letter">A</span>L'acheteur japonais, car le risque est transféré dès le chargement à bord au port de départ</label>
+        <label class="option"><input type="radio" name="s1q5" value="B"><span class="option-letter">B</span>Le vendeur français, car il paie le fret jusqu'à Tokyo</label>
+        <label class="option"><input type="radio" name="s1q5" value="C"><span class="option-letter">C</span>L'assureur, qui prend automatiquement en charge dès l'embarquement</label>
+        <label class="option"><input type="radio" name="s1q5" value="D"><span class="option-letter">D</span>Le transporteur maritime, responsable de la marchandise pendant le voyage</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous CIF, comme sous CFR, le risque est transféré à l'acheteur dès le chargement à bord au port de départ (France). Pendant la traversée, c'est l'acheteur japonais qui supporte le risque. Le vendeur paie le fret ET l'assurance, mais cette assurance est souscrite au bénéfice de l'acheteur : c'est l'acheteur qui s'en prévaut en cas de sinistre.</div>
+    </div>
+
+    <div class="question" id="s1q6">
+      <span class="q-label">Q6</span>
+      <p class="q-text">Quel Incoterm impose au vendeur le niveau d'obligations le plus élevé, y compris les droits de douane à l'import dans le pays de l'acheteur ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q6" value="A"><span class="option-letter">A</span>DAP</label>
+        <label class="option"><input type="radio" name="s1q6" value="B"><span class="option-letter">B</span>DDP</label>
+        <label class="option"><input type="radio" name="s1q6" value="C"><span class="option-letter">C</span>DPU</label>
+        <label class="option"><input type="radio" name="s1q6" value="D"><span class="option-letter">D</span>CIP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — DDP (Delivered Duty Paid / Rendu droits acquittés) est l'Incoterm avec le maximum d'obligations pour le vendeur : il prend en charge transport, assurance, dédouanement export ET import, droits et taxes. DAP et DPU s'arrêtent avant la douane import.</div>
+    </div>
+
+    <div class="question" id="s1q7">
+      <span class="q-label">Q7</span>
+      <p class="q-text">Quelle est la différence essentielle entre DAP et DPU ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q7" value="A"><span class="option-letter">A</span>Le DAP inclut les droits de douane import, pas le DPU</label>
+        <label class="option"><input type="radio" name="s1q7" value="B"><span class="option-letter">B</span>Le DPU est réservé au transport maritime</label>
+        <label class="option"><input type="radio" name="s1q7" value="C"><span class="option-letter">C</span>Sous DPU, le vendeur est responsable du déchargement à destination ; pas sous DAP</label>
+        <label class="option"><input type="radio" name="s1q7" value="D"><span class="option-letter">D</span>Le DAP est uniquement utilisé en Europe</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Sous DAP, la marchandise est livrée non déchargée sur le moyen de transport : c'est l'acheteur qui décharge. Sous DPU, le vendeur doit décharger la marchandise à destination. DPU est le seul Incoterm qui inclut le déchargement à la charge du vendeur.</div>
+    </div>
+
+    <div class="question" id="s1q8">
+      <span class="q-label">Q8</span>
+      <p class="q-text">Les Incoterms définissent-ils le transfert de propriété des marchandises ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q8" value="A"><span class="option-letter">A</span>Oui, c'est leur rôle principal</label>
+        <label class="option"><input type="radio" name="s1q8" value="B"><span class="option-letter">B</span>Oui, uniquement pour les Incoterms du groupe D</label>
+        <label class="option"><input type="radio" name="s1q8" value="C"><span class="option-letter">C</span>Oui, mais seulement pour le transport maritime</label>
+        <label class="option"><input type="radio" name="s1q8" value="D"><span class="option-letter">D</span>Non, cette question relève du contrat de vente</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — C'est un point fondamental et souvent testé : les Incoterms ne traitent PAS du transfert de propriété. Ils définissent le transfert des risques et la répartition des coûts. Le transfert de propriété est réglé par une clause spécifique dans le contrat de vente (ex : clause de réserve de propriété).</div>
+    </div>
+
+    <div class="question" id="s1q9">
+      <span class="q-label">Q9</span>
+      <p class="q-text">Une marchandise est vendue en Incoterm FOB Shanghai, valeur facturée 10 000 €. Le fret maritime jusqu'au port de Marseille coûte 800 € et l'assurance 100 €. Quelle valeur en douane doit être déclarée à l'entrée en France ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q9" value="A"><span class="option-letter">A</span>10 900 € (marchandise + fret + assurance jusqu'au point d'entrée UE)</label>
+        <label class="option"><input type="radio" name="s1q9" value="B"><span class="option-letter">B</span>10 000 € (prix FOB seul)</label>
+        <label class="option"><input type="radio" name="s1q9" value="C"><span class="option-letter">C</span>10 800 € (marchandise + fret uniquement)</label>
+        <label class="option"><input type="radio" name="s1q9" value="D"><span class="option-letter">D</span>11 000 € (marchandise + fret + assurance + 10% de majoration)</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Selon l'article 71 du Code des Douanes de l'Union, la valeur en douane inclut le prix de la marchandise + frais de transport + assurance + manutention jusqu'au premier point d'entrée dans le territoire douanier de l'UE. Sous FOB, le prix facturé ne comprend pas le fret ni l'assurance : il faut les ajouter. 10 000 + 800 + 100 = 10 900 €. Il n'existe pas de majoration forfaitaire de 10%.</div>
+    </div>
+
+    <div class="question" id="s1q10">
+      <span class="q-label">Q10</span>
+      <p class="q-text">Parmi ces Incoterms, lequel ne doit PAS être utilisé pour le transport de marchandises en conteneurs ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q10" value="A"><span class="option-letter">A</span>FCA</label>
+        <label class="option"><input type="radio" name="s1q10" value="B"><span class="option-letter">B</span>FOB</label>
+        <label class="option"><input type="radio" name="s1q10" value="C"><span class="option-letter">C</span>CIP</label>
+        <label class="option"><input type="radio" name="s1q10" value="D"><span class="option-letter">D</span>DAP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — FOB (et les autres Incoterms maritimes : FAS, CFR, CIF) sont réservés au transport maritime en vrac ou conventionnel. Pour les conteneurs, le transfert de risque se fait au terminal à conteneurs, avant la mise à bord. Utiliser FOB pour un conteneur crée un « vide » de responsabilité entre le terminal et le navire. Il faut utiliser FCA à la place.</div>
+    </div>
+
+    <div class="question" id="s1q11">
+      <span class="q-label">Q11</span>
+      <p class="q-text">Un commissionnaire organise l'expédition de vrac depuis Le Havre vers le Brésil. Le contrat précise « CFR Santos ». Qui doit souscrire l'assurance pour le voyage maritime ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q11" value="A"><span class="option-letter">A</span>Le vendeur, car CFR impose une assurance obligatoire</label>
+        <label class="option"><input type="radio" name="s1q11" value="B"><span class="option-letter">B</span>Le commissionnaire, en tant qu'organisateur du transport</label>
+        <label class="option"><input type="radio" name="s1q11" value="C"><span class="option-letter">C</span>L'acheteur brésilien, car CFR n'inclut pas l'assurance</label>
+        <label class="option"><input type="radio" name="s1q11" value="D"><span class="option-letter">D</span>L'assurance est automatiquement incluse dans le contrat de transport maritime</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — CFR (Cost and Freight) signifie que le vendeur paie le fret jusqu'à Santos, mais N'inclut PAS l'assurance. L'acheteur brésilien supporte les risques dès le chargement à bord au Havre et doit, s'il le souhaite, souscrire sa propre assurance. Pour inclure l'assurance côté vendeur, il faudrait utiliser CIF.</div>
+    </div>
+
+    <div class="question" id="s1q12">
+      <span class="q-label">Q12</span>
+      <p class="q-text">Quel Incoterm a été renommé dans la version 2020 et pour quelle raison ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q12" value="A"><span class="option-letter">A</span>FOB est devenu FCA pour inclure tous les modes de transport</label>
+        <label class="option"><input type="radio" name="s1q12" value="B"><span class="option-letter">B</span>DAP est devenu DPU pour inclure le déchargement</label>
+        <label class="option"><input type="radio" name="s1q12" value="C"><span class="option-letter">C</span>CIF est devenu CIP pour unifier l'assurance</label>
+        <label class="option"><input type="radio" name="s1q12" value="D"><span class="option-letter">D</span>DAT est devenu DPU pour élargir le lieu de livraison au-delà du seul terminal</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — DAT (Delivered at Terminal) est devenu DPU (Delivered at Place Unloaded) dans la version 2020. La raison : le mot « terminal » était trop restrictif. Désormais, le lieu de livraison peut être n'importe quel endroit convenu (entrepôt, usine, chantier…), pas seulement un terminal portuaire ou aéroportuaire.</div>
+    </div>
+
+    <div class="question" id="s1q13">
+      <span class="q-label">Q13</span>
+      <p class="q-text">Depuis la version 2020, quelle différence existe-t-il entre CIF et CIP en matière d'assurance obligatoire ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q13" value="A"><span class="option-letter">A</span>CIP impose une couverture tous risques (Clauses A) ; CIF une couverture minimale (Clauses C)</label>
+        <label class="option"><input type="radio" name="s1q13" value="B"><span class="option-letter">B</span>CIF impose une couverture tous risques ; CIP une couverture minimale</label>
+        <label class="option"><input type="radio" name="s1q13" value="C"><span class="option-letter">C</span>CIP et CIF exigent tous deux une couverture minimale depuis 2020</label>
+        <label class="option"><input type="radio" name="s1q13" value="D"><span class="option-letter">D</span>Ni CIF ni CIP n'imposent de niveau d'assurance précis depuis 2020</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — C'est une nouveauté 2020 importante. Le CIP (multimodal) exige désormais une couverture tous risques (Institute Cargo Clauses A), niveau le plus élevé. Le CIF (maritime) reste sur une couverture minimale (Clauses C). Les deux exigent au minimum 110% de la valeur facturée, mais le niveau de garantie est très différent.</div>
+    </div>
+
+    <div class="question" id="s1q14">
+      <span class="q-label">Q14</span>
+      <p class="q-text">Un vendeur allemand expédie des marchandises à un acheteur marocain sous Incoterm FCA Hambourg. Qui prend en charge les formalités douanières à l'exportation depuis l'Allemagne ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q14" value="A"><span class="option-letter">A</span>L'acheteur marocain</label>
+        <label class="option"><input type="radio" name="s1q14" value="B"><span class="option-letter">B</span>Le vendeur allemand</label>
+        <label class="option"><input type="radio" name="s1q14" value="C"><span class="option-letter">C</span>Le transitaire désigné conjointement</label>
+        <label class="option"><input type="radio" name="s1q14" value="D"><span class="option-letter">D</span>La compagnie de transport désignée par l'acheteur</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — Sous FCA, le vendeur est responsable du dédouanement à l'export dans son pays. C'est d'ailleurs l'un de ses avantages sur EXW : contrairement à EXW où l'acheteur doit gérer la douane export à l'étranger, sous FCA c'est le vendeur qui s'en charge, dans son propre pays où il maîtrise les procédures.</div>
+    </div>
+
+    <div class="question" id="s1q15">
+      <span class="q-label">Q15</span>
+      <p class="q-text">Une livraison est effectuée sous Incoterm DAP Lyon, valeur totale 15 000 € incluant 1 200 € de frais de transport après le port de Marseille (post-acheminement). Quelle est la valeur en douane à retenir ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q15" value="A"><span class="option-letter">A</span>15 000 € (la totalité du prix DAP)</label>
+        <label class="option"><input type="radio" name="s1q15" value="B"><span class="option-letter">B</span>16 200 € (valeur DAP + 10% forfaitaire)</label>
+        <label class="option"><input type="radio" name="s1q15" value="C"><span class="option-letter">C</span>13 800 € (valeur DAP moins le post-acheminement après entrée dans l'UE)</label>
+        <label class="option"><input type="radio" name="s1q15" value="D"><span class="option-letter">D</span>15 000 € uniquement si l'assurance est incluse</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Selon l'article 72 du Code des Douanes de l'Union, les frais de transport après l'entrée dans le territoire douanier de l'UE ne doivent PAS être inclus dans la valeur en douane. Sous DAP Lyon, le prix global inclut le post-acheminement Marseille → Lyon (1 200 €) qui doit être déduit : 15 000 - 1 200 = 13 800 €.</div>
+    </div>
+
+    <div class="question" id="s1q16">
+      <span class="q-label">Q16</span>
+      <p class="q-text">Parmi les thèmes suivants, lequel n'est PAS régi par les Incoterms ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q16" value="A"><span class="option-letter">A</span>Le lieu de livraison</label>
+        <label class="option"><input type="radio" name="s1q16" value="B"><span class="option-letter">B</span>La répartition des frais de transport</label>
+        <label class="option"><input type="radio" name="s1q16" value="C"><span class="option-letter">C</span>Les formalités douanières à l'export</label>
+        <label class="option"><input type="radio" name="s1q16" value="D"><span class="option-letter">D</span>Les modalités et délais de paiement</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Les Incoterms couvrent la livraison, les risques, les coûts et les formalités douanières. Ils ne traitent pas des modalités de paiement (délais, monnaie, mode), qui relèvent du contrat de vente. Ils ne traitent pas non plus du transfert de propriété, des recours en cas de litige, ou des sanctions.</div>
+    </div>
+
+    <div class="question" id="s1q17">
+      <span class="q-label">Q17</span>
+      <p class="q-text">Un vendeur espagnol livre des oranges en vrac à un acheteur anglais en Incoterm FAS Valence. La marchandise tombe à l'eau lors de la mise en position le long du navire. Qui supporte la perte ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q17" value="A"><span class="option-letter">A</span>L'acheteur anglais, car sous FAS le risque est transféré dès que la marchandise est le long du navire</label>
+        <label class="option"><input type="radio" name="s1q17" value="B"><span class="option-letter">B</span>Le vendeur espagnol, car la marchandise n'est pas encore chargée à bord</label>
+        <label class="option"><input type="radio" name="s1q17" value="C"><span class="option-letter">C</span>Le transporteur maritime, responsable des opérations portuaires</label>
+        <label class="option"><input type="radio" name="s1q17" value="D"><span class="option-letter">D</span>L'assureur obligatoire désigné sous FAS</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous FAS, le transfert des risques s'opère exactement au moment où la marchandise est placée le long du navire au port désigné. Dès cet instant, c'est l'acheteur qui supporte le risque, même si la marchandise n'est pas encore chargée à bord. FAS n'impose aucune assurance obligatoire.</div>
+    </div>
+
+    <div class="question" id="s1q18">
+      <span class="q-label">Q18</span>
+      <p class="q-text">Une boutique en ligne française vend des cosmétiques à des clients en Allemagne et souhaite gérer entièrement la livraison jusqu'à l'adresse du client. Quel Incoterm correspond le mieux à cette situation ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q18" value="A"><span class="option-letter">A</span>EXW</label>
+        <label class="option"><input type="radio" name="s1q18" value="B"><span class="option-letter">B</span>DAP</label>
+        <label class="option"><input type="radio" name="s1q18" value="C"><span class="option-letter">C</span>FCA</label>
+        <label class="option"><input type="radio" name="s1q18" value="D"><span class="option-letter">D</span>FOB</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — DAP (Delivered At Place) est l'Incoterm le plus utilisé en e-commerce : le vendeur organise et paie le transport jusqu'à l'adresse de destination, l'acheteur n'a rien à gérer côté transport. EXW serait l'opposé (tout à charge de l'acheteur). FOB est réservé au maritime. FCA transfère la responsabilité trop tôt.</div>
+    </div>
+
+    <div class="question" id="s1q19">
+      <span class="q-label">Q19</span>
+      <p class="q-text">Un exportateur veut bénéficier d'un crédit documentaire. Sa banque exige un connaissement avec mention « on board ». Le contrat est en Incoterm FCA entrepôt du vendeur. Quelle option 2020 permet de satisfaire cette exigence ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q19" value="A"><span class="option-letter">A</span>Passer en Incoterm FOB, qui inclut automatiquement le connaissement</label>
+        <label class="option"><input type="radio" name="s1q19" value="B"><span class="option-letter">B</span>Utiliser l'Incoterm CIF qui prévoit ce document par défaut</label>
+        <label class="option"><input type="radio" name="s1q19" value="C"><span class="option-letter">C</span>Convenir contractuellement que l'acheteur donne instruction à son transporteur de remettre un connaissement « on board » au vendeur</label>
+        <label class="option"><input type="radio" name="s1q19" value="D"><span class="option-letter">D</span>Ajouter une clause d'assurance pour que le transporteur fournisse le document</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — C'est une nouveauté 2020 pour le FCA. Les banques exigent souvent un connaissement avec mention « on board » pour les crédits documentaires. Sous FCA, le vendeur n'est pas partie au contrat de transport (c'est l'acheteur qui désigne le transporteur). La solution 2020 : les parties conviennent que l'acheteur donne instruction à son transporteur de remettre ce connaissement au vendeur. L'assurance n'a rien à voir avec ce document.</div>
+    </div>
+
+    <div class="question" id="s1q20">
+      <span class="q-label">Q20</span>
+      <p class="q-text">Sous l'Incoterm FOB, qui prend en charge les formalités douanières à l'exportation ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s1q20" value="A"><span class="option-letter">A</span>L'acheteur</label>
+        <label class="option"><input type="radio" name="s1q20" value="B"><span class="option-letter">B</span>Le capitaine du navire</label>
+        <label class="option"><input type="radio" name="s1q20" value="C"><span class="option-letter">C</span>Le transitaire indépendamment des parties</label>
+        <label class="option"><input type="radio" name="s1q20" value="D"><span class="option-letter">D</span>Le vendeur</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Sous FOB, le vendeur est responsable du dédouanement à l'export et du transport jusqu'au chargement à bord du navire. C'est l'une des différences avec FAS : sous FAS, le vendeur livre seulement le long du navire et gère aussi le dédouanement export, mais c'est l'acheteur qui charge à bord.</div>
+    </div>
+
+    <div class="serie-actions">
+      <button class="btn btn-primary" onclick="corriger(1)">Corriger</button>
+      <button class="btn btn-secondary" onclick="reinitialiser(1)">Recommencer</button>
+    </div>
+    <div class="score-box" id="score-1"></div>
+  </div>
+</div>
+
+<!-- ===== SÉRIE 2 — Bonnes réponses : B C D A B C D A B C D A B C D A B C D A ===== -->
+<div class="serie" id="serie-2">
+  <div class="serie-header"><h2>Les Incoterms — Série 2</h2><p>20 questions — 1 seule bonne réponse</p></div>
+  <div class="questions-block">
+
+    <div class="question" id="s2q1"><span class="q-label">Q1</span>
+      <p class="q-text">Quel organisme publie et révise les Incoterms ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q1" value="A"><span class="option-letter">A</span>L'Organisation Mondiale du Commerce (OMC)</label>
+        <label class="option"><input type="radio" name="s2q1" value="B"><span class="option-letter">B</span>La Chambre de Commerce Internationale (CCI)</label>
+        <label class="option"><input type="radio" name="s2q1" value="C"><span class="option-letter">C</span>L'Union Européenne</label>
+        <label class="option"><input type="radio" name="s2q1" value="D"><span class="option-letter">D</span>L'Organisation des Nations Unies</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — La CCI (Chambre de Commerce Internationale) a créé les Incoterms en 1936 et les révise environ tous les 10 ans. Dernière version : 2020. L'OMC et l'ONU ne sont pas impliquées dans cette codification.</div>
+    </div>
+
+    <div class="question" id="s2q2"><span class="q-label">Q2</span>
+      <p class="q-text">Parmi ces Incoterms, lequel est multimodal et peut être utilisé pour tous les modes de transport ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q2" value="A"><span class="option-letter">A</span>FOB</label>
+        <label class="option"><input type="radio" name="s2q2" value="B"><span class="option-letter">B</span>CIF</label>
+        <label class="option"><input type="radio" name="s2q2" value="C"><span class="option-letter">C</span>FCA</label>
+        <label class="option"><input type="radio" name="s2q2" value="D"><span class="option-letter">D</span>FAS</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — FCA (Free Carrier) est multimodal : il s'applique à tous les modes de transport (route, air, mer, fer, multimodal). FOB, CIF et FAS sont réservés au transport maritime ou fluvial uniquement. C'est pourquoi FCA est recommandé à la place de FOB pour les conteneurs.</div>
+    </div>
+
+    <div class="question" id="s2q3"><span class="q-label">Q3</span>
+      <p class="q-text">À quelle fréquence la Chambre de Commerce Internationale révise-t-elle les Incoterms ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q3" value="A"><span class="option-letter">A</span>Tous les 3 ans</label>
+        <label class="option"><input type="radio" name="s2q3" value="B"><span class="option-letter">B</span>Tous les 5 ans</label>
+        <label class="option"><input type="radio" name="s2q3" value="C"><span class="option-letter">C</span>Tous les 15 ans</label>
+        <label class="option"><input type="radio" name="s2q3" value="D"><span class="option-letter">D</span>Tous les 10 ans environ</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Les révisions ont eu lieu en 1936, 1953, 1980, 1990, 2000, 2010 et 2020 : environ tous les 10 ans. L'objectif est d'adapter les règles à l'évolution des pratiques commerciales (conteneurisation, numérique, nouvelles exigences de sécurité…).</div>
+    </div>
+
+    <div class="question" id="s2q4"><span class="q-label">Q4</span>
+      <p class="q-text">Un acheteur chinois passe commande à un vendeur italien en Incoterm EXW usine de Milan. Qui organise et paie le transport depuis Milan jusqu'à Shanghai ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q4" value="A"><span class="option-letter">A</span>L'acheteur chinois assume tout : transport, assurance, douane export et import</label>
+        <label class="option"><input type="radio" name="s2q4" value="B"><span class="option-letter">B</span>Le vendeur italien jusqu'au port de Gênes, puis l'acheteur pour le maritime</label>
+        <label class="option"><input type="radio" name="s2q4" value="C"><span class="option-letter">C</span>Le vendeur italien jusqu'à la frontière italienne</label>
+        <label class="option"><input type="radio" name="s2q4" value="D"><span class="option-letter">D</span>Le transitaire désigné d'un commun accord</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous EXW, le vendeur n'a qu'une seule obligation : mettre la marchandise à disposition dans ses locaux. L'acheteur chinois doit tout organiser lui-même depuis Milan : chargement, transport terrestre, formalités douanières à l'EXPORT en Italie (problème fréquent pour un acheteur étranger), fret maritime, et douane import en Chine.</div>
+    </div>
+
+    <div class="question" id="s2q5"><span class="q-label">Q5</span>
+      <p class="q-text">Sous l'Incoterm CFR, il existe une dissociation entre transfert des risques et transfert des coûts. Laquelle est exacte ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q5" value="A"><span class="option-letter">A</span>Risques transférés à destination, frais transférés au départ</label>
+        <label class="option"><input type="radio" name="s2q5" value="B"><span class="option-letter">B</span>Risques transférés au chargement à bord au départ, frais payés par le vendeur jusqu'au port de destination</label>
+        <label class="option"><input type="radio" name="s2q5" value="C"><span class="option-letter">C</span>Risques et frais transférés simultanément au port de destination</label>
+        <label class="option"><input type="radio" name="s2q5" value="D"><span class="option-letter">D</span>Risques transférés à la remise au transitaire, frais au déchargement</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — C'est la caractéristique clé du groupe C (CFR, CIF, CPT, CIP) : dissociation entre risques et frais. Sous CFR, le risque est transféré dès le chargement à bord au port de départ (l'acheteur voyage aux risques), mais le vendeur continue à payer le fret jusqu'au port de destination. Ce paradoxe apparent est important à maîtriser.</div>
+    </div>
+
+    <div class="question" id="s2q6"><span class="q-label">Q6</span>
+      <p class="q-text">Quel Incoterm est le seul à inclure obligatoirement le déchargement à destination à la charge du vendeur ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q6" value="A"><span class="option-letter">A</span>DAP</label>
+        <label class="option"><input type="radio" name="s2q6" value="B"><span class="option-letter">B</span>DDP</label>
+        <label class="option"><input type="radio" name="s2q6" value="C"><span class="option-letter">C</span>DPU</label>
+        <label class="option"><input type="radio" name="s2q6" value="D"><span class="option-letter">D</span>CIP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — DPU (Delivered at Place Unloaded) est l'unique Incoterm où le vendeur doit décharger la marchandise à destination. Sous DAP et DDP, la marchandise est livrée sur le moyen de transport arrivant, non déchargée : c'est l'acheteur qui décharge. Sous CIP, il n'y a pas de livraison à destination au sens du groupe D.</div>
+    </div>
+
+    <div class="question" id="s2q7"><span class="q-label">Q7</span>
+      <p class="q-text">Un exportateur français vend du matériel agricole à un client brésilien sous Incoterm CIP São Paulo. Un incendie détruit la marchandise en cours de route. Quel niveau d'assurance le vendeur a-t-il dû souscrire au minimum ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q7" value="A"><span class="option-letter">A</span>Aucune assurance n'est obligatoire sous CIP depuis 2020</label>
+        <label class="option"><input type="radio" name="s2q7" value="B"><span class="option-letter">B</span>Une assurance minimale (Clauses C)</label>
+        <label class="option"><input type="radio" name="s2q7" value="C"><span class="option-letter">C</span>Une assurance intermédiaire (Clauses B)</label>
+        <label class="option"><input type="radio" name="s2q7" value="D"><span class="option-letter">D</span>Une assurance tous risques (Clauses A)</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Depuis la révision 2020, le CIP exige une couverture tous risques (Institute Cargo Clauses A), la plus complète. L'incendie est couvert par cette assurance. C'est différent du CIF (maritime) qui reste sur les Clauses C (couverture minimale). Cette évolution 2020 est essentielle à retenir.</div>
+    </div>
+
+    <div class="question" id="s2q8"><span class="q-label">Q8</span>
+      <p class="q-text">Combien d'Incoterms multimodaux (applicables à tous modes de transport) compte la version 2020 ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q8" value="A"><span class="option-letter">A</span>7</label>
+        <label class="option"><input type="radio" name="s2q8" value="B"><span class="option-letter">B</span>4</label>
+        <label class="option"><input type="radio" name="s2q8" value="C"><span class="option-letter">C</span>9</label>
+        <label class="option"><input type="radio" name="s2q8" value="D"><span class="option-letter">D</span>11</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Les 7 Incoterms multimodaux sont : EXW, FCA, CPT, CIP, DAP, DPU, DDP. Les 4 restants (FAS, FOB, CFR, CIF) sont réservés au maritime/fluvial. 7 + 4 = 11 Incoterms au total.</div>
+    </div>
+
+    <div class="question" id="s2q9"><span class="q-label">Q9</span>
+      <p class="q-text">Une marchandise est achetée en Incoterm DDP Paris, valeur totale 20 000 € incluant 3 000 € de droits de douane et 800 € de frais de livraison après le port du Havre. Quelle valeur en douane déclarer ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q9" value="A"><span class="option-letter">A</span>20 000 € (prix total DDP)</label>
+        <label class="option"><input type="radio" name="s2q9" value="B"><span class="option-letter">B</span>16 200 € (valeur DDP moins droits de douane et post-acheminement)</label>
+        <label class="option"><input type="radio" name="s2q9" value="C"><span class="option-letter">C</span>17 000 € (valeur DDP moins droits de douane seulement)</label>
+        <label class="option"><input type="radio" name="s2q9" value="D"><span class="option-letter">D</span>23 000 € (valeur DDP + 10% de majoration)</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — Sous DDP, deux éléments doivent être déduits de la valeur totale pour obtenir la valeur en douane : (1) les droits de douane eux-mêmes (article 72 CDU : les droits à l'importation ne font pas partie de la valeur en douane), et (2) les frais de post-acheminement après entrée dans l'UE. 20 000 - 3 000 - 800 = 16 200 €.</div>
+    </div>
+
+    <div class="question" id="s2q10"><span class="q-label">Q10</span>
+      <p class="q-text">Quel Incoterm est généralement recommandé à la place de l'EXW pour les ventes internationales nécessitant un dédouanement à l'export ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q10" value="A"><span class="option-letter">A</span>FOB</label>
+        <label class="option"><input type="radio" name="s2q10" value="B"><span class="option-letter">B</span>DAP</label>
+        <label class="option"><input type="radio" name="s2q10" value="C"><span class="option-letter">C</span>FCA</label>
+        <label class="option"><input type="radio" name="s2q10" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — La CCI recommande explicitement FCA en remplacement de EXW pour les échanges internationaux. La raison : sous FCA, c'est le vendeur qui gère le dédouanement export dans son propre pays (où il connaît les procédures), alors que sous EXW c'est l'acheteur étranger qui doit le faire, ce qui est souvent très problématique en pratique.</div>
+    </div>
+
+    <div class="question" id="s2q11"><span class="q-label">Q11</span>
+      <p class="q-text">Un transitaire organise l'expédition de conteneurs de Chine vers France. Le vendeur souhaite maîtriser transport et assurance jusqu'à Lyon, sans que l'acheteur ne gère la douane import. Quel Incoterm conseiller ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q11" value="A"><span class="option-letter">A</span>FOB Shanghai</label>
+        <label class="option"><input type="radio" name="s2q11" value="B"><span class="option-letter">B</span>EXW usine chinoise</label>
+        <label class="option"><input type="radio" name="s2q11" value="C"><span class="option-letter">C</span>FCA entrepôt Chine</label>
+        <label class="option"><input type="radio" name="s2q11" value="D"><span class="option-letter">D</span>DDP Lyon</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — DDP (Delivered Duty Paid) est le seul Incoterm qui inclut tout : transport, assurance ET douane import + droits et taxes à destination. C'est le seul qui décharge complètement l'acheteur de toute démarche. FOB transfère trop tôt la maîtrise du transport à l'acheteur. FCA également. EXW est l'opposé de ce que veut le vendeur.</div>
+    </div>
+
+    <div class="question" id="s2q12"><span class="q-label">Q12</span>
+      <p class="q-text">Quelle est la différence principale entre FAS et FOB ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q12" value="A"><span class="option-letter">A</span>Sous FOB le vendeur charge à bord ; sous FAS il livre seulement le long du navire</label>
+        <label class="option"><input type="radio" name="s2q12" value="B"><span class="option-letter">B</span>FAS inclut l'assurance, FOB non</label>
+        <label class="option"><input type="radio" name="s2q12" value="C"><span class="option-letter">C</span>FOB est multimodal, FAS uniquement maritime</label>
+        <label class="option"><input type="radio" name="s2q12" value="D"><span class="option-letter">D</span>Sous FAS le vendeur gère le dédouanement import, pas sous FOB</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — FAS : le vendeur livre le long du navire (sur le quai), le transfert de risque s'opère à ce moment. C'est l'acheteur qui charge à bord. FOB : le vendeur va plus loin, il livre à bord du navire. Le transfert de risque s'opère au chargement à bord. Les deux gèrent le dédouanement export, aucun n'inclut d'assurance.</div>
+    </div>
+
+    <div class="question" id="s2q13"><span class="q-label">Q13</span>
+      <p class="q-text">Une cargaison de café est vendue FOB port de Santos (Brésil). La marchandise est endommagée lors du chargement à bord du navire. Qui supporte le sinistre ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q13" value="A"><span class="option-letter">A</span>Le vendeur brésilien, car la marchandise n'était pas encore à bord</label>
+        <label class="option"><input type="radio" name="s2q13" value="B"><span class="option-letter">B</span>L'acheteur, car sous FOB le risque se transfère au moment du chargement à bord</label>
+        <label class="option"><input type="radio" name="s2q13" value="C"><span class="option-letter">C</span>La compagnie maritime, responsable des opérations de chargement</label>
+        <label class="option"><input type="radio" name="s2q13" value="D"><span class="option-letter">D</span>L'assureur du vendeur, couverture automatique jusqu'à destination</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — Sous FOB, le transfert des risques intervient exactement au moment du chargement à bord. Le dommage survenu pendant le chargement est donc à la charge de l'acheteur. C'est une limite du FOB : la frontière de responsabilité est très précise. Le vendeur n'a pas d'assurance obligatoire sous FOB.</div>
+    </div>
+
+    <div class="question" id="s2q14"><span class="q-label">Q14</span>
+      <p class="q-text">Quel groupe d'Incoterms désigne les règles où le vendeur organise et paie le transport principal, mais le risque est transféré à l'acheteur dès l'expédition ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q14" value="A"><span class="option-letter">A</span>Groupe E</label>
+        <label class="option"><input type="radio" name="s2q14" value="B"><span class="option-letter">B</span>Groupe F</label>
+        <label class="option"><input type="radio" name="s2q14" value="C"><span class="option-letter">C</span>Groupe C</label>
+        <label class="option"><input type="radio" name="s2q14" value="D"><span class="option-letter">D</span>Groupe D</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Le groupe C (CPT, CIP, CFR, CIF) est caractérisé par cette dissociation : le vendeur organise et paie le transport principal jusqu'à destination, mais le risque est transféré à l'acheteur dès l'expédition (remise au 1er transporteur ou chargement à bord). Dans le groupe D, vendeur supporte risques et frais jusqu'à destination.</div>
+    </div>
+
+    <div class="question" id="s2q15"><span class="q-label">Q15</span>
+      <p class="q-text">Un importateur français reçoit des marchandises sous Incoterm DAP entrepôt Paris. À réception, les caisses sont endommagées lors du déchargement. Qui en est responsable selon le DAP ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q15" value="A"><span class="option-letter">A</span>Le vendeur, car sous DAP il prend en charge le déchargement</label>
+        <label class="option"><input type="radio" name="s2q15" value="B"><span class="option-letter">B</span>Le transitaire, toujours responsable des opérations de manutention</label>
+        <label class="option"><input type="radio" name="s2q15" value="C"><span class="option-letter">C</span>L'assureur du vendeur, couverture jusqu'à destination</label>
+        <label class="option"><input type="radio" name="s2q15" value="D"><span class="option-letter">D</span>L'acheteur français, car sous DAP le déchargement est à sa charge</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Sous DAP, la livraison s'effectue sur le moyen de transport arrivant, non déchargée. C'est l'acheteur qui organise et assume le déchargement. Si la marchandise est endommagée pendant le déchargement (qui est sous la responsabilité de l'acheteur), c'est l'acheteur qui supporte. Pour que le vendeur prenne en charge le déchargement, il faudrait un Incoterm DPU.</div>
+    </div>
+
+    <div class="question" id="s2q16"><span class="q-label">Q16</span>
+      <p class="q-text">Quelle nouveauté 2020 concernant le FCA a été introduite pour répondre aux besoins des crédits documentaires ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q16" value="A"><span class="option-letter">A</span>La possibilité pour le vendeur d'obtenir un connaissement avec mention « on board » de la part du transporteur de l'acheteur</label>
+        <label class="option"><input type="radio" name="s2q16" value="B"><span class="option-letter">B</span>L'obligation pour le vendeur de souscrire une assurance tous risques</label>
+        <label class="option"><input type="radio" name="s2q16" value="C"><span class="option-letter">C</span>La suppression du FCA au profit du FOB pour les crédits documentaires</label>
+        <label class="option"><input type="radio" name="s2q16" value="D"><span class="option-letter">D</span>L'extension du FCA au transport maritime uniquement</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Les banques exigent souvent un « on board bill of lading » pour les crédits documentaires. Sous FCA, le vendeur n'est pas partie au contrat de transport (c'est le transporteur de l'acheteur). La nouveauté 2020 : les parties peuvent convenir que l'acheteur donne instruction à son transporteur de remettre ce connaissement au vendeur. Cela évite de devoir passer en FOB.</div>
+    </div>
+
+    <div class="question" id="s2q17"><span class="q-label">Q17</span>
+      <p class="q-text">Un acheteur international souhaite avoir le contrôle total sur le transport et l'assurance dès la sortie de l'usine du vendeur. Quel Incoterm lui convient le mieux ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q17" value="A"><span class="option-letter">A</span>DDP</label>
+        <label class="option"><input type="radio" name="s2q17" value="B"><span class="option-letter">B</span>EXW</label>
+        <label class="option"><input type="radio" name="s2q17" value="C"><span class="option-letter">C</span>CIP</label>
+        <label class="option"><input type="radio" name="s2q17" value="D"><span class="option-letter">D</span>DAP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — EXW donne à l'acheteur le contrôle maximum : il organise tout depuis les locaux du vendeur (transport, assurance, douane export, import…). DDP c'est l'inverse : c'est le vendeur qui contrôle tout. CIP et DAP laissent la maîtrise du transport et de l'assurance au vendeur.</div>
+    </div>
+
+    <div class="question" id="s2q18"><span class="q-label">Q18</span>
+      <p class="q-text">Un vendeur signe un contrat CPT Barcelone avec un acheteur espagnol. La marchandise est détruite par un incendie pendant le transport, avant d'arriver à Barcelone. Qui supporte la perte ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q18" value="A"><span class="option-letter">A</span>Le vendeur, car il paie le transport jusqu'à Barcelone</label>
+        <label class="option"><input type="radio" name="s2q18" value="B"><span class="option-letter">B</span>L'assureur, car le CPT inclut une assurance obligatoire</label>
+        <label class="option"><input type="radio" name="s2q18" value="C"><span class="option-letter">C</span>L'acheteur espagnol, car sous CPT le risque est transféré dès la remise au premier transporteur</label>
+        <label class="option"><input type="radio" name="s2q18" value="D"><span class="option-letter">D</span>Le transporteur, dont la responsabilité est pleine jusqu'à destination</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Sous CPT, le risque est transféré à l'acheteur dès la remise des marchandises au 1er transporteur au départ. Pendant tout le voyage, c'est l'acheteur qui supporte les risques, même si le vendeur continue à payer le fret. CPT n'inclut PAS d'assurance obligatoire (contrairement à CIP). Si l'acheteur n'a pas souscrit d'assurance, il perd sa marchandise sans recours contre le vendeur.</div>
+    </div>
+
+    <div class="question" id="s2q19"><span class="q-label">Q19</span>
+      <p class="q-text">Pour le calcul de la valeur en douane à l'importation en France, selon l'article 71 du Code des Douanes de l'Union, quels éléments doivent être ajoutés au prix de la marchandise ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q19" value="A"><span class="option-letter">A</span>Les droits de douane et taxes à l'importation</label>
+        <label class="option"><input type="radio" name="s2q19" value="B"><span class="option-letter">B</span>Les frais de post-acheminement après entrée dans le territoire de l'UE</label>
+        <label class="option"><input type="radio" name="s2q19" value="C"><span class="option-letter">C</span>La marge bénéficiaire du vendeur</label>
+        <label class="option"><input type="radio" name="s2q19" value="D"><span class="option-letter">D</span>Les frais de transport, d'assurance et de manutention jusqu'au premier point d'entrée dans l'UE</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — L'article 71 CDU dispose que la valeur en douane = prix payé + frais de transport, d'assurance et de manutention jusqu'au 1er point d'entrée dans le TDU (Territoire Douanier de l'Union). Les droits de douane eux-mêmes ne font PAS partie de la valeur en douane (article 72). Le post-acheminement après l'entrée dans l'UE est à déduire.</div>
+    </div>
+
+    <div class="question" id="s2q20"><span class="q-label">Q20</span>
+      <p class="q-text">Quel Incoterm du groupe C implique que le vendeur paie le fret maritime jusqu'au port de destination ET souscrit une assurance minimale au profit de l'acheteur ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s2q20" value="A"><span class="option-letter">A</span>CIF</label>
+        <label class="option"><input type="radio" name="s2q20" value="B"><span class="option-letter">B</span>CFR</label>
+        <label class="option"><input type="radio" name="s2q20" value="C"><span class="option-letter">C</span>CIP</label>
+        <label class="option"><input type="radio" name="s2q20" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — CIF (Cost, Insurance and Freight) est le seul Incoterm maritime du groupe C qui inclut l'assurance. CFR paie le fret mais sans assurance. CIP est l'équivalent multimodal du CIF mais exige une couverture tous risques (Clauses A) alors que le CIF se limite à la couverture minimale (Clauses C). CPT est multimodal sans assurance.</div>
+    </div>
+
+    <div class="serie-actions">
+      <button class="btn btn-primary" onclick="corriger(2)">Corriger</button>
+      <button class="btn btn-secondary" onclick="reinitialiser(2)">Recommencer</button>
+    </div>
+    <div class="score-box" id="score-2"></div>
+  </div>
+</div>
+
+<!-- ===== SÉRIE 3 — Bonnes réponses : C D A B C D A B C D A B C D A B C D A B ===== -->
+<div class="serie" id="serie-3">
+  <div class="serie-header"><h2>Les Incoterms — Série 3</h2><p>20 questions — 1 seule bonne réponse</p></div>
+  <div class="questions-block">
+
+    <div class="question" id="s3q1"><span class="q-label">Q1</span>
+      <p class="q-text">Quel Incoterm signifie « Carriage Paid To » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q1" value="A"><span class="option-letter">A</span>CIF</label>
+        <label class="option"><input type="radio" name="s3q1" value="B"><span class="option-letter">B</span>CIP</label>
+        <label class="option"><input type="radio" name="s3q1" value="C"><span class="option-letter">C</span>CPT</label>
+        <label class="option"><input type="radio" name="s3q1" value="D"><span class="option-letter">D</span>CFR</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — CPT = Carriage Paid To = Port payé jusqu'à. CIP = Carriage and Insurance Paid To = Port payé assurance comprise. CFR = Cost and Freight. CIF = Cost, Insurance and Freight. Ces 4 Incoterms du groupe C sont souvent confondus : CPT et CIP sont multimodaux, CFR et CIF sont maritimes.</div>
+    </div>
+
+    <div class="question" id="s3q2"><span class="q-label">Q2</span>
+      <p class="q-text">L'utilisation des Incoterms est-elle obligatoire dans les contrats de vente internationale ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q2" value="A"><span class="option-letter">A</span>Oui, depuis la version 2010</label>
+        <label class="option"><input type="radio" name="s3q2" value="B"><span class="option-letter">B</span>Oui, pour tous les échanges hors Union Européenne</label>
+        <label class="option"><input type="radio" name="s3q2" value="C"><span class="option-letter">C</span>Oui, uniquement pour les transactions supérieures à 10 000 €</label>
+        <label class="option"><input type="radio" name="s3q2" value="D"><span class="option-letter">D</span>Non, leur utilisation est facultative mais très répandue</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Les Incoterms sont des règles privées publiées par la CCI : leur utilisation n'est jamais obligatoire. Environ 90% des transactions internationales y font référence. Ils s'appliquent uniquement lorsque les parties les intègrent explicitement dans leur contrat. Il n'existe aucun seuil de valeur ni obligation légale.</div>
+    </div>
+
+    <div class="question" id="s3q3"><span class="q-label">Q3</span>
+      <p class="q-text">Un vendeur néerlandais et un acheteur américain conviennent d'un Incoterm FCA terminal à conteneurs d'Amsterdam. À quel moment exact le risque est-il transféré à l'acheteur ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q3" value="A"><span class="option-letter">A</span>À la remise de la marchandise au transporteur désigné par l'acheteur au terminal</label>
+        <label class="option"><input type="radio" name="s3q3" value="B"><span class="option-letter">B</span>Quand le navire quitte le port d'Amsterdam</label>
+        <label class="option"><input type="radio" name="s3q3" value="C"><span class="option-letter">C</span>À l'arrivée du conteneur au port américain</label>
+        <label class="option"><input type="radio" name="s3q3" value="D"><span class="option-letter">D</span>Quand l'acheteur paie la facture</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous FCA, le risque se transfère à la remise de la marchandise au transporteur désigné par l'acheteur, au lieu convenu (ici le terminal à conteneurs). C'est précisément pour ça que FCA est recommandé pour les conteneurs : le transfert a lieu au terminal, là où la marchandise est réellement prise en charge, et non à bord du navire comme sous FOB.</div>
+    </div>
+
+    <div class="question" id="s3q4"><span class="q-label">Q4</span>
+      <p class="q-text">Quel Incoterm maritime implique que le vendeur livre la marchandise le long du navire, sans la charger à bord ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q4" value="A"><span class="option-letter">A</span>FOB</label>
+        <label class="option"><input type="radio" name="s3q4" value="B"><span class="option-letter">B</span>FAS</label>
+        <label class="option"><input type="radio" name="s3q4" value="C"><span class="option-letter">C</span>CFR</label>
+        <label class="option"><input type="radio" name="s3q4" value="D"><span class="option-letter">D</span>CIF</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — FAS (Free Alongside Ship) : le vendeur place la marchandise le long du navire sur le quai. Le chargement à bord est à la charge de l'acheteur. C'est la différence clé avec FOB où le vendeur va jusqu'au chargement à bord inclus. FAS est peu utilisé dans la pratique moderne.</div>
+    </div>
+
+    <div class="question" id="s3q5"><span class="q-label">Q5</span>
+      <p class="q-text">Des marchandises sont achetées en Incoterm CIF Le Havre, facturées 8 000 €. Le transport entre Le Havre et l'entrepôt final à Paris coûte 300 €. Quelle valeur en douane retenir à l'entrée en France ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q5" value="A"><span class="option-letter">A</span>8 300 € (CIF + post-acheminement)</label>
+        <label class="option"><input type="radio" name="s3q5" value="B"><span class="option-letter">B</span>8 800 € (CIF + 10% forfaitaire réglementaire)</label>
+        <label class="option"><input type="radio" name="s3q5" value="C"><span class="option-letter">C</span>8 000 € (le prix CIF correspond directement à la valeur en douane au port d'entrée UE)</label>
+        <label class="option"><input type="radio" name="s3q5" value="D"><span class="option-letter">D</span>7 700 € (CIF moins les frais d'assurance inclus)</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Le CIF inclut déjà le coût des marchandises + fret jusqu'au port de destination + assurance. Le port du Havre étant le premier point d'entrée dans l'UE, le prix CIF correspond exactement à la valeur en douane. Le post-acheminement Le Havre → Paris (300 €) n'est PAS ajouté car il intervient après l'entrée dans l'UE. Il n'existe pas de majoration forfaitaire de 10%.</div>
+    </div>
+
+    <div class="question" id="s3q6"><span class="q-label">Q6</span>
+      <p class="q-text">Un vendeur veut livrer sa marchandise à l'acheteur à destination, sans se charger du déchargement ni de la douane import. Quel Incoterm choisir ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q6" value="A"><span class="option-letter">A</span>DDP</label>
+        <label class="option"><input type="radio" name="s3q6" value="B"><span class="option-letter">B</span>DPU</label>
+        <label class="option"><input type="radio" name="s3q6" value="C"><span class="option-letter">C</span>CPT</label>
+        <label class="option"><input type="radio" name="s3q6" value="D"><span class="option-letter">D</span>DAP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — DAP (Delivered At Place) : le vendeur organise tout jusqu'à destination, sans décharger et sans gérer la douane import. DDP irait trop loin (inclurait la douane import). DPU irait trop loin sur le déchargement. CPT ne livre pas jusqu'à destination au sens strict (risque transféré au départ).</div>
+    </div>
+
+    <div class="question" id="s3q7"><span class="q-label">Q7</span>
+      <p class="q-text">Un exportateur tunisien vend du textile à un importateur français sous Incoterm DDP Lyon. Qui dépose la déclaration en douane d'importation et paie les droits ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q7" value="A"><span class="option-letter">A</span>Le vendeur tunisien (ou son représentant en douane en France)</label>
+        <label class="option"><input type="radio" name="s3q7" value="B"><span class="option-letter">B</span>L'importateur français</label>
+        <label class="option"><input type="radio" name="s3q7" value="C"><span class="option-letter">C</span>La douane française directement, sans déclaration requise</label>
+        <label class="option"><input type="radio" name="s3q7" value="D"><span class="option-letter">D</span>Le transitaire désigné par l'acheteur</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous DDP, le vendeur prend en charge TOUTES les formalités y compris le dédouanement import et les droits et taxes dans le pays de l'acheteur. En pratique, le vendeur tunisien devra mandater un représentant en douane (commissionnaire agréé) en France pour accomplir ces formalités. C'est l'un des risques du DDP pour le vendeur.</div>
+    </div>
+
+    <div class="question" id="s3q8"><span class="q-label">Q8</span>
+      <p class="q-text">Entre CPT et CIP, quelle est l'unique différence ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q8" value="A"><span class="option-letter">A</span>CPT est maritime uniquement, CIP est multimodal</label>
+        <label class="option"><input type="radio" name="s3q8" value="B"><span class="option-letter">B</span>CIP inclut une assurance tous risques obligatoire, CPT n'en prévoit aucune</label>
+        <label class="option"><input type="radio" name="s3q8" value="C"><span class="option-letter">C</span>Sous CPT le vendeur gère la douane import, pas sous CIP</label>
+        <label class="option"><input type="radio" name="s3q8" value="D"><span class="option-letter">D</span>CPT transfère le risque à destination, CIP au départ</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — CPT et CIP sont tous deux multimodaux, transfèrent le risque au 1er transporteur au départ, le vendeur paie le transport jusqu'à destination. L'unique différence : CIP ajoute l'obligation de souscrire une assurance tous risques (Clauses A) au profit de l'acheteur. CPT ne prévoit aucune assurance obligatoire.</div>
+    </div>
+
+    <div class="question" id="s3q9"><span class="q-label">Q9</span>
+      <p class="q-text">Un contrat prévoit la vente de machines en Incoterm DPU entrepôt de Madrid. Le vendeur décharge les machines. L'une d'elles tombe et est endommagée pendant le déchargement. Qui supporte le sinistre ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q9" value="A"><span class="option-letter">A</span>L'acheteur, car la marchandise est à destination</label>
+        <label class="option"><input type="radio" name="s3q9" value="B"><span class="option-letter">B</span>L'assureur de l'acheteur, couverture automatique à destination</label>
+        <label class="option"><input type="radio" name="s3q9" value="C"><span class="option-letter">C</span>Le vendeur, car sous DPU le risque est transféré seulement après déchargement complet</label>
+        <label class="option"><input type="radio" name="s3q9" value="D"><span class="option-letter">D</span>Le manutentionnaire, responsable de plein droit</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Sous DPU, le risque est transféré à l'acheteur seulement une fois la marchandise déchargée et mise à disposition au lieu convenu. Pendant l'opération de déchargement (qui est à la charge du vendeur), le vendeur supporte encore les risques. C'est précisément pour cela que DPU est l'Incoterm avec le périmètre de responsabilité vendeur le plus étendu sur les opérations physiques.</div>
+    </div>
+
+    <div class="question" id="s3q10"><span class="q-label">Q10</span>
+      <p class="q-text">Quelle est la version actuellement en vigueur des Incoterms ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q10" value="A"><span class="option-letter">A</span>Incoterms 2000</label>
+        <label class="option"><input type="radio" name="s3q10" value="B"><span class="option-letter">B</span>Incoterms 2010</label>
+        <label class="option"><input type="radio" name="s3q10" value="C"><span class="option-letter">C</span>Incoterms 2015</label>
+        <label class="option"><input type="radio" name="s3q10" value="D"><span class="option-letter">D</span>Incoterms 2020</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Les Incoterms 2020 sont entrés en vigueur le 1er janvier 2020. Les versions 2000 et 2010 existent mais sont remplacées. Il n'existe pas de version 2015. Les parties peuvent théoriquement choisir d'appliquer une version antérieure en le précisant explicitement dans leur contrat, mais la version 2020 est la référence actuelle.</div>
+    </div>
+
+    <div class="question" id="s3q11"><span class="q-label">Q11</span>
+      <p class="q-text">Un commissionnaire doit conseiller un client qui exporte du matériel en vrac par voie maritime et veut payer le fret mais pas souscrire d'assurance. Quel Incoterm maritime convient ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q11" value="A"><span class="option-letter">A</span>CFR</label>
+        <label class="option"><input type="radio" name="s3q11" value="B"><span class="option-letter">B</span>CIF</label>
+        <label class="option"><input type="radio" name="s3q11" value="C"><span class="option-letter">C</span>FOB</label>
+        <label class="option"><input type="radio" name="s3q11" value="D"><span class="option-letter">D</span>FAS</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — CFR (Cost and Freight) : le vendeur paie le fret maritime jusqu'au port de destination, mais sans assurance obligatoire. CIF ajouterait l'assurance (ce que le client ne veut pas). FOB et FAS ne incluent pas le fret payé par le vendeur. CFR est exactement la combinaison demandée : fret payé + pas d'assurance vendeur.</div>
+    </div>
+
+    <div class="question" id="s3q12"><span class="q-label">Q12</span>
+      <p class="q-text">Quel Incoterm impose que le vendeur livre à bord du navire et gère le dédouanement export, l'acheteur prenant en charge le fret et l'assurance ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q12" value="A"><span class="option-letter">A</span>FAS</label>
+        <label class="option"><input type="radio" name="s3q12" value="B"><span class="option-letter">B</span>FOB</label>
+        <label class="option"><input type="radio" name="s3q12" value="C"><span class="option-letter">C</span>CFR</label>
+        <label class="option"><input type="radio" name="s3q12" value="D"><span class="option-letter">D</span>CIF</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — FOB (Free On Board) : vendeur livre à bord + gère le dédouanement export. Acheteur organise et paie le fret maritime, l'assurance, et la douane import. FAS s'arrête au long du navire. CFR inclut le fret payé par le vendeur. CIF inclut fret + assurance payés par le vendeur.</div>
+    </div>
+
+    <div class="question" id="s3q13"><span class="q-label">Q13</span>
+      <p class="q-text">Une PME française importe des vêtements de Turquie. Le fournisseur propose un Incoterm EXW Istanbul. Quel problème principal l'acheteur français risque-t-il de rencontrer ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q13" value="A"><span class="option-letter">A</span>Le vendeur est obligé de charger la marchandise, ce qui complexifie les opérations</label>
+        <label class="option"><input type="radio" name="s3q13" value="B"><span class="option-letter">B</span>L'Incoterm EXW est interdit pour les échanges avec la Turquie</label>
+        <label class="option"><input type="radio" name="s3q13" value="C"><span class="option-letter">C</span>L'acheteur français doit gérer le dédouanement à l'export en Turquie, ce qui est très complexe pour un étranger</label>
+        <label class="option"><input type="radio" name="s3q13" value="D"><span class="option-letter">D</span>EXW ne peut pas être utilisé hors de l'Union Européenne</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Sous EXW, l'acheteur est responsable de TOUT depuis les locaux du vendeur, y compris le dédouanement export en Turquie. Un acheteur étranger a rarement les autorisations et la connaissance des procédures douanières turques. Cela peut bloquer l'exportation, entraîner des sanctions douanières, et compliquer la justification de l'exonération de TVA pour le vendeur. EXW n'est pas interdit hors UE.</div>
+    </div>
+
+    <div class="question" id="s3q14"><span class="q-label">Q14</span>
+      <p class="q-text">Comment se nomme en français l'Incoterm « Delivered At Place » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q14" value="A"><span class="option-letter">A</span>Rendu droits acquittés</label>
+        <label class="option"><input type="radio" name="s3q14" value="B"><span class="option-letter">B</span>Rendu déchargé</label>
+        <label class="option"><input type="radio" name="s3q14" value="C"><span class="option-letter">C</span>Port payé jusqu'à</label>
+        <label class="option"><input type="radio" name="s3q14" value="D"><span class="option-letter">D</span>Rendu au lieu de destination</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — DAP = Delivered At Place = Rendu au lieu de destination. DDP = Delivered Duty Paid = Rendu droits acquittés. DPU = Delivered at Place Unloaded = Rendu déchargé au lieu de destination. CPT = Carriage Paid To = Port payé jusqu'à. Ces traductions françaises sont parfois testées à l'examen.</div>
+    </div>
+
+    <div class="question" id="s3q15"><span class="q-label">Q15</span>
+      <p class="q-text">Un vendeur vend en Incoterm CIF port de Barcelone. L'assurance minimale CIF doit couvrir au minimum quel montant par rapport à la valeur facturée ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q15" value="A"><span class="option-letter">A</span>110 % de la valeur facturée</label>
+        <label class="option"><input type="radio" name="s3q15" value="B"><span class="option-letter">B</span>100 % de la valeur facturée</label>
+        <label class="option"><input type="radio" name="s3q15" value="C"><span class="option-letter">C</span>120 % de la valeur facturée</label>
+        <label class="option"><input type="radio" name="s3q15" value="D"><span class="option-letter">D</span>90 % de la valeur facturée</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous CIF (et CIP), l'assurance doit couvrir au minimum 110% de la valeur facturée. Les 10% supplémentaires représentent le manque à gagner potentiel (bénéfice attendu). Ce seuil de 110% est prévu par les règles Incoterms et par les Institute Cargo Clauses.</div>
+    </div>
+
+    <div class="question" id="s3q16"><span class="q-label">Q16</span>
+      <p class="q-text">Un vendeur veut organiser le transport de conteneurs jusqu'à destination avec une assurance tous risques incluse, sans prendre en charge la douane import. Quel Incoterm correspond ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q16" value="A"><span class="option-letter">A</span>DDP</label>
+        <label class="option"><input type="radio" name="s3q16" value="B"><span class="option-letter">B</span>CIP</label>
+        <label class="option"><input type="radio" name="s3q16" value="C"><span class="option-letter">C</span>CIF</label>
+        <label class="option"><input type="radio" name="s3q16" value="D"><span class="option-letter">D</span>DAP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — CIP (Carriage and Insurance Paid To) : multimodal (donc adapté aux conteneurs), vendeur paie le transport jusqu'à destination + assurance tous risques obligatoire. La douane import reste à la charge de l'acheteur. CIF serait le même esprit mais réservé au maritime en vrac. DDP ajouterait la douane import. DAP n'inclut pas d'assurance obligatoire.</div>
+    </div>
+
+    <div class="question" id="s3q17"><span class="q-label">Q17</span>
+      <p class="q-text">Dans un contrat FCA, si la livraison a lieu dans les propres locaux du vendeur, qui est responsable du chargement sur le moyen de transport ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q17" value="A"><span class="option-letter">A</span>L'acheteur, car c'est son transporteur</label>
+        <label class="option"><input type="radio" name="s3q17" value="B"><span class="option-letter">B</span>Le transporteur désigné par l'acheteur</label>
+        <label class="option"><input type="radio" name="s3q17" value="C"><span class="option-letter">C</span>Le vendeur, car la livraison a lieu dans ses locaux</label>
+        <label class="option"><input type="radio" name="s3q17" value="D"><span class="option-letter">D</span>Le transitaire désigné conjointement</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Sous FCA, il y a une règle précise selon le lieu : si la livraison est dans les locaux du vendeur, c'est LUI qui charge. Si la livraison est dans un autre lieu (terminal, aéroport…), le vendeur n'est pas responsable du déchargement depuis son moyen de transport. Cette distinction est spécifique au FCA.</div>
+    </div>
+
+    <div class="question" id="s3q18"><span class="q-label">Q18</span>
+      <p class="q-text">Dans quel groupe d'Incoterms le vendeur supporte-t-il tous les risques et coûts jusqu'à la destination finale dans le pays de l'acheteur ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q18" value="A"><span class="option-letter">A</span>Groupe E</label>
+        <label class="option"><input type="radio" name="s3q18" value="B"><span class="option-letter">B</span>Groupe F</label>
+        <label class="option"><input type="radio" name="s3q18" value="C"><span class="option-letter">C</span>Groupe C</label>
+        <label class="option"><input type="radio" name="s3q18" value="D"><span class="option-letter">D</span>Groupe D</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Le groupe D (DAP, DPU, DDP) est appelé « vente à l'arrivée » : le vendeur supporte tous les risques et les coûts jusqu'au pays de destination. C'est l'opposé du groupe E (EXW) où c'est l'acheteur qui supporte tout. Le groupe C transfère le risque au départ mais le vendeur paie les frais jusqu'à destination.</div>
+    </div>
+
+    <div class="question" id="s3q19"><span class="q-label">Q19</span>
+      <p class="q-text">Un contrat prévoit l'Incoterm FOB port de Hambourg. La marchandise est endommagée sur le quai, avant d'être mise à bord. Qui supporte le risque ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q19" value="A"><span class="option-letter">A</span>Le vendeur, car le risque FOB n'est transféré qu'au moment du chargement à bord</label>
+        <label class="option"><input type="radio" name="s3q19" value="B"><span class="option-letter">B</span>L'acheteur, car la marchandise est déjà au port désigné</label>
+        <label class="option"><input type="radio" name="s3q19" value="C"><span class="option-letter">C</span>L'autorité portuaire, responsable de la sécurité des quais</label>
+        <label class="option"><input type="radio" name="s3q19" value="D"><span class="option-letter">D</span>Le transitaire, responsable de l'acheminement jusqu'à bord</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous FOB, le transfert de risque s'opère exactement au moment du chargement à bord du navire. Avant ce moment (y compris sur le quai, le long du navire), le vendeur supporte encore le risque. C'est la différence avec FAS où le risque se transfère dès que la marchandise est le long du navire (sur le quai).</div>
+    </div>
+
+    <div class="question" id="s3q20"><span class="q-label">Q20</span>
+      <p class="q-text">Quel Incoterm remplace officiellement le DAT (Delivered at Terminal) depuis la version 2020 ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s3q20" value="A"><span class="option-letter">A</span>DAP</label>
+        <label class="option"><input type="radio" name="s3q20" value="B"><span class="option-letter">B</span>DPU</label>
+        <label class="option"><input type="radio" name="s3q20" value="C"><span class="option-letter">C</span>DDP</label>
+        <label class="option"><input type="radio" name="s3q20" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — DAT (Delivered at Terminal) est devenu DPU (Delivered at Place Unloaded) dans les Incoterms 2020. Le changement de nom élargit le champ d'application : avant, la livraison ne pouvait se faire que dans un « terminal ». Désormais, elle peut s'effectuer en tout lieu convenu (entrepôt, usine, dépôt, chantier…) à condition que le vendeur décharge la marchandise.</div>
+    </div>
+
+    <div class="serie-actions">
+      <button class="btn btn-primary" onclick="corriger(3)">Corriger</button>
+      <button class="btn btn-secondary" onclick="reinitialiser(3)">Recommencer</button>
+    </div>
+    <div class="score-box" id="score-3"></div>
+  </div>
+</div>
+
+<!-- ===== SÉRIE 4 — Bonnes réponses : D A B C D A B C D A B C D A B C D A B C ===== -->
+<div class="serie" id="serie-4">
+  <div class="serie-header"><h2>Les Incoterms — Série 4</h2><p>20 questions — 1 seule bonne réponse</p></div>
+  <div class="questions-block">
+
+    <div class="question" id="s4q1"><span class="q-label">Q1</span>
+      <p class="q-text">Quel Incoterm correspond à « Rendu droits acquittés » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q1" value="A"><span class="option-letter">A</span>DAP</label>
+        <label class="option"><input type="radio" name="s4q1" value="B"><span class="option-letter">B</span>DPU</label>
+        <label class="option"><input type="radio" name="s4q1" value="C"><span class="option-letter">C</span>CPT</label>
+        <label class="option"><input type="radio" name="s4q1" value="D"><span class="option-letter">D</span>DDP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — DDP = Delivered Duty Paid = Rendu droits acquittés. « Droits acquittés » signifie que les droits de douane ont été payés par le vendeur. DAP = Rendu au lieu de destination. DPU = Rendu déchargé. CPT = Port payé jusqu'à.</div>
+    </div>
+
+    <div class="question" id="s4q2"><span class="q-label">Q2</span>
+      <p class="q-text">Un exportateur marocain vend des conserves à un acheteur français sous Incoterm FOB Casablanca. Qui organise et paie le transport maritime entre Casablanca et Marseille ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q2" value="A"><span class="option-letter">A</span>L'acheteur français</label>
+        <label class="option"><input type="radio" name="s4q2" value="B"><span class="option-letter">B</span>Le vendeur marocain</label>
+        <label class="option"><input type="radio" name="s4q2" value="C"><span class="option-letter">C</span>Le transitaire désigné par la douane</label>
+        <label class="option"><input type="radio" name="s4q2" value="D"><span class="option-letter">D</span>La compagnie de transport indépendamment des parties</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous FOB, le vendeur livre à bord au port d'embarquement (Casablanca). Dès ce moment, c'est l'acheteur français qui prend en charge : le fret maritime, l'assurance, le déchargement à Marseille et le dédouanement import en France. Le vendeur marocain n'intervient plus après le chargement à Casablanca.</div>
+    </div>
+
+    <div class="question" id="s4q3"><span class="q-label">Q3</span>
+      <p class="q-text">Quel Incoterm signifie « Free On Board » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q3" value="A"><span class="option-letter">A</span>FAS</label>
+        <label class="option"><input type="radio" name="s4q3" value="B"><span class="option-letter">B</span>FOB</label>
+        <label class="option"><input type="radio" name="s4q3" value="C"><span class="option-letter">C</span>FCA</label>
+        <label class="option"><input type="radio" name="s4q3" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — FOB = Free On Board = Franco à bord. FAS = Free Alongside Ship = Franco le long du navire. FCA = Free Carrier = Franco transporteur. CPT = Carriage Paid To = Port payé jusqu'à. FOB et FAS sont maritimes ; FCA et CPT sont multimodaux.</div>
+    </div>
+
+    <div class="question" id="s4q4"><span class="q-label">Q4</span>
+      <p class="q-text">Un importateur reçoit une livraison sous Incoterm FCA. Qui est responsable des formalités douanières à l'importation dans son pays ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q4" value="A"><span class="option-letter">A</span>Le vendeur, car il a géré toutes les formalités</label>
+        <label class="option"><input type="radio" name="s4q4" value="B"><span class="option-letter">B</span>Le transitaire, toujours responsable en FCA</label>
+        <label class="option"><input type="radio" name="s4q4" value="C"><span class="option-letter">C</span>L'acheteur importateur</label>
+        <label class="option"><input type="radio" name="s4q4" value="D"><span class="option-letter">D</span>Le transporteur désigné</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Sous FCA, le vendeur gère uniquement le dédouanement à l'EXPORT. La douane import reste entièrement à la charge de l'acheteur. C'est l'une des différences avec DDP où le vendeur gère les deux. Le transitaire peut être mandaté par l'acheteur pour accomplir ces formalités, mais la responsabilité juridique reste celle de l'acheteur.</div>
+    </div>
+
+    <div class="question" id="s4q5"><span class="q-label">Q5</span>
+      <p class="q-text">Un contrat précise « CIF port de Marseille ». La marchandise arrive endommagée à Marseille. L'acheteur veut se retourner contre le vendeur. A-t-il raison ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q5" value="A"><span class="option-letter">A</span>Oui, car le vendeur est responsable jusqu'à la livraison à Marseille</label>
+        <label class="option"><input type="radio" name="s4q5" value="B"><span class="option-letter">B</span>Oui, car le CIF inclut une assurance qui couvre le vendeur jusqu'à destination</label>
+        <label class="option"><input type="radio" name="s4q5" value="C"><span class="option-letter">C</span>Oui, si le vendeur n'a pas souscrit l'assurance CIF minimale</label>
+        <label class="option"><input type="radio" name="s4q5" value="D"><span class="option-letter">D</span>Non en principe, le risque est transféré à l'acheteur au chargement à bord ; l'acheteur doit se retourner contre l'assureur</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Sous CIF, le risque est transféré à l'acheteur dès le chargement à bord au port de départ. L'acheteur supporte donc les risques pendant la traversée. Cependant, le vendeur a souscrit une assurance au bénéfice de l'acheteur : c'est contre l'assureur que l'acheteur doit se retourner, pas contre le vendeur. Exception : si le vendeur n'a pas souscrit l'assurance minimale requise, sa responsabilité contractuelle est engagée (réponse C partiellement juste, mais D est la réponse la plus complète et correcte).</div>
+    </div>
+
+    <div class="question" id="s4q6"><span class="q-label">Q6</span>
+      <p class="q-text">Dans les Incoterms du groupe F (FCA, FAS, FOB), qui désigne et rémunère le transporteur principal ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q6" value="A"><span class="option-letter">A</span>L'acheteur</label>
+        <label class="option"><input type="radio" name="s4q6" value="B"><span class="option-letter">B</span>Le vendeur</label>
+        <label class="option"><input type="radio" name="s4q6" value="C"><span class="option-letter">C</span>Le transitaire, obligatoirement</label>
+        <label class="option"><input type="radio" name="s4q6" value="D"><span class="option-letter">D</span>Les deux parties conjointement</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Dans le groupe F, la lettre F signifie « Free » : le vendeur est libéré de ses obligations après livraison au transporteur. C'est l'ACHETEUR qui désigne et rémunère le transporteur principal. Le vendeur s'occupe du pré-acheminement jusqu'au point de remise et du dédouanement export, mais le transport principal (fret) est organisé et payé par l'acheteur.</div>
+    </div>
+
+    <div class="question" id="s4q7"><span class="q-label">Q7</span>
+      <p class="q-text">Un commissionnaire conseille un client importateur qui achète sous Incoterm EXW. Le dédouanement export dans le pays du vendeur pose problème. Quel Incoterm alternatif conseiller ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q7" value="A"><span class="option-letter">A</span>DAP</label>
+        <label class="option"><input type="radio" name="s4q7" value="B"><span class="option-letter">B</span>FCA</label>
+        <label class="option"><input type="radio" name="s4q7" value="C"><span class="option-letter">C</span>CFR</label>
+        <label class="option"><input type="radio" name="s4q7" value="D"><span class="option-letter">D</span>CIF</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — FCA est la solution recommandée par la CCI pour remplacer EXW dans les ventes internationales. Sous FCA, le vendeur prend en charge le dédouanement export dans son propre pays (là où il maîtrise les procédures). L'acheteur conserve la maîtrise du transport principal. DAP ou CIF impliqueraient que le vendeur organise tout le transport, ce qui donne trop de contrôle au vendeur.</div>
+    </div>
+
+    <div class="question" id="s4q8"><span class="q-label">Q8</span>
+      <p class="q-text">Quel Incoterm correspond à l'expression « Cost, Insurance and Freight » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q8" value="A"><span class="option-letter">A</span>CFR</label>
+        <label class="option"><input type="radio" name="s4q8" value="B"><span class="option-letter">B</span>CIP</label>
+        <label class="option"><input type="radio" name="s4q8" value="C"><span class="option-letter">C</span>CIF</label>
+        <label class="option"><input type="radio" name="s4q8" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — CIF = Cost, Insurance and Freight = Coût, assurance et fret (maritime). CFR = Cost and Freight = Coût et fret (maritime, sans assurance). CIP = Carriage and Insurance Paid To = Port payé assurance comprise (multimodal). CPT = Carriage Paid To = Port payé jusqu'à (multimodal, sans assurance).</div>
+    </div>
+
+    <div class="question" id="s4q9"><span class="q-label">Q9</span>
+      <p class="q-text">Marchandises achetées EXW usine Osaka (Japon) : 5 000 €. Transport Osaka → port de Kobe : 200 €. Fret maritime Kobe → Marseille : 600 €. Assurance maritime : 80 €. Quelle valeur en douane déclarer à Marseille ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q9" value="A"><span class="option-letter">A</span>5 000 € (prix EXW seul)</label>
+        <label class="option"><input type="radio" name="s4q9" value="B"><span class="option-letter">B</span>5 800 € (EXW + fret maritime uniquement)</label>
+        <label class="option"><input type="radio" name="s4q9" value="C"><span class="option-letter">C</span>5 200 € (EXW + pré-acheminement uniquement)</label>
+        <label class="option"><input type="radio" name="s4q9" value="D"><span class="option-letter">D</span>5 880 € (EXW + pré-acheminement + fret + assurance jusqu'au port d'entrée UE)</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Sous EXW, le prix ne comprend que la marchandise. Pour la valeur en douane, il faut ajouter TOUS les frais jusqu'au premier point d'entrée dans l'UE (Marseille) : pré-acheminement Osaka→Kobe (200 €) + fret maritime (600 €) + assurance (80 €) = 5 000 + 880 = 5 880 €. L'article 71 CDU est exhaustif sur ces ajouts.</div>
+    </div>
+
+    <div class="question" id="s4q10"><span class="q-label">Q10</span>
+      <p class="q-text">Entre CFR et CIF, quelle est la différence exacte ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q10" value="A"><span class="option-letter">A</span>CIF inclut une assurance maritime minimale obligatoire à la charge du vendeur, pas CFR</label>
+        <label class="option"><input type="radio" name="s4q10" value="B"><span class="option-letter">B</span>CFR est multimodal, CIF uniquement maritime</label>
+        <label class="option"><input type="radio" name="s4q10" value="C"><span class="option-letter">C</span>Sous CFR le vendeur gère la douane import, pas sous CIF</label>
+        <label class="option"><input type="radio" name="s4q10" value="D"><span class="option-letter">D</span>CIF transfère le risque à destination, CFR au départ</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — CFR et CIF sont tous deux maritimes. Ils ont le même mécanisme : vendeur paie le fret, risque transféré au chargement à bord. L'unique différence : CIF ajoute l'obligation de souscrire une assurance minimale (Clauses C, min. 110% de la valeur). Sous CFR, l'acheteur doit s'assurer lui-même s'il le souhaite.</div>
+    </div>
+
+    <div class="question" id="s4q11"><span class="q-label">Q11</span>
+      <p class="q-text">Un acheteur négocie un contrat en Incoterm DPU entrepôt de Rome. À l'arrivée, le vendeur refuse de décharger les palettes. L'acheteur peut-il contester ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q11" value="A"><span class="option-letter">A</span>Non, sous DPU c'est à l'acheteur d'organiser le déchargement</label>
+        <label class="option"><input type="radio" name="s4q11" value="B"><span class="option-letter">B</span>Oui, car sous DPU le vendeur est contractuellement tenu de décharger à destination</label>
+        <label class="option"><input type="radio" name="s4q11" value="C"><span class="option-letter">C</span>Non, le déchargement est toujours à la charge du manutentionnaire portuaire</label>
+        <label class="option"><input type="radio" name="s4q11" value="D"><span class="option-letter">D</span>Oui, mais uniquement si l'entrepôt est situé dans un terminal officiel</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — DPU est le seul Incoterm qui met le déchargement à la charge du vendeur. C'est une obligation contractuelle : le vendeur DOIT décharger. S'il refuse, il est en faute. L'acheteur peut exiger l'exécution ou réclamer des dommages. Le lieu peut être n'importe quel endroit convenu (pas seulement un terminal) depuis 2020.</div>
+    </div>
+
+    <div class="question" id="s4q12"><span class="q-label">Q12</span>
+      <p class="q-text">Dans quel groupe d'Incoterms le risque est-il transféré à l'acheteur le plus tôt (dès la mise à disposition chez le vendeur) ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q12" value="A"><span class="option-letter">A</span>Groupe D</label>
+        <label class="option"><input type="radio" name="s4q12" value="B"><span class="option-letter">B</span>Groupe F</label>
+        <label class="option"><input type="radio" name="s4q12" value="C"><span class="option-letter">C</span>Groupe E</label>
+        <label class="option"><input type="radio" name="s4q12" value="D"><span class="option-letter">D</span>Groupe C</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Le groupe E (EXW uniquement) transfère le risque le plus tôt possible : dès que la marchandise est mise à disposition dans les locaux du vendeur. C'est le minimum d'obligations pour le vendeur et le maximum pour l'acheteur. Dans le groupe D, c'est l'inverse : le risque est transféré le plus tard (à destination).</div>
+    </div>
+
+    <div class="question" id="s4q13"><span class="q-label">Q13</span>
+      <p class="q-text">Un vendeur français propose à un client américain l'Incoterm DDP New York. Quel risque principal le vendeur encourt-il ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q13" value="A"><span class="option-letter">A</span>Le vendeur ne peut pas être assuré pour le transport transatlantique</label>
+        <label class="option"><input type="radio" name="s4q13" value="B"><span class="option-letter">B</span>Le DDP est interdit entre la France et les États-Unis</label>
+        <label class="option"><input type="radio" name="s4q13" value="C"><span class="option-letter">C</span>Le vendeur devra obligatoirement passer par un transitaire agréé OEA</label>
+        <label class="option"><input type="radio" name="s4q13" value="D"><span class="option-letter">D</span>Le vendeur devra maîtriser et gérer le dédouanement import aux États-Unis, très complexe pour un vendeur étranger</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Sous DDP, le vendeur assume le dédouanement import dans le pays de l'acheteur, y compris les droits et taxes. Gérer la douane américaine (CBP) depuis la France est extrêmement complexe : le vendeur doit avoir un représentant en douane agréé aux USA, connaître les réglementations américaines, payer les droits de douane US… C'est le principal risque et inconvénient du DDP pour un vendeur étranger.</div>
+    </div>
+
+    <div class="question" id="s4q14"><span class="q-label">Q14</span>
+      <p class="q-text">Quel Incoterm signifie « Carriage and Insurance Paid To » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q14" value="A"><span class="option-letter">A</span>CIP</label>
+        <label class="option"><input type="radio" name="s4q14" value="B"><span class="option-letter">B</span>CIF</label>
+        <label class="option"><input type="radio" name="s4q14" value="C"><span class="option-letter">C</span>CFR</label>
+        <label class="option"><input type="radio" name="s4q14" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — CIP = Carriage and Insurance Paid To = Port payé assurance comprise jusqu'à (multimodal). CIF = Cost, Insurance and Freight (maritime). CFR = Cost and Freight (maritime, sans assurance). CPT = Carriage Paid To (multimodal, sans assurance). CIP et CIF incluent tous deux l'assurance mais diffèrent sur le mode de transport et le niveau de couverture.</div>
+    </div>
+
+    <div class="question" id="s4q15"><span class="q-label">Q15</span>
+      <p class="q-text">Sous les Incoterms du groupe C (CPT, CIP, CFR, CIF), le transfert des risques et le transfert des frais ne coïncident pas. Quelle affirmation est exacte ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q15" value="A"><span class="option-letter">A</span>Les risques sont transférés à destination, les frais au départ</label>
+        <label class="option"><input type="radio" name="s4q15" value="B"><span class="option-letter">B</span>Les risques sont transférés au départ, les frais restent à la charge du vendeur jusqu'à destination</label>
+        <label class="option"><input type="radio" name="s4q15" value="C"><span class="option-letter">C</span>Risques et frais sont transférés simultanément au départ</label>
+        <label class="option"><input type="radio" name="s4q15" value="D"><span class="option-letter">D</span>Risques et frais sont transférés simultanément à destination</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — C'est LA caractéristique du groupe C : dissociation entre risques et frais. Risques : transférés au départ (remise au 1er transporteur pour CPT/CIP, chargement à bord pour CFR/CIF). Frais : le vendeur continue à payer jusqu'à destination. Résultat : l'acheteur voyage aux risques mais le vendeur paie le transport. Cela peut sembler paradoxal mais est fondamental à comprendre.</div>
+    </div>
+
+    <div class="question" id="s4q16"><span class="q-label">Q16</span>
+      <p class="q-text">Combien d'Incoterms au total compte la version 2020 ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q16" value="A"><span class="option-letter">A</span>9</label>
+        <label class="option"><input type="radio" name="s4q16" value="B"><span class="option-letter">B</span>13</label>
+        <label class="option"><input type="radio" name="s4q16" value="C"><span class="option-letter">C</span>11</label>
+        <label class="option"><input type="radio" name="s4q16" value="D"><span class="option-letter">D</span>14</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Les Incoterms 2020 sont au nombre de 11 : 7 multimodaux (EXW, FCA, CPT, CIP, DAP, DPU, DDP) + 4 maritimes/fluviaux (FAS, FOB, CFR, CIF). Les versions antérieures (2000 et avant) en comptaient jusqu'à 13.</div>
+    </div>
+
+    <div class="question" id="s4q17"><span class="q-label">Q17</span>
+      <p class="q-text">Un acheteur européen commande des pièces automobiles à un fournisseur coréen sous « CIP aéroport de Francfort ». La marchandise est volée lors du transit aérien. Qui prend en charge le sinistre en première intention ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q17" value="A"><span class="option-letter">A</span>L'acheteur, le risque étant transféré dès l'expédition</label>
+        <label class="option"><input type="radio" name="s4q17" value="B"><span class="option-letter">B</span>Le vendeur coréen, responsable jusqu'à Francfort</label>
+        <label class="option"><input type="radio" name="s4q17" value="C"><span class="option-letter">C</span>La compagnie aérienne, responsable en cas de vol</label>
+        <label class="option"><input type="radio" name="s4q17" value="D"><span class="option-letter">D</span>L'assureur, car sous CIP le vendeur a souscrit une assurance tous risques au profit de l'acheteur</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Sous CIP, le risque est transféré à l'acheteur dès la remise au 1er transporteur (réponse A : vrai pour le risque). Mais le vendeur a souscrit une assurance TOUS RISQUES (Clauses A depuis 2020) au bénéfice de l'acheteur. Le vol est couvert par cette assurance. En première intention, c'est l'assureur qui indemnise l'acheteur. C'est tout l'intérêt du CIP par rapport au CPT.</div>
+    </div>
+
+    <div class="question" id="s4q18"><span class="q-label">Q18</span>
+      <p class="q-text">Quel Incoterm signifie « Free Alongside Ship » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q18" value="A"><span class="option-letter">A</span>FAS</label>
+        <label class="option"><input type="radio" name="s4q18" value="B"><span class="option-letter">B</span>FOB</label>
+        <label class="option"><input type="radio" name="s4q18" value="C"><span class="option-letter">C</span>FCA</label>
+        <label class="option"><input type="radio" name="s4q18" value="D"><span class="option-letter">D</span>CFR</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — FAS = Free Alongside Ship = Franco le long du navire. FOB = Free On Board = Franco à bord. FCA = Free Carrier = Franco transporteur (multimodal). CFR = Cost and Freight = Coût et fret. Les trois Incoterms commençant par F sont dans le groupe F (vendeur livre à un transporteur désigné par l'acheteur).</div>
+    </div>
+
+    <div class="question" id="s4q19"><span class="q-label">Q19</span>
+      <p class="q-text">Un vendeur non payé revendique la propriété de marchandises déjà livrées en DDP. Les Incoterms lui donnent-ils raison ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q19" value="A"><span class="option-letter">A</span>Oui, DDP implique que le vendeur garde la propriété jusqu'au paiement complet</label>
+        <label class="option"><input type="radio" name="s4q19" value="B"><span class="option-letter">B</span>Non, les Incoterms ne traitent pas du transfert de propriété ; seul le contrat de vente règle ce point</label>
+        <label class="option"><input type="radio" name="s4q19" value="C"><span class="option-letter">C</span>Oui, les Incoterms du groupe D prévoient une réserve de propriété automatique</label>
+        <label class="option"><input type="radio" name="s4q19" value="D"><span class="option-letter">D</span>Non, la propriété est transférée automatiquement à la livraison selon les Incoterms</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — Les Incoterms ne définissent PAS le transfert de propriété. Ni DDP ni aucun autre Incoterm ne contient de clause de réserve de propriété. Pour que le vendeur conserve la propriété jusqu'au paiement, il doit insérer une clause de réserve de propriété dans le contrat de vente. Sans cette clause, le droit applicable (ex : droit français) détermine le moment du transfert de propriété.</div>
+    </div>
+
+    <div class="question" id="s4q20"><span class="q-label">Q20</span>
+      <p class="q-text">Un vendeur veut livrer à un client étranger en prenant en charge tout le transport et l'assurance jusqu'à destination, sans gérer la douane import ni le déchargement. Quel Incoterm choisir ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s4q20" value="A"><span class="option-letter">A</span>DDP</label>
+        <label class="option"><input type="radio" name="s4q20" value="B"><span class="option-letter">B</span>DPU</label>
+        <label class="option"><input type="radio" name="s4q20" value="C"><span class="option-letter">C</span>DAP</label>
+        <label class="option"><input type="radio" name="s4q20" value="D"><span class="option-letter">D</span>CIP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — DAP : le vendeur organise et paie le transport + risques jusqu'à destination, sans décharger (acheteur décharge) et sans gérer la douane import (acheteur la gère). DDP irait trop loin sur la douane import. DPU irait trop loin sur le déchargement. CIP transfère le risque au départ et ne livre pas au sens strict jusqu'à destination.</div>
+    </div>
+
+    <div class="serie-actions">
+      <button class="btn btn-primary" onclick="corriger(4)">Corriger</button>
+      <button class="btn btn-secondary" onclick="reinitialiser(4)">Recommencer</button>
+    </div>
+    <div class="score-box" id="score-4"></div>
+  </div>
+</div>
+
+<!-- ===== SÉRIE 5 — Bonnes réponses : A B C D A B C D A B C D A B C D A B C D ===== -->
+<div class="serie" id="serie-5">
+  <div class="serie-header"><h2>Les Incoterms — Série 5</h2><p>20 questions — 1 seule bonne réponse</p></div>
+  <div class="questions-block">
+
+    <div class="question" id="s5q1"><span class="q-label">Q1</span>
+      <p class="q-text">Quel Incoterm signifie « Delivered at Place Unloaded » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q1" value="A"><span class="option-letter">A</span>DPU</label>
+        <label class="option"><input type="radio" name="s5q1" value="B"><span class="option-letter">B</span>DAP</label>
+        <label class="option"><input type="radio" name="s5q1" value="C"><span class="option-letter">C</span>DDP</label>
+        <label class="option"><input type="radio" name="s5q1" value="D"><span class="option-letter">D</span>DAT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — DPU = Delivered at Place Unloaded = Rendu déchargé au lieu de destination. C'est l'ancien DAT (Delivered at Terminal) renommé en 2020. DAP = Delivered At Place (non déchargé). DDP = Delivered Duty Paid. DAT n'existe plus depuis 2020 : il faut utiliser DPU.</div>
+    </div>
+
+    <div class="question" id="s5q2"><span class="q-label">Q2</span>
+      <p class="q-text">Un acheteur américain commande sous Incoterm FCA entrepôt du vendeur à Lyon. Le vendeur charge la marchandise sur le camion du transporteur désigné. La marchandise est endommagée lors du chargement. Qui est responsable ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q2" value="A"><span class="option-letter">A</span>L'acheteur américain, car son transporteur était présent</label>
+        <label class="option"><input type="radio" name="s5q2" value="B"><span class="option-letter">B</span>Le vendeur lyonnais, car sous FCA dans ses locaux il est responsable du chargement</label>
+        <label class="option"><input type="radio" name="s5q2" value="C"><span class="option-letter">C</span>Le transporteur, toujours responsable dès qu'il intervient sur site</label>
+        <label class="option"><input type="radio" name="s5q2" value="D"><span class="option-letter">D</span>L'assureur de l'acheteur, couverture FCA automatique</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — Sous FCA, lorsque la livraison a lieu dans les locaux du vendeur, c'est le VENDEUR qui est responsable du chargement. C'est une règle spécifique au FCA : si la livraison est dans les locaux du vendeur → vendeur charge ; si la livraison est ailleurs → le vendeur n'est pas responsable du déchargement de son véhicule. Le risque n'est transféré à l'acheteur qu'une fois le chargement effectué.</div>
+    </div>
+
+    <div class="question" id="s5q3"><span class="q-label">Q3</span>
+      <p class="q-text">Quel Incoterm signifie « Free Carrier » (Franco transporteur) ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q3" value="A"><span class="option-letter">A</span>FOB</label>
+        <label class="option"><input type="radio" name="s5q3" value="B"><span class="option-letter">B</span>FAS</label>
+        <label class="option"><input type="radio" name="s5q3" value="C"><span class="option-letter">C</span>FCA</label>
+        <label class="option"><input type="radio" name="s5q3" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — FCA = Free Carrier = Franco transporteur. C'est l'Incoterm multimodal du groupe F, utilisé pour tous modes de transport. FOB = Free On Board (maritime). FAS = Free Alongside Ship (maritime). CPT = Carriage Paid To (multimodal, groupe C, vendeur paie le fret).</div>
+    </div>
+
+    <div class="question" id="s5q4"><span class="q-label">Q4</span>
+      <p class="q-text">Un vendeur signe un contrat CIF Sydney. L'acheteur subit un dommage en cours de route et présente sa réclamation directement à l'assureur du vendeur. Est-il en droit de le faire ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q4" value="A"><span class="option-letter">A</span>Non, seul le vendeur peut présenter une réclamation à son propre assureur</label>
+        <label class="option"><input type="radio" name="s5q4" value="B"><span class="option-letter">B</span>Non, l'assurance CIF ne couvre que les dommages depuis 2020 (pas le vol ni la perte)</label>
+        <label class="option"><input type="radio" name="s5q4" value="C"><span class="option-letter">C</span>Non, l'acheteur doit d'abord se retourner contre le vendeur</label>
+        <label class="option"><input type="radio" name="s5q4" value="D"><span class="option-letter">D</span>Oui, l'acheteur (ou tout tiers ayant un intérêt assurable) peut présenter sa réclamation directement à l'assureur</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Sous CIF, l'assurance souscrite par le vendeur l'est AU BÉNÉFICE DE L'ACHETEUR. L'acheteur (ou tout tiers ayant un intérêt assurable sur les marchandises) peut présenter sa réclamation directement à l'assureur. C'est d'ailleurs tout l'intérêt du CIF pour l'acheteur : il bénéficie d'une couverture même s'il supporte le risque depuis le port de départ.</div>
+    </div>
+
+    <div class="question" id="s5q5"><span class="q-label">Q5</span>
+      <p class="q-text">Un transitaire conseille un client importateur qui reçoit des marchandises sous Incoterm DAP entrepôt de Bordeaux. Qui effectue les formalités douanières à l'importation en France ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q5" value="A"><span class="option-letter">A</span>L'acheteur importateur (ou son représentant en douane)</label>
+        <label class="option"><input type="radio" name="s5q5" value="B"><span class="option-letter">B</span>Le vendeur, car il organise le transport jusqu'à Bordeaux</label>
+        <label class="option"><input type="radio" name="s5q5" value="C"><span class="option-letter">C</span>Le transitaire, obligatoirement sous DAP</label>
+        <label class="option"><input type="radio" name="s5q5" value="D"><span class="option-letter">D</span>La douane française, automatiquement à l'arrivée</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous DAP, le vendeur prend en charge le transport jusqu'à destination MAIS pas les formalités douanières import ni le paiement des droits. C'est l'acheteur (ou le transitaire qu'il mandate) qui effectue le dédouanement import. C'est la différence essentielle entre DAP et DDP : le DDP irait jusqu'à inclure la douane import à la charge du vendeur.</div>
+    </div>
+
+    <div class="question" id="s5q6"><span class="q-label">Q6</span>
+      <p class="q-text">Quel est le principal domaine que les Incoterms ne couvrent PAS ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q6" value="A"><span class="option-letter">A</span>Les formalités douanières</label>
+        <label class="option"><input type="radio" name="s5q6" value="B"><span class="option-letter">B</span>Le transfert de propriété des marchandises</label>
+        <label class="option"><input type="radio" name="s5q6" value="C"><span class="option-letter">C</span>La répartition des coûts de transport</label>
+        <label class="option"><input type="radio" name="s5q6" value="D"><span class="option-letter">D</span>Le lieu de livraison</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — Les Incoterms couvrent : lieu et moment de livraison, transfert des risques, répartition des coûts, formalités douanières, documents de transport. Ils ne couvrent PAS : le transfert de propriété, les modalités de paiement, les recours en cas de violation du contrat, la force majeure, la propriété intellectuelle. Le transfert de propriété est systématiquement exclu.</div>
+    </div>
+
+    <div class="question" id="s5q7"><span class="q-label">Q7</span>
+      <p class="q-text">Quel Incoterm du groupe C est recommandé pour le transport conteneurisé multimodal avec assurance obligatoire tous risques ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q7" value="A"><span class="option-letter">A</span>CIF</label>
+        <label class="option"><input type="radio" name="s5q7" value="B"><span class="option-letter">B</span>CFR</label>
+        <label class="option"><input type="radio" name="s5q7" value="C"><span class="option-letter">C</span>CIP</label>
+        <label class="option"><input type="radio" name="s5q7" value="D"><span class="option-letter">D</span>CPT</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — CIP (Carriage and Insurance Paid To) est multimodal (adapté aux conteneurs) ET inclut une assurance tous risques obligatoire (Clauses A depuis 2020). CIF est maritime uniquement et n'exige qu'une couverture minimale. CFR est maritime sans assurance. CPT est multimodal mais sans assurance obligatoire. CIP est donc la seule réponse combinant : multimodal + assurance tous risques.</div>
+    </div>
+
+    <div class="question" id="s5q8"><span class="q-label">Q8</span>
+      <p class="q-text">Quel Incoterm signifie « Cost and Freight » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q8" value="A"><span class="option-letter">A</span>CIP</label>
+        <label class="option"><input type="radio" name="s5q8" value="B"><span class="option-letter">B</span>CIF</label>
+        <label class="option"><input type="radio" name="s5q8" value="C"><span class="option-letter">C</span>CPT</label>
+        <label class="option"><input type="radio" name="s5q8" value="D"><span class="option-letter">D</span>CFR</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — CFR = Cost and Freight = Coût et fret (maritime). CIF = Cost, Insurance and Freight (maritime + assurance). CPT = Carriage Paid To (multimodal, sans assurance). CIP = Carriage and Insurance Paid To (multimodal + assurance). CFR et CIF sont maritimes ; CPT et CIP sont multimodaux.</div>
+    </div>
+
+    <div class="question" id="s5q9"><span class="q-label">Q9</span>
+      <p class="q-text">Marchandises vendues en Incoterm CFR Marseille, valeur 12 000 €. L'assurance maritime (non incluse dans CFR) coûte 150 €. Quelle valeur en douane déclarer à Marseille ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q9" value="A"><span class="option-letter">A</span>12 150 € (CFR + assurance à ajouter car non incluse dans CFR)</label>
+        <label class="option"><input type="radio" name="s5q9" value="B"><span class="option-letter">B</span>12 000 € (prix CFR, l'assurance est optionnelle et ne change pas la valeur en douane)</label>
+        <label class="option"><input type="radio" name="s5q9" value="C"><span class="option-letter">C</span>13 200 € (CFR + 10% forfaitaire réglementaire)</label>
+        <label class="option"><input type="radio" name="s5q9" value="D"><span class="option-letter">D</span>11 850 € (CFR moins les frais de port inclus dans le fret)</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Selon l'article 71 CDU, la valeur en douane inclut le prix + frais de transport + assurance jusqu'au 1er point d'entrée dans l'UE. Le CFR inclut déjà le fret (coût + fret jusqu'à Marseille), mais PAS l'assurance. L'assurance (150 €) doit donc être ajoutée : 12 000 + 150 = 12 150 €. Si le vendeur avait utilisé CIF, l'assurance aurait déjà été incluse dans le prix.</div>
+    </div>
+
+    <div class="question" id="s5q10"><span class="q-label">Q10</span>
+      <p class="q-text">Un contrat prévoit un Incoterm FCA aéroport de Paris-CDG. La marchandise est remise au transporteur aérien désigné par l'acheteur. Où s'effectue le transfert des risques ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q10" value="A"><span class="option-letter">A</span>À l'atterrissage à l'aéroport de destination</label>
+        <label class="option"><input type="radio" name="s5q10" value="B"><span class="option-letter">B</span>À la remise de la marchandise au transporteur aérien à CDG</label>
+        <label class="option"><input type="radio" name="s5q10" value="C"><span class="option-letter">C</span>Quand l'avion décolle de CDG</label>
+        <label class="option"><input type="radio" name="s5q10" value="D"><span class="option-letter">D</span>Quand l'acheteur prend possession physique à destination</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — Sous FCA, le transfert de risque s'effectue à la remise de la marchandise au transporteur désigné par l'acheteur, au lieu convenu. Ici, dès la remise au transporteur aérien à CDG. Peu importe que l'avion n'ait pas encore décollé ou que l'acheteur ne soit pas encore en possession physique. C'est la remise au transporteur qui fait foi.</div>
+    </div>
+
+    <div class="question" id="s5q11"><span class="q-label">Q11</span>
+      <p class="q-text">Un vendeur choisit l'Incoterm DAP pour livrer à un acheteur hors UE. À destination, des taxes douanières bloquent la livraison. Qui doit les régler ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q11" value="A"><span class="option-letter">A</span>Le vendeur, qui supporte tous les frais jusqu'à destination sous DAP</label>
+        <label class="option"><input type="radio" name="s5q11" value="B"><span class="option-letter">B</span>Le transitaire, responsable des formalités douanières</label>
+        <label class="option"><input type="radio" name="s5q11" value="C"><span class="option-letter">C</span>L'acheteur, car sous DAP les formalités et droits import sont à sa charge</label>
+        <label class="option"><input type="radio" name="s5q11" value="D"><span class="option-letter">D</span>Les deux parties à parts égales selon la valeur des taxes</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — Sous DAP, le vendeur prend en charge le transport jusqu'à destination, MAIS les formalités douanières import et le paiement des droits et taxes à l'importation restent à la charge de l'acheteur. Si les taxes bloquent la livraison, c'est l'acheteur qui doit les régler. Pour éviter ce problème, l'acheteur aurait dû négocier un Incoterm DDP.</div>
+    </div>
+
+    <div class="question" id="s5q12"><span class="q-label">Q12</span>
+      <p class="q-text">Quel Incoterm signifie « Delivered At Place » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q12" value="A"><span class="option-letter">A</span>DPU</label>
+        <label class="option"><input type="radio" name="s5q12" value="B"><span class="option-letter">B</span>DDP</label>
+        <label class="option"><input type="radio" name="s5q12" value="C"><span class="option-letter">C</span>CPT</label>
+        <label class="option"><input type="radio" name="s5q12" value="D"><span class="option-letter">D</span>DAP</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — DAP = Delivered At Place = Rendu au lieu de destination (non déchargé, hors douane import). DPU = Delivered at Place Unloaded (déchargé inclus). DDP = Delivered Duty Paid (droits et douane import inclus). CPT = Carriage Paid To (groupe C, pas une livraison « D »).</div>
+    </div>
+
+    <div class="question" id="s5q13"><span class="q-label">Q13</span>
+      <p class="q-text">Un contrat prévoit « FAS port de Marseille ». La grue portuaire abîme la marchandise en la déposant le long du navire. Qui supporte le sinistre ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q13" value="A"><span class="option-letter">A</span>L'acheteur, car sous FAS le risque se transfère dès que la marchandise est le long du navire</label>
+        <label class="option"><input type="radio" name="s5q13" value="B"><span class="option-letter">B</span>Le vendeur, car la marchandise n'est pas encore à bord</label>
+        <label class="option"><input type="radio" name="s5q13" value="C"><span class="option-letter">C</span>L'autorité portuaire, responsable des équipements de manutention</label>
+        <label class="option"><input type="radio" name="s5q13" value="D"><span class="option-letter">D</span>Le vendeur et l'acheteur à parts égales</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous FAS, le risque est transféré à l'acheteur exactement au moment où la marchandise est placée le long du navire. Une fois la marchandise déposée le long du navire (même endommagée lors de cette opération finale), le risque passe à l'acheteur. Attention : si le dommage survient avant que la marchandise soit le long du navire, c'est le vendeur qui supporte. FAS impose que le vendeur gère le dédouanement export.</div>
+    </div>
+
+    <div class="question" id="s5q14"><span class="q-label">Q14</span>
+      <p class="q-text">Quelle est la différence principale entre DAP et DDP ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q14" value="A"><span class="option-letter">A</span>DAP inclut le déchargement, DDP non</label>
+        <label class="option"><input type="radio" name="s5q14" value="B"><span class="option-letter">B</span>DDP inclut les droits de douane import et le dédouanement, DAP non</label>
+        <label class="option"><input type="radio" name="s5q14" value="C"><span class="option-letter">C</span>DAP est maritime uniquement, DDP multimodal</label>
+        <label class="option"><input type="radio" name="s5q14" value="D"><span class="option-letter">D</span>DDP transfère le risque au départ, DAP à destination</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — DAP et DDP livrent tous deux à destination, sans décharger (c'est DPU qui décharge). La seule différence : sous DDP, le vendeur gère EN PLUS le dédouanement import et paie les droits et taxes à l'importation dans le pays de l'acheteur. Sous DAP, ces formalités et coûts restent à la charge de l'acheteur. DAP et DDP sont tous deux multimodaux.</div>
+    </div>
+
+    <div class="question" id="s5q15"><span class="q-label">Q15</span>
+      <p class="q-text">Un importateur reçoit une offre DDP. Après enquête, le vendeur n'est pas représenté fiscalement en France et ne peut pas payer la TVA à l'import. Que risque l'importateur ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q15" value="A"><span class="option-letter">A</span>Rien, la TVA import est toujours à la charge de la douane française</label>
+        <label class="option"><input type="radio" name="s5q15" value="B"><span class="option-letter">B</span>L'importateur peut refuser la livraison sans conséquence</label>
+        <label class="option"><input type="radio" name="s5q15" value="C"><span class="option-letter">C</span>L'importateur risque de se retrouver redevable de la TVA (voire des droits de douane) malgré le DDP</label>
+        <label class="option"><input type="radio" name="s5q15" value="D"><span class="option-letter">D</span>Le contrat DDP est automatiquement annulé si le vendeur n'est pas représenté fiscalement</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — C'est le risque du « faux DDP » ou « DDP hors TVA ». En pratique, si le vendeur n'est pas représenté fiscalement en France, le déclarant en douane utilise le numéro de TVA de l'acheteur pour la déclaration. L'acheteur se retrouve alors redevable de la TVA import (voire des droits de douane) alors qu'il pensait tout avoir délégué au vendeur via le DDP. Ce piège pratique est fréquent dans le commerce avec les pays asiatiques.</div>
+    </div>
+
+    <div class="question" id="s5q16"><span class="q-label">Q16</span>
+      <p class="q-text">Les Incoterms peuvent-ils se substituer à un contrat de vente ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q16" value="A"><span class="option-letter">A</span>Oui, ils tiennent lieu de contrat dès qu'ils sont mentionnés dans un document commercial</label>
+        <label class="option"><input type="radio" name="s5q16" value="B"><span class="option-letter">B</span>Oui, pour les contrats de vente internationale uniquement</label>
+        <label class="option"><input type="radio" name="s5q16" value="C"><span class="option-letter">C</span>Oui, si les deux parties sont d'accord pour n'utiliser que l'Incoterm</label>
+        <label class="option"><input type="radio" name="s5q16" value="D"><span class="option-letter">D</span>Non, les Incoterms ne peuvent pas se substituer à un contrat de vente</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — Les Incoterms sont des règles sur la livraison, les risques et les coûts. Ils ne couvrent pas : la formation du contrat, le prix, le paiement, les recours, la propriété, la force majeure, le droit applicable, etc. Ils complètent un contrat de vente mais ne peuvent jamais s'y substituer. Sans contrat de vente, l'Incoterm seul ne peut pas régler un litige commercial.</div>
+    </div>
+
+    <div class="question" id="s5q17"><span class="q-label">Q17</span>
+      <p class="q-text">Un vendeur utilise systématiquement l'Incoterm EXW pour toutes ses ventes export. Quel risque fiscal principal encourt-il en France ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q17" value="A"><span class="option-letter">A</span>Il peut avoir du mal à prouver l'exportation pour justifier l'exonération de TVA</label>
+        <label class="option"><input type="radio" name="s5q17" value="B"><span class="option-letter">B</span>Il sera soumis à une double imposition douanière à l'export</label>
+        <label class="option"><input type="radio" name="s5q17" value="C"><span class="option-letter">C</span>Il ne pourra pas récupérer sa TVA sur les achats liés à ces ventes</label>
+        <label class="option"><input type="radio" name="s5q17" value="D"><span class="option-letter">D</span>EXW génère automatiquement une pénalité douanière à l'export</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : A — Sous EXW, c'est l'acheteur étranger qui gère le dédouanement export. Le vendeur français ne maîtrise pas ce processus et peut se retrouver dans l'incapacité de prouver que les marchandises ont bien quitté le territoire français. Or, l'exonération de TVA sur les exportations est conditionnée à la preuve de sortie du territoire (DAE, attestation de sortie). Sans cette preuve, le vendeur peut être redressé par l'administration fiscale.</div>
+    </div>
+
+    <div class="question" id="s5q18"><span class="q-label">Q18</span>
+      <p class="q-text">Quel Incoterm signifie « Ex Works » ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q18" value="A"><span class="option-letter">A</span>FCA</label>
+        <label class="option"><input type="radio" name="s5q18" value="B"><span class="option-letter">B</span>EXW</label>
+        <label class="option"><input type="radio" name="s5q18" value="C"><span class="option-letter">C</span>DAP</label>
+        <label class="option"><input type="radio" name="s5q18" value="D"><span class="option-letter">D</span>FOB</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : B — EXW = Ex Works = À l'usine. C'est le seul Incoterm du groupe E. Il est à l'opposé de DDP : minimum d'obligations pour le vendeur, maximum pour l'acheteur. « Ex Works » signifie littéralement « sorti de l'usine » : le vendeur n'a qu'à rendre la marchandise disponible sur son site.</div>
+    </div>
+
+    <div class="question" id="s5q19"><span class="q-label">Q19</span>
+      <p class="q-text">Un vendeur signe un contrat CPT Barcelone. La marchandise est détruite par un accident en route avant d'arriver. Le vendeur affirme qu'ayant payé le transport, il doit être remboursé par l'acheteur. A-t-il raison ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q19" value="A"><span class="option-letter">A</span>Oui, le vendeur ayant payé le transport, il est en droit d'être indemnisé par l'acheteur</label>
+        <label class="option"><input type="radio" name="s5q19" value="B"><span class="option-letter">B</span>Non, le transporteur indemnise automatiquement le vendeur dans tous les cas</label>
+        <label class="option"><input type="radio" name="s5q19" value="C"><span class="option-letter">C</span>Non, sous CPT le risque est transféré à l'acheteur dès la remise au 1er transporteur : c'est l'acheteur qui supporte la perte</label>
+        <label class="option"><input type="radio" name="s5q19" value="D"><span class="option-letter">D</span>Oui, le CPT rend le vendeur responsable jusqu'à la livraison effective à Barcelone</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : C — C'est l'illustration parfaite de la dissociation du groupe C. Sous CPT, le vendeur paie le transport mais le RISQUE est transféré à l'acheteur dès la remise au 1er transporteur au départ. La marchandise voyage AUX RISQUES DE L'ACHETEUR. Le fait que le vendeur paie le fret ne le rend pas responsable des dommages pendant le transport. L'acheteur doit se retourner contre le transporteur ou son propre assureur (CPT ne prévoit pas d'assurance obligatoire).</div>
+    </div>
+
+    <div class="question" id="s5q20"><span class="q-label">Q20</span>
+      <p class="q-text">Parmi les affirmations suivantes sur les Incoterms 2020, laquelle est EXACTE ?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="s5q20" value="A"><span class="option-letter">A</span>FAS, FOB, CFR et CIF peuvent être utilisés pour tous les modes de transport y compris aérien</label>
+        <label class="option"><input type="radio" name="s5q20" value="B"><span class="option-letter">B</span>Le CIF impose une couverture d'assurance tous risques depuis 2020</label>
+        <label class="option"><input type="radio" name="s5q20" value="C"><span class="option-letter">C</span>Les Incoterms définissent le transfert de propriété des marchandises</label>
+        <label class="option"><input type="radio" name="s5q20" value="D"><span class="option-letter">D</span>DPU est le seul Incoterm qui oblige le vendeur à décharger la marchandise à destination</label>
+      </div>
+      <div class="correction-note">✅ Bonne réponse : D — A est faux : FAS, FOB, CFR et CIF sont réservés au maritime/fluvial. B est faux : depuis 2020 c'est CIP (pas CIF) qui impose la couverture tous risques ; le CIF reste sur une couverture minimale. C est faux : les Incoterms ne définissent pas le transfert de propriété. D est exact : DPU est bien le seul Incoterm incluant le déchargement à destination à la charge du vendeur.</div>
+    </div>
+
+    <div class="serie-actions">
+      <button class="btn btn-primary" onclick="corriger(5)">Corriger</button>
+      <button class="btn btn-secondary" onclick="reinitialiser(5)">Recommencer</button>
+    </div>
+    <div class="score-box" id="score-5"></div>
+  </div>
+</div>
+
+<script>
+const ANSWERS = {
+  1: ['A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D'],
+  2: ['B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A'],
+  3: ['C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B'],
+  4: ['D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C'],
+  5: ['A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D']
+};
+
+function showSerie(n) {
+  document.querySelectorAll('.serie').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('serie-' + n).classList.add('active');
+  document.querySelectorAll('.tab-btn')[n-1].classList.add('active');
+}
+
+function corriger(n) {
+  const serie = document.getElementById('serie-' + n);
+  const questions = serie.querySelectorAll('.question');
+  let score = 0;
+
+  questions.forEach((q, idx) => {
+    const correct = ANSWERS[n][idx];
+    const radios = q.querySelectorAll('input[type="radio"]');
+    const options = q.querySelectorAll('.option');
+    const note = q.querySelector('.correction-note');
+    let userAnswer = null;
+
+    radios.forEach(r => { if (r.checked) userAnswer = r.value; });
+
+    options.forEach(opt => {
+      opt.classList.remove('correct-answer','wrong-answer');
+      const letter = opt.querySelector('.option-letter').textContent.trim();
+      if (letter === correct) opt.classList.add('correct-answer');
+    });
+
+    if (userAnswer === correct) {
+      score++;
+      note.style.display = 'none';
+    } else {
+      if (userAnswer) {
+        options.forEach(opt => {
+          const letter = opt.querySelector('.option-letter').textContent.trim();
+          if (letter === userAnswer) opt.classList.add('wrong-answer');
+        });
+      }
+      note.style.display = 'block';
+    }
+  });
+
+  const pct = Math.round((score / 20) * 100);
+  let mention = pct >= 80 ? '✅ Excellent !' : pct >= 60 ? '👍 Bien' : pct >= 40 ? '⚠️ À retravailler' : '❌ Insuffisant — relire le cours';
+  const box = document.getElementById('score-' + n);
+  box.innerHTML = '<h3>Résultat Série ' + n + '</h3><div class="score-value">' + score + ' / 20</div><p>' + pct + '%</p><div class="score-mention">' + mention + '</div>';
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function reinitialiser(n) {
+  const serie = document.getElementById('serie-' + n);
+  serie.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  serie.querySelectorAll('.option').forEach(o => o.classList.remove('correct-answer','wrong-answer'));
+  serie.querySelectorAll('.correction-note').forEach(note => note.style.display = 'none');
+  const box = document.getElementById('score-' + n);
+  box.style.display = 'none';
+  box.innerHTML = '';
+}
+</script>
+</body>
+</html>
