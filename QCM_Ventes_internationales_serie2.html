@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ventes internationales</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#F5F5F5;color:#222;padding:1rem}
+.container{max-width:680px;margin:0 auto}
+
+.header{background:#1A5C38;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.header h1{color:#fff;font-size:17px;font-weight:600}
+.header p{color:#A8D5BC;font-size:12px;margin-top:2px}
+.score-box{text-align:right;color:#fff}
+.score-box .pts{font-size:22px;font-weight:700;line-height:1}
+.score-box .lbl{font-size:11px;color:#A8D5BC}
+
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:6px}
+.progress-bar{height:6px;background:#E0E0E0;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:#1A5C38;border-radius:3px;transition:width .3s}
+
+.qcard{background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.qbadge{background:#1B4F8A;color:#fff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px}
+.qtext{font-size:15px;font-weight:600;color:#222;line-height:1.5;margin-bottom:1rem}
+
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1px solid #E0E0E0;border-radius:8px;cursor:pointer;transition:all .15s;background:#fff}
+.opt:hover:not(.locked){background:#F5F8FB;border-color:#1B4F8A}
+.opt.sel{border-color:#1B4F8A;background:#E8F0FA}
+.opt.ok{border-color:#1A5C38;background:#E8F5EE}
+.opt.ko{border-color:#C0392B;background:#FCEBEB}
+.letter{width:22px;height:22px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#666;flex-shrink:0;margin-top:1px}
+.opt.sel .letter{background:#1B4F8A;color:#fff}
+.opt.ok .letter{background:#1A5C38;color:#fff}
+.opt.ko .letter{background:#C0392B;color:#fff}
+.otext{font-size:14px;color:#222;line-height:1.45}
+
+.expl{margin-top:.85rem;padding:.75rem 1rem;background:#F5F8FB;border-left:3px solid #1B4F8A;border-radius:0 6px 6px 0;font-size:13px;color:#444;line-height:1.5}
+.expl strong{color:#1A5C38}
+
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btn{background:#fff;border:1px solid #ccc;border-radius:8px;padding:10px 18px;font-size:14px;color:#222;cursor:pointer;transition:all .15s}
+.btn:hover:not(:disabled){border-color:#1A5C38;color:#1A5C38}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.primary{background:#1A5C38;color:#fff;border-color:#1A5C38}
+.btn.primary:hover{background:#14492C}
+.qcount{font-size:13px;color:#666;font-weight:600}
+
+.result-card{display:none;background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:1.5rem;text-align:center}
+.result-score{font-size:36px;font-weight:700;color:#1A5C38}
+.result-sub{font-size:14px;color:#666;margin:6px 0 4px}
+.result-msg{font-size:14px;color:#444;margin:10px 0 16px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <h1>Ventes internationales</h1>
+      <p>20 questions</p>
+    </div>
+    <div class="score-box">
+      <div class="pts" id="score">0</div>
+      <div class="lbl">/ 20</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap" id="pwrap">
+    <div class="progress-info">
+      <span id="qtop">Question 1 sur 20</span>
+      <span id="answered">0 répondues</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+  </div>
+
+  <div id="qzone"></div>
+  <div class="result-card" id="result"></div>
+
+  <div class="nav" id="nav">
+    <button class="btn" id="bprev" onclick="go(-1)" disabled>&larr; Précédent</button>
+    <span class="qcount" id="qcount">1 / 20</span>
+    <button class="btn primary" id="bnext" onclick="go(1)">Suivant &rarr;</button>
+  </div>
+
+</div>
+<script>
+const Q = [{"q": "Le chèque de banque est émis par :", "o": ["Le tiré directement", "Le bénéficiaire lui-même", "Une banque, au profit d'un bénéficiaire", "La Chambre de Commerce Internationale"], "a": 2, "e": "Le chèque de banque est émis par une banque au profit d'un bénéficiaire."}, {"q": "Pour qu'un chèque de banque soit débité, le compte du tiré doit être :", "o": ["Provisionné", "Bloqué", "Nul", "Domicilié à l'étranger"], "a": 0, "e": "Le compte du tiré doit être provisionné afin d'être débité."}, {"q": "Dans la lettre de change, le bénéficiaire présente le titre :", "o": ["Au tireur directement en espèces", "À la Chambre de Commerce Internationale", "Au transporteur", "Aux guichets de la banque du tiré pour paiement à l'échéance"], "a": 3, "e": "Le bénéficiaire (en général par l'intermédiaire de sa banque) présente le titre aux guichets de la banque du tiré pour paiement à l'échéance."}, {"q": "Un paiement « à vue » pour une lettre de change signifie :", "o": ["Le paiement est différé à l'échéance", "Le paiement est annulé", "Le paiement nécessite un aval", "Le paiement est immédiat dès la remise de l'effet à l'encaissement"], "a": 3, "e": "À vue : le paiement est immédiat dès la remise de l'effet à l'encaissement."}, {"q": "Une lettre de change « endossée » signifie que :", "o": ["La banque refuse le paiement", "Le tireur devient bénéficiaire", "Le bénéficiaire transmet, par endos, le montant de la créance au profit d'un tiers", "L'effet de commerce est annulé"], "a": 2, "e": "Endossée : le bénéficiaire peut transmettre, par endos, le montant de la créance au profit d'un tiers."}, {"q": "Le bénéficiaire d'un billet à ordre remet le titre :", "o": ["À sa banque, qui sollicite le règlement auprès de la banque du souscripteur", "Directement au souscripteur en main propre", "À la Chambre de Commerce Internationale", "À l'assureur de la marchandise"], "a": 0, "e": "Le bénéficiaire du billet à ordre le remet à sa banque qui sollicite le règlement auprès de la banque du souscripteur."}, {"q": "Le virement est :", "o": ["Un effet de commerce avalisé", "Un ordre donné par le titulaire d'un compte de débiter son compte pour créditer celui du bénéficiaire", "Une garantie bancaire à première demande", "Un document de transport"], "a": 1, "e": "Le virement est un ordre donné par le titulaire d'un compte bancaire de débiter son compte afin de créditer le compte du bénéficiaire."}, {"q": "Les Règles et Usances Uniformes RUU 600 sont entrées en vigueur :", "o": ["Le 1er juillet 2007", "Le 1er janvier 2007", "Le 1er août 2014", "Le 1er juillet 2009"], "a": 0, "e": "Les RUU 600 sont entrées en vigueur le 1er juillet 2007."}, {"q": "Les standbys (LCSB) sont définies dans la publication :", "o": ["RUU 600", "RPIS 98", "eUCP 2.0", "DAU 2021"], "a": 1, "e": "Les standbys sont définies dans la publication RPIS 98 : Règles et Pratiques Internationales relatives aux Standby."}, {"q": "Dans la remise documentaire, la banque qui remet les documents à l'acheteur contre paiement est :", "o": ["La banque remettante", "La banque émettrice", "La banque présentatrice", "La banque confirmatrice"], "a": 2, "e": "La banque présentatrice remet ces documents à l'acheteur contre paiement ou acceptation de paiement."}, {"q": "Dans le crédit documentaire, l'acheteur est appelé :", "o": ["Le bénéficiaire", "La banque notificatrice", "Le donneur d'ordres", "Le tiré"], "a": 2, "e": "L'acheteur (Donneur d'ordres) donne les instructions à sa banque (Banque émettrice) de procéder à l'ouverture d'un crédit documentaire."}, {"q": "La banque qui avise le vendeur de l'ouverture d'un crédit documentaire en sa faveur est :", "o": ["La banque notificatrice", "La banque émettrice", "La banque remettante", "La banque négociatrice"], "a": 0, "e": "Cette banque, dite banque notificatrice, avise le vendeur (bénéficiaire) de l'opération de crédit ouvert en sa faveur."}, {"q": "Le crédit documentaire « transférable » permet :", "o": ["Au bénéficiaire de demander son transfert en faveur de ses fournisseurs ou sous-traitants", "À la banque émettrice de changer de pays", "D'annuler le crédit sans accord des parties", "De supprimer le délai de validité"], "a": 0, "e": "Le crédit transférable permet au bénéficiaire de demander à la banque son transfert de tout ou partie en faveur de ses fournisseurs ou sous-traitants."}, {"q": "La clause « red clause » dans un crédit documentaire autorise :", "o": ["L'annulation automatique du crédit", "La banque notificatrice ou confirmatrice à effectuer une avance au bénéficiaire avant expédition", "Le transfert du crédit vers une autre devise", "La suppression de la banque émettrice"], "a": 1, "e": "La clause « red clause » autorise la banque notificatrice ou confirmatrice à effectuer une avance au profit du bénéficiaire contre son engagement de présenter les documents et d'expédier les marchandises ultérieurement."}, {"q": "Pour l'assureur dans un crédit documentaire, à défaut d'indication d'un pourcentage, le montant assuré ne doit pas être inférieur à :", "o": ["100% de la valeur CIP ou CIF", "90% de la valeur FOB", "120% de la valeur FCA", "110% de la valeur CIP ou CIF"], "a": 3, "e": "À défaut d'indication d'un pourcentage, le montant ne doit pas être inférieur à 110% de la valeur CIP ou CIF."}, {"q": "Dans le schéma de la LCSB, en cas d'absence de paiement de l'importateur, l'exportateur :", "o": ["Doit saisir un tribunal avant toute action", "Doit attendre la fin du contrat commercial", "Perd automatiquement la garantie", "Notifie sa banque du non-paiement, ce qui suffit pour lancer le règlement de la LCSB"], "a": 3, "e": "Une simple déclaration de non-paiement faite par l'exportateur à sa banque suffit pour lancer le processus de règlement de la LCSB."}, {"q": "Dans le forfaitage, l'acheteur doit obtenir :", "o": ["Un crédit documentaire transférable", "La garantie de sa banque où sera domiciliée l'opération", "Une LCSB confirmée", "Un carnet ATA"], "a": 1, "e": "L'acheteur doit obtenir la garantie de sa banque où sera domiciliée l'opération."}, {"q": "La rémunération de l'entreprise d'affacturage comprend notamment :", "o": ["Une taxe parafiscale", "Des droits de douane", "Une cotisation EORI", "Une commission d'affacturage en pourcentage du chiffre d'affaires"], "a": 3, "e": "L'intervention de l'entreprise d'affacturage donne lieu à une commission d'affacturage, en pourcentage du chiffre d'affaires, destinée à rémunérer la prise en charge des risques et la gestion des comptes."}, {"q": "L'attestation de prise en charge FCR est établie par :", "o": ["La banque émettrice", "La douane", "Les organisateurs de transport (commissionnaires, transporteurs)", "L'assureur uniquement"], "a": 2, "e": "Ce document est établi par les organisateurs de transport (commissionnaires, transporteurs...). L'opérateur de transport certifie avoir pris en charge l'envoi en bon état apparent."}, {"q": "Parmi les techniques de paiement, la plus sécurisée selon le comparatif du document est :", "o": ["L'encaissement simple", "Le crédit documentaire confirmé", "Le virement", "La remise documentaire contre acceptation"], "a": 1, "e": "Le schéma comparatif place le crédit documentaire confirmé à l'extrémité « sécurité élevée »."}];
+const letters = ["a","b","c","d"];
+let cur = 0;
+let answers = new Array(Q.length).fill(null);
+let locked = new Array(Q.length).fill(false);
+
+function render() {
+  const q = Q[cur];
+  document.getElementById("qtop").textContent = "Question " + (cur+1) + " sur " + Q.length;
+  document.getElementById("qcount").textContent = (cur+1) + " / " + Q.length;
+  document.getElementById("pfill").style.width = Math.round((cur+1)/Q.length*100) + "%";
+  document.getElementById("answered").textContent = locked.filter(Boolean).length + " répondues";
+
+  let html = '<div class="qcard"><div class="qhead"><span class="qbadge">Q' + (cur+1) + '</span></div>';
+  html += '<div class="qtext">' + q.q + '</div><div class="opts">';
+
+  q.o.forEach((opt, i) => {
+    let cls = "opt";
+    if (locked[cur]) {
+      cls += " locked";
+      if (i === q.a) cls += " ok";
+      else if (i === answers[cur]) cls += " ko";
+    } else if (i === answers[cur]) {
+      cls += " sel";
+    }
+    html += '<div class="' + cls + '" onclick="pick(' + i + ')">'
+          + '<div class="letter">' + letters[i] + '</div>'
+          + '<div class="otext">' + opt + '</div></div>';
+  });
+
+  html += '</div>';
+  if (locked[cur]) {
+    html += '<div class="expl"><strong>Réponse correcte : ' + letters[q.a] + ') ' + q.o[q.a] + '.</strong><br>' + q.e + '</div>';
+  }
+  html += '</div>';
+
+  document.getElementById("qzone").innerHTML = html;
+  document.getElementById("bprev").disabled = (cur === 0);
+
+  const bnext = document.getElementById("bnext");
+  if (cur === Q.length - 1) {
+    bnext.textContent = "Voir les résultats";
+    bnext.onclick = showResult;
+  } else {
+    bnext.textContent = "Suivant →";
+    bnext.onclick = function() { go(1); };
+  }
+  updateScore();
+}
+
+function pick(i) {
+  if (locked[cur]) return;
+  answers[cur] = i;
+  locked[cur] = true;
+  render();
+}
+
+function go(d) {
+  if (cur + d < 0 || cur + d > Q.length - 1) return;
+  cur += d;
+  render();
+}
+
+function updateScore() {
+  let ok = 0;
+  for (let i = 0; i < Q.length; i++) if (locked[i] && answers[i] === Q[i].a) ok++;
+  document.getElementById("score").textContent = ok;
+}
+
+function showResult() {
+  let ok = 0;
+  for (let i = 0; i < Q.length; i++) if (answers[i] === Q[i].a) ok++;
+  const ko = Q.length - ok;
+  const pct = Math.round(ok / Q.length * 100);
+  let msg;
+  if (pct >= 80) msg = "Excellent niveau, tu maîtrises bien le module.";
+  else if (pct >= 60) msg = "Bon niveau, quelques points à revoir avant l'examen.";
+  else msg = "Des révisions sont nécessaires : relis les explications et recommence.";
+
+  document.getElementById("qzone").innerHTML = "";
+  document.getElementById("pwrap").style.display = "none";
+  document.getElementById("nav").style.display = "none";
+
+  const r = document.getElementById("result");
+  r.style.display = "block";
+  r.innerHTML = '<div class="result-score">' + ok + ' / ' + Q.length + '</div>'
+    + '<div class="result-sub">' + pct + '% de réussite</div>'
+    + '<div class="result-msg">' + msg + '</div>'
+    + '<button class="btn primary" onclick="restart()">Recommencer</button>';
+}
+
+function restart() {
+  cur = 0;
+  answers = new Array(Q.length).fill(null);
+  locked = new Array(Q.length).fill(false);
+  document.getElementById("pwrap").style.display = "block";
+  document.getElementById("nav").style.display = "flex";
+  document.getElementById("result").style.display = "none";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
