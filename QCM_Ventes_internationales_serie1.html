@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ventes internationales</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#F5F5F5;color:#222;padding:1rem}
+.container{max-width:680px;margin:0 auto}
+
+.header{background:#1A5C38;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.header h1{color:#fff;font-size:17px;font-weight:600}
+.header p{color:#A8D5BC;font-size:12px;margin-top:2px}
+.score-box{text-align:right;color:#fff}
+.score-box .pts{font-size:22px;font-weight:700;line-height:1}
+.score-box .lbl{font-size:11px;color:#A8D5BC}
+
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:6px}
+.progress-bar{height:6px;background:#E0E0E0;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:#1A5C38;border-radius:3px;transition:width .3s}
+
+.qcard{background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.qbadge{background:#1B4F8A;color:#fff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px}
+.qtext{font-size:15px;font-weight:600;color:#222;line-height:1.5;margin-bottom:1rem}
+
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1px solid #E0E0E0;border-radius:8px;cursor:pointer;transition:all .15s;background:#fff}
+.opt:hover:not(.locked){background:#F5F8FB;border-color:#1B4F8A}
+.opt.sel{border-color:#1B4F8A;background:#E8F0FA}
+.opt.ok{border-color:#1A5C38;background:#E8F5EE}
+.opt.ko{border-color:#C0392B;background:#FCEBEB}
+.letter{width:22px;height:22px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#666;flex-shrink:0;margin-top:1px}
+.opt.sel .letter{background:#1B4F8A;color:#fff}
+.opt.ok .letter{background:#1A5C38;color:#fff}
+.opt.ko .letter{background:#C0392B;color:#fff}
+.otext{font-size:14px;color:#222;line-height:1.45}
+
+.expl{margin-top:.85rem;padding:.75rem 1rem;background:#F5F8FB;border-left:3px solid #1B4F8A;border-radius:0 6px 6px 0;font-size:13px;color:#444;line-height:1.5}
+.expl strong{color:#1A5C38}
+
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btn{background:#fff;border:1px solid #ccc;border-radius:8px;padding:10px 18px;font-size:14px;color:#222;cursor:pointer;transition:all .15s}
+.btn:hover:not(:disabled){border-color:#1A5C38;color:#1A5C38}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.primary{background:#1A5C38;color:#fff;border-color:#1A5C38}
+.btn.primary:hover{background:#14492C}
+.qcount{font-size:13px;color:#666;font-weight:600}
+
+.result-card{display:none;background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:1.5rem;text-align:center}
+.result-score{font-size:36px;font-weight:700;color:#1A5C38}
+.result-sub{font-size:14px;color:#666;margin:6px 0 4px}
+.result-msg{font-size:14px;color:#444;margin:10px 0 16px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <h1>Ventes internationales</h1>
+      <p>20 questions</p>
+    </div>
+    <div class="score-box">
+      <div class="pts" id="score">0</div>
+      <div class="lbl">/ 20</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap" id="pwrap">
+    <div class="progress-info">
+      <span id="qtop">Question 1 sur 20</span>
+      <span id="answered">0 répondues</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+  </div>
+
+  <div id="qzone"></div>
+  <div class="result-card" id="result"></div>
+
+  <div class="nav" id="nav">
+    <button class="btn" id="bprev" onclick="go(-1)" disabled>&larr; Précédent</button>
+    <span class="qcount" id="qcount">1 / 20</span>
+    <button class="btn primary" id="bnext" onclick="go(1)">Suivant &rarr;</button>
+  </div>
+
+</div>
+<script>
+const Q = [{"q": "Le chèque est un titre de paiement :", "o": ["À terme uniquement", "Négociable uniquement entre banques", "Valable seulement à l'international", "À vue dès présentation au tiré"], "a": 3, "e": "Le chèque est un titre de paiement à vue dès présentation au tiré (celui qui doit payer)."}, {"q": "Lorsqu'un chèque est barré, il ne peut être payé :", "o": ["Qu'en espèces au guichet", "Qu'à une banque ou un centre de chèques postaux au profit du bénéficiaire", "Qu'à l'étranger", "Qu'au tireur lui-même"], "a": 1, "e": "Lorsqu'il est barré, le chèque ne peut être payé qu'à une banque ou à un centre de chèques postaux au profit du bénéficiaire."}, {"q": "Dans la lettre de change, le tiré est :", "o": ["Le bénéficiaire de la créance", "La banque émettrice", "Le débiteur de la créance, celui qui doit payer", "L'assureur de la marchandise"], "a": 2, "e": "Le tiré est le débiteur de la créance, celui à qui le tireur donne l'ordre de payer."}, {"q": "Une lettre de change « escomptée » signifie que :", "o": ["La banque crédite immédiatement le bénéficiaire, diminué des agios", "Elle est annulée par le tiré", "Elle devient un billet à ordre", "Elle perd sa valeur juridique"], "a": 0, "e": "Escomptée : remise à une banque, celle-ci peut créditer immédiatement le bénéficiaire du montant diminué des frais financiers (agios)."}, {"q": "Une lettre de change « avalisée » signifie que :", "o": ["Le bénéficiaire renonce à son paiement", "Un avaliseur s'engage à garantir le paiement en cas de défaillance du tiré", "Le tireur devient le tiré", "Le paiement est annulé"], "a": 1, "e": "Avalisée : un avaliseur ou avaliste s'engage à garantir le paiement de l'effet de commerce au bénéficiaire en cas de défaillance du tiré."}, {"q": "Le billet à ordre est un effet de commerce par lequel :", "o": ["Le bénéficiaire paie le souscripteur", "Un souscripteur s'engage à payer une somme à un bénéficiaire à vue ou à échéance", "Une banque garantit un crédit documentaire", "L'acheteur émet un chèque de banque"], "a": 1, "e": "Le billet à ordre est un effet de commerce par lequel un souscripteur (débiteur de la créance) s'engage à payer une somme à un bénéficiaire à vue ou à échéance."}, {"q": "Le SWIFT est :", "o": ["Un type de chèque international", "Une garantie bancaire à première demande", "Un organisme de contrôle douanier", "Un réseau télématique international auquel sont abonnées la majorité des banques"], "a": 3, "e": "Le SWIFT (Society for Worldwide Interbank Financial Telecommunication) est un réseau télématique international auquel sont abonnés la majorité des banques."}, {"q": "Le SEPA (Single Euro Payment Area) est en place depuis :", "o": ["Le 1er janvier 2007", "Le 1er juillet 2009", "Le 1er août 2014", "Le 1er juillet 2019"], "a": 2, "e": "Des moyens de paiement européens en euros sont en place depuis le 1er août 2014 avec le SEPA."}, {"q": "Le SEPA comprend :", "o": ["15 pays", "27 pays uniquement", "34 pays européens ou associés", "Tous les pays du monde"], "a": 2, "e": "Chaque opérateur peut, dans un espace qui comprend 34 pays européens ou associés, émettre et recevoir des virements et des prélèvements."}, {"q": "Dans la remise documentaire, la banque qui transmet les documents à la banque du pays de l'acheteur est appelée :", "o": ["Banque remettante", "Banque émettrice", "Banque confirmatrice", "Banque notificatrice"], "a": 0, "e": "Le vendeur transmet les documents à sa banque (banque remettante) afin qu'elle les transmette à la banque correspondante (banque présentatrice)."}, {"q": "Dans la remise documentaire « contre acceptation », les documents sont remis à l'acheteur :", "o": ["Contre paiement immédiat uniquement", "Contre acceptation d'un effet de commerce", "Sans aucune condition", "Contre garantie bancaire confirmée"], "a": 1, "e": "Contre acceptation : les documents ne sont remis à l'acheteur que contre acceptation d'un effet de commerce."}, {"q": "Le crédit documentaire est :", "o": ["Dépendant du contrat commercial", "Un simple virement bancaire", "Une opération par laquelle la banque de l'acheteur s'engage à régler le vendeur contre remise de documents", "Réservé aux transactions en euros"], "a": 2, "e": "Le crédit documentaire est une opération par laquelle la banque de l'acheteur s'engage à régler le vendeur d'une certaine somme dans un délai déterminé contre remise de documents."}, {"q": "Le crédit documentaire irrévocable et confirmé garantit l'exportateur contre :", "o": ["Le risque de change uniquement", "Le risque client et le risque pays", "Le risque de transport uniquement", "Le risque d'incendie"], "a": 1, "e": "Le crédit irrévocable et confirmé garantit l'exportateur contre le risque client et le risque pays."}, {"q": "Le crédit « revolving » :", "o": ["Ne peut être utilisé qu'une seule fois", "Est réservé aux LCSB", "Annule l'engagement de la banque émettrice", "Se reconstitue automatiquement après chaque utilisation jusqu'à son échéance"], "a": 3, "e": "Le crédit revolving est un crédit documentaire qui se reconstitue automatiquement après chaque utilisation par le bénéficiaire, jusqu'à son échéance."}, {"q": "À défaut de précision, le délai de présentation des documents selon l'article 14c des RUU 600 est de :", "o": ["7 jours à dater de l'expédition", "15 jours à dater de l'expédition", "21 jours à dater de l'expédition", "30 jours à dater de l'expédition"], "a": 2, "e": "À défaut de précision, l'article 14c des RUU 600 stipule un délai de 21 jours à dater de l'expédition."}, {"q": "Les banques intervenantes au crédit documentaire disposent d'un délai pour examiner les documents de :", "o": ["5 jours (jours fériés non compris)", "2 jours", "10 jours", "1 mois"], "a": 0, "e": "Les banques intervenantes disposent d'un délai de 5 jours (jours fériés non compris) à dater de la réception des documents."}, {"q": "La LCSB (lettre de crédit Stand-by) est :", "o": ["Un moyen de paiement à part entière", "Identique au crédit documentaire transférable", "Réservée aux opérations intracommunautaires", "Une garantie de paiement, mise en œuvre seulement en cas de défaillance du donneur d'ordre"], "a": 3, "e": "La lettre de crédit est uniquement une garantie de paiement, pas un moyen de paiement ; sa mise en œuvre intervient en cas de défaillance du donneur d'ordre."}, {"q": "Le forfaitage (forfaiting) permet à un vendeur :", "o": ["D'obtenir un paiement différé avec l'assurance d'être réglé après expédition", "De transférer ses créances à un factor", "D'émettre une LCSB", "D'annuler le contrat commercial"], "a": 0, "e": "Le forfaitage est une technique par laquelle un vendeur consent à son acheteur un paiement différé en obtenant l'assurance d'être réglé après expédition des marchandises."}, {"q": "L'affacturage (factoring) consiste en :", "o": ["Un transfert de créances commerciales à un « factor » qui opère le recouvrement", "Une garantie bancaire à première demande", "Un crédit documentaire transférable", "Une lettre de change avalisée"], "a": 0, "e": "L'affacturage est une technique qui consiste en un transfert de créances commerciales d'une entreprise à un « factor » qui opère le recouvrement."}, {"q": "L'inspection avant expédition (I.A.E. / PSI) porte sur :", "o": ["Uniquement le prix de la marchandise", "Uniquement le mode de transport", "Le statut OEA de l'exportateur", "La qualité, la quantité et le prix des marchandises"], "a": 3, "e": "Le contrôle porte sur la qualité, la quantité et le prix des marchandises afin de vérifier la conformité de l'envoi par rapport à la commande."}];
+const letters = ["a","b","c","d"];
+let cur = 0;
+let answers = new Array(Q.length).fill(null);
+let locked = new Array(Q.length).fill(false);
+
+function render() {
+  const q = Q[cur];
+  document.getElementById("qtop").textContent = "Question " + (cur+1) + " sur " + Q.length;
+  document.getElementById("qcount").textContent = (cur+1) + " / " + Q.length;
+  document.getElementById("pfill").style.width = Math.round((cur+1)/Q.length*100) + "%";
+  document.getElementById("answered").textContent = locked.filter(Boolean).length + " répondues";
+
+  let html = '<div class="qcard"><div class="qhead"><span class="qbadge">Q' + (cur+1) + '</span></div>';
+  html += '<div class="qtext">' + q.q + '</div><div class="opts">';
+
+  q.o.forEach((opt, i) => {
+    let cls = "opt";
+    if (locked[cur]) {
+      cls += " locked";
+      if (i === q.a) cls += " ok";
+      else if (i === answers[cur]) cls += " ko";
+    } else if (i === answers[cur]) {
+      cls += " sel";
+    }
+    html += '<div class="' + cls + '" onclick="pick(' + i + ')">'
+          + '<div class="letter">' + letters[i] + '</div>'
+          + '<div class="otext">' + opt + '</div></div>';
+  });
+
+  html += '</div>';
+  if (locked[cur]) {
+    html += '<div class="expl"><strong>Réponse correcte : ' + letters[q.a] + ') ' + q.o[q.a] + '.</strong><br>' + q.e + '</div>';
+  }
+  html += '</div>';
+
+  document.getElementById("qzone").innerHTML = html;
+  document.getElementById("bprev").disabled = (cur === 0);
+
+  const bnext = document.getElementById("bnext");
+  if (cur === Q.length - 1) {
+    bnext.textContent = "Voir les résultats";
+    bnext.onclick = showResult;
+  } else {
+    bnext.textContent = "Suivant →";
+    bnext.onclick = function() { go(1); };
+  }
+  updateScore();
+}
+
+function pick(i) {
+  if (locked[cur]) return;
+  answers[cur] = i;
+  locked[cur] = true;
+  render();
+}
+
+function go(d) {
+  if (cur + d < 0 || cur + d > Q.length - 1) return;
+  cur += d;
+  render();
+}
+
+function updateScore() {
+  let ok = 0;
+  for (let i = 0; i < Q.length; i++) if (locked[i] && answers[i] === Q[i].a) ok++;
+  document.getElementById("score").textContent = ok;
+}
+
+function showResult() {
+  let ok = 0;
+  for (let i = 0; i < Q.length; i++) if (answers[i] === Q[i].a) ok++;
+  const ko = Q.length - ok;
+  const pct = Math.round(ok / Q.length * 100);
+  let msg;
+  if (pct >= 80) msg = "Excellent niveau, tu maîtrises bien le module.";
+  else if (pct >= 60) msg = "Bon niveau, quelques points à revoir avant l'examen.";
+  else msg = "Des révisions sont nécessaires : relis les explications et recommence.";
+
+  document.getElementById("qzone").innerHTML = "";
+  document.getElementById("pwrap").style.display = "none";
+  document.getElementById("nav").style.display = "none";
+
+  const r = document.getElementById("result");
+  r.style.display = "block";
+  r.innerHTML = '<div class="result-score">' + ok + ' / ' + Q.length + '</div>'
+    + '<div class="result-sub">' + pct + '% de réussite</div>'
+    + '<div class="result-msg">' + msg + '</div>'
+    + '<button class="btn primary" onclick="restart()">Recommencer</button>';
+}
+
+function restart() {
+  cur = 0;
+  answers = new Array(Q.length).fill(null);
+  locked = new Array(Q.length).fill(false);
+  document.getElementById("pwrap").style.display = "block";
+  document.getElementById("nav").style.display = "flex";
+  document.getElementById("result").style.display = "none";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
