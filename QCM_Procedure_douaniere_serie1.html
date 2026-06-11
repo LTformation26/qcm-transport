@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procédure douanière</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#F5F5F5;color:#222;padding:1rem}
+.container{max-width:680px;margin:0 auto}
+
+.header{background:#1A5C38;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.header h1{color:#fff;font-size:17px;font-weight:600}
+.header p{color:#A8D5BC;font-size:12px;margin-top:2px}
+.score-box{text-align:right;color:#fff}
+.score-box .pts{font-size:22px;font-weight:700;line-height:1}
+.score-box .lbl{font-size:11px;color:#A8D5BC}
+
+.progress-wrap{margin-bottom:1rem}
+.progress-info{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:6px}
+.progress-bar{height:6px;background:#E0E0E0;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:#1A5C38;border-radius:3px;transition:width .3s}
+
+.qcard{background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.qbadge{background:#1B4F8A;color:#fff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px}
+.qtext{font-size:15px;font-weight:600;color:#222;line-height:1.5;margin-bottom:1rem}
+
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1px solid #E0E0E0;border-radius:8px;cursor:pointer;transition:all .15s;background:#fff}
+.opt:hover:not(.locked){background:#F5F8FB;border-color:#1B4F8A}
+.opt.sel{border-color:#1B4F8A;background:#E8F0FA}
+.opt.ok{border-color:#1A5C38;background:#E8F5EE}
+.opt.ko{border-color:#C0392B;background:#FCEBEB}
+.letter{width:22px;height:22px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#666;flex-shrink:0;margin-top:1px}
+.opt.sel .letter{background:#1B4F8A;color:#fff}
+.opt.ok .letter{background:#1A5C38;color:#fff}
+.opt.ko .letter{background:#C0392B;color:#fff}
+.otext{font-size:14px;color:#222;line-height:1.45}
+
+.expl{margin-top:.85rem;padding:.75rem 1rem;background:#F5F8FB;border-left:3px solid #1B4F8A;border-radius:0 6px 6px 0;font-size:13px;color:#444;line-height:1.5}
+.expl strong{color:#1A5C38}
+
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btn{background:#fff;border:1px solid #ccc;border-radius:8px;padding:10px 18px;font-size:14px;color:#222;cursor:pointer;transition:all .15s}
+.btn:hover:not(:disabled){border-color:#1A5C38;color:#1A5C38}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.primary{background:#1A5C38;color:#fff;border-color:#1A5C38}
+.btn.primary:hover{background:#14492C}
+.qcount{font-size:13px;color:#666;font-weight:600}
+
+.result-card{display:none;background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:1.5rem;text-align:center}
+.result-score{font-size:36px;font-weight:700;color:#1A5C38}
+.result-sub{font-size:14px;color:#666;margin:6px 0 4px}
+.result-msg{font-size:14px;color:#444;margin:10px 0 16px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <h1>Procédure douanière</h1>
+      <p>20 questions · ordre fixe (annale)</p>
+    </div>
+    <div class="score-box">
+      <div class="pts" id="score">0</div>
+      <div class="lbl">/ 20</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap" id="pwrap">
+    <div class="progress-info">
+      <span id="qtop">Question 1 sur 20</span>
+      <span id="answered">0 répondues</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+  </div>
+
+  <div id="qzone"></div>
+  <div class="result-card" id="result"></div>
+
+  <div class="nav" id="nav">
+    <button class="btn" id="bprev" onclick="go(-1)" disabled>&larr; Précédent</button>
+    <span class="qcount" id="qcount">1 / 20</span>
+    <button class="btn primary" id="bnext" onclick="go(1)">Suivant &rarr;</button>
+  </div>
+
+</div>
+<script>
+const Q = [{"q": "Le D.A.U. (Document Administratif Unique) se présente sous la forme d'une liasse à combien de feuillets ?", "o": ["8 feuillets", "6 feuillets", "10 feuillets", "4 feuillets"], "a": 0, "e": "Le D.A.U. se présente sous la forme d'une liasse à 8 feuillets (éventuellement 9)."}, {"q": "Quel feuillet du D.A.U. sert de preuve de l'opération d'exportation ?", "o": ["Le feuillet n°1", "Le feuillet n°3", "Le feuillet n°2", "Le feuillet n°8"], "a": 1, "e": "Le feuillet n°3 (destiné à l'exportateur) sert de preuve de l'opération d'exportation."}, {"q": "Que signifie le sigle « EU » dans la 1ère sous-case de la nature de la déclaration ?", "o": ["Exportation vers des pays tiers", "Importation en provenance de pays tiers", "Échanges à l'exportation et à l'importation avec des États membres de l'A.E.L.E./GB", "Échanges communautaires avec les DOM"], "a": 2, "e": "EU = échanges à l'exportation et à l'importation avec des États membres de l'A.E.L.E./GB."}, {"q": "Que signifie le code « C » en 2ème sous-case de la déclaration ?", "o": ["Déclaration de droit commun", "Déclaration incomplète", "Déclaration complémentaire", "Déclaration simplifiée"], "a": 3, "e": "C = déclaration simplifiée."}, {"q": "Le système ECS a pour but de :", "o": ["Dématérialiser le justificatif de sortie des marchandises hors de l'UE", "Calculer les droits de douane", "Gérer le crédit documentaire", "Identifier les opérateurs économiques"], "a": 0, "e": "Le système ECS a pour but de dématérialiser le justificatif de sortie des marchandises hors de l'U.E."}, {"q": "Que signifie MRN dans le cadre de l'EAD ?", "o": ["Marchandise Régime National", "Movement Reference Number", "Mouvement Régulier National", "Mode de Reconnaissance Numérique"], "a": 1, "e": "L'EAD est édité avec un numéro de référence du mouvement MRN (movement reference number)."}, {"q": "Le régime de transit T1 correspond à :", "o": ["La circulation de marchandises CEE entre 2 bureaux via AELE", "La mise en libre pratique", "La circulation de marchandises tierces sous douane entre 2 bureaux UE", "L'exportation définitive"], "a": 2, "e": "T1 = circulation marchandises tierces sous douane entre 2 bureaux UE."}, {"q": "La case 47 du DAU correspond à :", "o": ["La valeur statistique", "Les conditions de livraison (incoterms)", "La masse nette", "Le calcul des impositions (droits, TVA, autres taxes)"], "a": 3, "e": "La rubrique du DAU relative au calcul des droits et taxes est la case 47."}, {"q": "Le document D48 permet :", "o": ["De s'engager à fournir ultérieurement un document ou procéder à une formalité", "De solliciter l'exonération de TVA", "D'obtenir le statut OEA", "De déclarer un transit T2"], "a": 0, "e": "Le D48 est un engagement à fournir ultérieurement un document ou à procéder à une formalité."}, {"q": "DELTA G correspond à :", "o": ["Le transit en phase transitoire avec NSTI", "Le dédouanement en procédure de droit commun", "Le dédouanement à domicile simplifié", "La déclaration sommaire du manifeste aérien"], "a": 1, "e": "DELTA G = dédouanement en procédure de droit commun."}, {"q": "L'assiette du droit de douane correspond à :", "o": ["La valeur de la marchandise au lieu de destination finale", "La valeur facturée hors transport", "La valeur de la marchandise au lieu d'entrée dans l'Union Européenne", "La valeur en devise étrangère sans conversion"], "a": 2, "e": "L'assiette du droit de douane correspond à la valeur de la marchandise au lieu d'entrée dans l'UE."}, {"q": "L'assiette de la TVA à l'import correspond à :", "o": ["La valeur en douane uniquement", "La valeur facturée uniquement", "La valeur statistique du DAU", "La valeur en douane + droits de douane + autres taxes et charges jusqu'au lieu de destination"], "a": 3, "e": "L'assiette de la TVA correspond à la valeur en douane + droits de douane + autres taxes/charges jusqu'au lieu de destination."}, {"q": "Pour une facture en devise étrangère, le taux de change retenu pour la liquidation est :", "o": ["Le cours de l'avant-dernier mercredi du mois précédent la liquidation", "Le cours du jour de la déclaration", "Le cours moyen du mois précédent", "Le cours du dernier jour du mois en cours"], "a": 0, "e": "Le cours retenu est celui de l'avant-dernier mercredi du mois précédent la liquidation."}, {"q": "Les opérations à l'exportation sont :", "o": ["Soumises systématiquement à la TVA", "Exonérées du paiement de tout droit et taxe (sauf exception pour certains produits agricoles)", "Soumises aux droits de douane uniquement", "Soumises à la taxe parafiscale uniquement"], "a": 1, "e": "Les opérations à l'exportation sont exonérées de tout droit et taxe, sauf exception pour certains produits agricoles."}, {"q": "Le crédit d'enlèvement permet :", "o": ["Une exonération définitive des droits", "Un paiement immédiat obligatoire", "Un paiement différé à 15 jours ou un mois", "Un report de paiement de 6 mois"], "a": 2, "e": "Le crédit d'enlèvement permet un paiement différé à 15 jours ou à un mois."}, {"q": "Le régime douanier 42 permet :", "o": ["L'exonération des droits de douane pour les véhicules", "Le report du paiement de la TVA à l'export", "La suppression du contrôle douanier", "L'exonération de TVA pour des biens destinés à une livraison intracommunautaire ultérieure"], "a": 3, "e": "Le régime 42 permet l'exonération de TVA pour des biens destinés à une livraison intracommunautaire ultérieure."}, {"q": "Dans la procédure fluvio-maritime à l'importation, le délai de stockage en dépôt temporaire avant déclaration est de :", "o": ["45 jours", "15 jours", "30 jours", "60 jours"], "a": 0, "e": "L'importateur bénéficie d'un délai de stockage en dépôt temporaire de 45 jours."}, {"q": "Le carnet ATA peut être utilisé pour :", "o": ["Uniquement des produits alimentaires", "Des marchandises destinées à des foires/expositions, du matériel professionnel, des échantillons, des animaux", "Uniquement des véhicules", "Le transport de marchandises dangereuses"], "a": 1, "e": "Le carnet ATA peut être utilisé pour des foires/expositions, du matériel professionnel, des emballages, des échantillons, des animaux."}, {"q": "Le statut OEA (Opérateur Économique Agréé) est accordé à l'issue :", "o": ["D'un simple dépôt de dossier en ligne", "D'une inspection avant expédition", "D'un audit exercé par le service des douanes", "D'une certification ISO obligatoire"], "a": 2, "e": "Le statut OEA est accordé à l'issue d'un audit exercé par le service des douanes."}, {"q": "Le numéro EORI a pour structure en France :", "o": ["FR + numéro de TVA intracommunautaire", "FR + RCS", "FR + numéro de licence de transport", "FR + SIRET"], "a": 3, "e": "Le numéro EORI en France a pour structure FR + SIRET."}];
+const letters = ["a","b","c","d"];
+let cur = 0;
+let answers = new Array(Q.length).fill(null);
+let locked = new Array(Q.length).fill(false);
+
+function render() {
+  const q = Q[cur];
+  document.getElementById("qtop").textContent = "Question " + (cur+1) + " sur " + Q.length;
+  document.getElementById("qcount").textContent = (cur+1) + " / " + Q.length;
+  document.getElementById("pfill").style.width = Math.round((cur+1)/Q.length*100) + "%";
+  document.getElementById("answered").textContent = locked.filter(Boolean).length + " répondues";
+
+  let html = '<div class="qcard"><div class="qhead"><span class="qbadge">Q' + (cur+1) + '</span></div>';
+  html += '<div class="qtext">' + q.q + '</div><div class="opts">';
+
+  q.o.forEach((opt, i) => {
+    let cls = "opt";
+    if (locked[cur]) {
+      cls += " locked";
+      if (i === q.a) cls += " ok";
+      else if (i === answers[cur]) cls += " ko";
+    } else if (i === answers[cur]) {
+      cls += " sel";
+    }
+    html += '<div class="' + cls + '" onclick="pick(' + i + ')">'
+          + '<div class="letter">' + letters[i] + '</div>'
+          + '<div class="otext">' + opt + '</div></div>';
+  });
+
+  html += '</div>';
+  if (locked[cur]) {
+    html += '<div class="expl"><strong>Réponse correcte : ' + letters[q.a] + ') ' + q.o[q.a] + '.</strong><br>' + q.e + '</div>';
+  }
+  html += '</div>';
+
+  document.getElementById("qzone").innerHTML = html;
+  document.getElementById("bprev").disabled = (cur === 0);
+
+  const bnext = document.getElementById("bnext");
+  if (cur === Q.length - 1) {
+    bnext.textContent = "Voir les résultats";
+    bnext.onclick = showResult;
+  } else {
+    bnext.textContent = "Suivant →";
+    bnext.onclick = function() { go(1); };
+  }
+  updateScore();
+}
+
+function pick(i) {
+  if (locked[cur]) return;
+  answers[cur] = i;
+  locked[cur] = true;
+  render();
+}
+
+function go(d) {
+  if (cur + d < 0 || cur + d > Q.length - 1) return;
+  cur += d;
+  render();
+}
+
+function updateScore() {
+  let ok = 0;
+  for (let i = 0; i < Q.length; i++) if (locked[i] && answers[i] === Q[i].a) ok++;
+  document.getElementById("score").textContent = ok;
+}
+
+function showResult() {
+  let ok = 0;
+  for (let i = 0; i < Q.length; i++) if (answers[i] === Q[i].a) ok++;
+  const ko = Q.length - ok;
+  const pct = Math.round(ok / Q.length * 100);
+  let msg;
+  if (pct >= 80) msg = "Excellent niveau, tu maîtrises bien le module.";
+  else if (pct >= 60) msg = "Bon niveau, quelques points à revoir avant l'examen.";
+  else msg = "Des révisions sont nécessaires : relis les explications et recommence.";
+
+  document.getElementById("qzone").innerHTML = "";
+  document.getElementById("pwrap").style.display = "none";
+  document.getElementById("nav").style.display = "none";
+
+  const r = document.getElementById("result");
+  r.style.display = "block";
+  r.innerHTML = '<div class="result-score">' + ok + ' / ' + Q.length + '</div>'
+    + '<div class="result-sub">' + pct + '% de réussite</div>'
+    + '<div class="result-msg">' + msg + '</div>'
+    + '<button class="btn primary" onclick="restart()">Recommencer</button>';
+}
+
+function restart() {
+  cur = 0;
+  answers = new Array(Q.length).fill(null);
+  locked = new Array(Q.length).fill(false);
+  document.getElementById("pwrap").style.display = "block";
+  document.getElementById("nav").style.display = "flex";
+  document.getElementById("result").style.display = "none";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
