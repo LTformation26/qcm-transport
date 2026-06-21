@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Incoterms® 2020 maritimes</title>
+<style>
+  :root{
+    --dark-green:#1A5C38;
+    --steel-blue:#1B4F8A;
+    --text-gray:#3A3A3A;
+    --light-green:#E8F2EC;
+    --light-blue:#EAF1F8;
+    --red:#B3261E;
+    --bg:#F7F9F8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--bg);
+    margin:0;
+    padding:0;
+    color:var(--text-gray);
+  }
+  .wrap{
+    max-width:680px;
+    margin:0 auto;
+    padding:20px 16px 40px;
+  }
+  .header{
+    margin-bottom:18px;
+  }
+  .header h1{
+    color:var(--dark-green);
+    font-size:22px;
+    margin:0 0 4px 0;
+  }
+  .progress-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    color:var(--steel-blue);
+    margin-bottom:6px;
+  }
+  .progress-bar-bg{
+    width:100%;
+    height:8px;
+    background:#DCE6E0;
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .progress-bar-fill{
+    height:100%;
+    background:var(--dark-green);
+    width:0%;
+    transition:width .3s ease;
+  }
+  .card{
+    background:#FFFFFF;
+    border-radius:12px;
+    padding:24px 22px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  }
+  .question-text{
+    font-size:17px;
+    font-weight:bold;
+    color:var(--steel-blue);
+    margin:0 0 18px 0;
+    line-height:1.4;
+  }
+  .option{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:13px 14px;
+    margin-bottom:10px;
+    border:1.5px solid #D9E2EC;
+    border-radius:8px;
+    background:#FFFFFF;
+    font-family:inherit;
+    font-size:15px;
+    color:var(--text-gray);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .option:hover:not(.disabled){
+    border-color:var(--steel-blue);
+    background:var(--light-blue);
+  }
+  .option.correct{
+    border-color:var(--dark-green);
+    background:var(--light-green);
+    color:var(--dark-green);
+    font-weight:bold;
+  }
+  .option.incorrect{
+    border-color:var(--red);
+    background:#FBEAE9;
+    color:var(--red);
+    font-weight:bold;
+  }
+  .option.disabled{
+    cursor:default;
+  }
+  .feedback{
+    display:none;
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:8px;
+    font-size:14px;
+    line-height:1.5;
+  }
+  .feedback.show{
+    display:block;
+  }
+  .feedback.ok{
+    background:var(--light-green);
+    color:var(--dark-green);
+  }
+  .feedback.ko{
+    background:#FBEAE9;
+    color:var(--red);
+  }
+  .feedback strong{
+    display:block;
+    margin-bottom:4px;
+  }
+  .feedback .explanation{
+    color:var(--text-gray);
+    font-weight:normal;
+  }
+  .nav-row{
+    margin-top:20px;
+    text-align:right;
+  }
+  .btn{
+    display:inline-block;
+    background:var(--steel-blue);
+    color:#fff;
+    border:none;
+    padding:12px 26px;
+    border-radius:8px;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .btn:hover{
+    background:var(--dark-green);
+  }
+  .btn:disabled{
+    background:#B9C4CE;
+    cursor:not-allowed;
+  }
+  .result-card{
+    text-align:center;
+    padding:34px 22px;
+  }
+  .result-score{
+    font-size:46px;
+    font-weight:bold;
+    color:var(--dark-green);
+    margin:6px 0 4px 0;
+  }
+  .result-label{
+    font-size:15px;
+    color:var(--steel-blue);
+    margin-bottom:22px;
+  }
+  .hidden{
+    display:none;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <h1>QCM — Incoterms® 2020 maritimes</h1>
+    <div class="progress-row">
+      <span id="progressText">Question 1 / 20</span>
+      <span id="scoreText">Score : 0</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="card" id="quizCard">
+    <p class="question-text" id="questionText"></p>
+    <div id="optionsContainer"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="nav-row">
+      <button class="btn" id="nextBtn" disabled>Question suivante</button>
+    </div>
+  </div>
+
+  <div class="card result-card hidden" id="resultCard">
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-label">bonnes réponses sur 20</div>
+    <button class="btn" id="restartBtn">Recommencer</button>
+  </div>
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// Banque de questions — chaque question porte sa bonne réponse
+// (index "correct") et une courte explication ("explanation")
+// directement consultable ici en lisant le code.
+// ---------------------------------------------------------------
+const questionsData = [
+  {
+    "q": "En FAS, la marchandise est endommagée alors qu'elle est encore sur le quai, avant d'être placée le long du navire. Qui supporte ce dommage ?",
+    "options": [
+      "L'acheteur, systématiquement",
+      "Le transporteur maritime",
+      "Le vendeur, car le risque ne se transfère qu'une fois la marchandise placée le long du navire",
+      "Les deux parties à parts égales"
+    ],
+    "correct": 2,
+    "explanation": "En FAS, le risque ne se transfère qu'une fois la marchandise placée le long du navire — tant qu'elle est sur le quai, elle reste sous la responsabilité du vendeur."
+  },
+  {
+    "q": "Quel Incoterm® choisir si le vendeur livre la marchandise le long du navire, mais ne veut pas être responsable de son chargement à bord ?",
+    "options": [
+      "FAS",
+      "FOB",
+      "CIF",
+      "CFR"
+    ],
+    "correct": 0,
+    "explanation": "Le FAS s'arrête à la mise à quai ; c'est le FOB qui transfère la responsabilité du chargement à bord au vendeur."
+  },
+  {
+    "q": "En FOB, à quel moment précis le risque est-il transféré à l'acheteur ?",
+    "options": [
+      "Dès la mise sur le quai",
+      "À l'arrivée au port de destination",
+      "Au moment du paiement",
+      "Dès que la marchandise est chargée à bord du navire désigné par l'acheteur"
+    ],
+    "correct": 3,
+    "explanation": "En FOB, le risque et les frais basculent dès que la marchandise est chargée à bord du navire désigné par l'acheteur."
+  },
+  {
+    "q": "Le FOB permet de :",
+    "options": [
+      "Faire financer le transport principal par le vendeur jusqu'à destination",
+      "Faire assumer au vendeur le chargement à bord du navire, le risque et le coût étant ensuite transférés à l'acheteur",
+      "Dispenser le vendeur de toute formalité à l'export",
+      "Garantir une assurance tous risques pour l'acheteur"
+    ],
+    "correct": 1,
+    "explanation": "Le FOB fait porter au vendeur la responsabilité du chargement à bord ; une fois cette étape faite, risque et coût passent à l'acheteur."
+  },
+  {
+    "q": "Quel Incoterm® choisir si le vendeur doit payer le fret maritime jusqu'au port de destination, mais sans aucune obligation d'assurance ?",
+    "options": [
+      "CIF",
+      "FAS",
+      "CIP",
+      "CFR"
+    ],
+    "correct": 3,
+    "explanation": "Le CFR convient quand le vendeur paie le fret jusqu'à destination mais sans obligation d'assurance — contrairement au CIF."
+  },
+  {
+    "q": "Pendant un transport sous CFR, la marchandise est endommagée alors qu'elle est déjà chargée à bord, mais encore loin du port de destination. Qui supporte ce dommage ?",
+    "options": [
+      "Le vendeur, car il paie le transport jusqu'à destination",
+      "Le transporteur maritime, systématiquement",
+      "L'acheteur, car le risque a été transféré dès le chargement à bord",
+      "Personne, le risque n'est jamais transféré en CFR"
+    ],
+    "correct": 2,
+    "explanation": "En CFR, le risque est transféré dès le chargement à bord, même si le vendeur continue de payer le transport jusqu'à destination."
+  },
+  {
+    "q": "Le CFR permet de :",
+    "options": [
+      "Faire payer au vendeur le fret jusqu'au port de destination, alors que le risque est déjà transféré à l'acheteur dès le chargement à bord",
+      "Garantir une assurance obligatoire au vendeur",
+      "Dispenser totalement l'acheteur de tout coût après chargement",
+      "Réserver la règle au transport conteneurisé"
+    ],
+    "correct": 0,
+    "explanation": "Le CFR dissocie le paiement du transport (à la charge du vendeur jusqu'à destination) du transfert du risque (dès le chargement à bord)."
+  },
+  {
+    "q": "Quel Incoterm® choisir si le vendeur doit, en plus de payer le fret jusqu'à destination, garantir une assurance à l'acheteur ?",
+    "options": [
+      "CFR",
+      "CIF",
+      "FOB",
+      "FAS"
+    ],
+    "correct": 1,
+    "explanation": "Le CIF ajoute au CFR l'obligation pour le vendeur de souscrire une assurance pour l'acheteur."
+  },
+  {
+    "q": "Quel est le niveau de couverture d'assurance minimum que le vendeur doit souscrire en CIF ?",
+    "options": [
+      "Une couverture « tous risques » identique au CIP",
+      "Aucun minimum n'est fixé",
+      "Le double de la valeur facturée",
+      "Le prix de la marchandise majoré de 10 % (110 % de la valeur facturée)"
+    ],
+    "correct": 3,
+    "explanation": "Le CIF impose une couverture minimale égale au prix de la marchandise majoré de 10 % (110 % de la valeur facturée)."
+  },
+  {
+    "q": "Depuis la réforme 2020, quelle différence sépare désormais le niveau d'assurance du CIF de celui du CIP ?",
+    "options": [
+      "Le CIF est resté à une couverture minimale, alors que le CIP impose désormais une couverture « tous risques »",
+      "Les deux règles imposent désormais le même niveau « tous risques »",
+      "Le CIF impose désormais une couverture supérieure au CIP",
+      "Aucune différence n'a jamais existé entre les deux"
+    ],
+    "correct": 0,
+    "explanation": "Depuis 2020, seul le CIP impose une couverture « tous risques » ; le CIF est resté à son niveau minimal historique."
+  },
+  {
+    "q": "Quel Incoterm® choisir lorsque la marchandise est transportée en conteneurs, plutôt que FOB ou CIF ?",
+    "options": [
+      "FAS, qui reste adapté aux conteneurs",
+      "Aucun Incoterm® ne couvre les conteneurs",
+      "Un Incoterm® multimodal, par exemple FCA ou CIP",
+      "CFR, qui est spécifiquement conçu pour les conteneurs"
+    ],
+    "correct": 2,
+    "explanation": "Le transport en conteneurs est régi par les Incoterms® multimodaux (FCA, CIP...), les règles maritimes étant réservées au vrac et au conventionnel."
+  },
+  {
+    "q": "Pourquoi le FOB est-il risqué pour le vendeur lorsque la marchandise est remise à un transporteur de conteneurs avant le chargement effectif à bord du navire ?",
+    "options": [
+      "Le FOB est interdit pour les conteneurs depuis 2020",
+      "Le vendeur reste responsable du risque jusqu'au chargement effectif à bord, alors qu'il perd souvent le contrôle de la marchandise dès sa remise au terminal à conteneurs",
+      "Le FOB impose une double assurance dans ce cas",
+      "L'acheteur refuse systématiquement le FOB pour les conteneurs"
+    ],
+    "correct": 1,
+    "explanation": "En FOB, le vendeur reste responsable du risque jusqu'au chargement effectif à bord, ce qui pose problème s'il perd le contrôle de la marchandise dès sa remise au terminal à conteneurs."
+  },
+  {
+    "q": "Quelle différence oppose la famille F maritime (FAS, FOB) à la famille C maritime (CFR, CIF) ?",
+    "options": [
+      "Dans la famille F, le vendeur ne paie pas le transport maritime ; dans la famille C, il le paie jusqu'au port de destination",
+      "La famille F impose une assurance, pas la famille C",
+      "La famille C concerne le fluvial, pas la famille F",
+      "Aucune différence entre ces deux familles"
+    ],
+    "correct": 0,
+    "explanation": "Dans la famille F (FAS, FOB), le vendeur ne paie pas le transport maritime ; dans la famille C (CFR, CIF), il le paie jusqu'à destination."
+  },
+  {
+    "q": "Le FAS permet de :",
+    "options": [
+      "Faire payer le transport maritime au vendeur jusqu'à destination",
+      "Garantir une assurance obligatoire à l'acheteur",
+      "Faire assumer au vendeur le chargement à bord du navire",
+      "Transférer le risque à l'acheteur dès que la marchandise est placée le long du navire désigné, sans que le vendeur ait à la charger à bord"
+    ],
+    "correct": 3,
+    "explanation": "Le FAS transfère le risque dès la mise à quai, sans que le vendeur ait à charger la marchandise à bord du navire."
+  },
+  {
+    "q": "En FAS, qui prend en charge le chargement de la marchandise à bord du navire ?",
+    "options": [
+      "Le vendeur",
+      "L'acheteur",
+      "Le commissionnaire de transport, par défaut",
+      "Le capitaine du navire, à frais partagés"
+    ],
+    "correct": 1,
+    "explanation": "En FAS, c'est l'acheteur qui prend en charge le chargement à bord — à la différence du FOB."
+  },
+  {
+    "q": "Quel Incoterm® choisir pour un acheteur peu expérimenté qui souhaite que le vendeur organise le transport ET l'assurance jusqu'au port de destination ?",
+    "options": [
+      "FOB",
+      "FAS",
+      "CIF",
+      "CFR"
+    ],
+    "correct": 2,
+    "explanation": "Le CIF convient à un acheteur peu expérimenté car le vendeur organise à la fois le transport et l'assurance jusqu'au port de destination."
+  },
+  {
+    "q": "Quel Incoterm® choisir pour un acheteur qui veut lui-même réserver et organiser le transport maritime dès le port d'embarquement ?",
+    "options": [
+      "FOB",
+      "CIF",
+      "CFR",
+      "DDP"
+    ],
+    "correct": 0,
+    "explanation": "Le FOB convient à un acheteur qui veut garder la main sur la réservation et l'organisation du transport maritime dès le port d'embarquement."
+  },
+  {
+    "q": "En CFR, qui supporte par défaut les coûts de déchargement au port de destination ?",
+    "options": [
+      "Le vendeur, systématiquement",
+      "Le transporteur maritime",
+      "Les deux parties à parts égales",
+      "L'acheteur, sauf disposition contraire du contrat de transport"
+    ],
+    "correct": 3,
+    "explanation": "En CFR, le coût du fret payé par le vendeur s'arrête à l'arrivée au port — le déchargement reste à la charge de l'acheteur, sauf clause contraire."
+  },
+  {
+    "q": "Pourquoi un vendeur choisirait-il le FAS plutôt que le CFR pour une même expédition ?",
+    "options": [
+      "Le FAS impose une assurance, pas le CFR",
+      "Le CFR est réservé au fluvial",
+      "En FAS, le vendeur transfère le risque et arrête ses frais bien plus tôt (au quai), alors qu'en CFR il continue de payer le transport jusqu'à destination",
+      "Aucune raison, les deux règles sont équivalentes"
+    ],
+    "correct": 2,
+    "explanation": "En FAS, le vendeur arrête ses frais et son risque dès le quai ; en CFR, il continue de payer le transport jusqu'au port de destination."
+  },
+  {
+    "q": "Parmi FAS, FOB, CFR et CIF, lequel est le seul à imposer une obligation d'assurance au vendeur ?",
+    "options": [
+      "Le CFR",
+      "Le CIF",
+      "Le FOB",
+      "Le FAS"
+    ],
+    "correct": 1,
+    "explanation": "Parmi les 4 règles maritimes, seul le CIF impose au vendeur de souscrire une assurance pour l'acheteur."
+  }
+];
+
+// ---- Fisher-Yates shuffle ----
+function shuffle(array){
+  const arr = array.slice();
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildRuntimeQuestions(){
+  return shuffle(questionsData).map(item => {
+    const optionObjs = item.options.map((text, idx) => ({text, isCorrect: idx === item.correct}));
+    const shuffledOptions = shuffle(optionObjs);
+    return {q: item.q, explanation: item.explanation, options: shuffledOptions};
+  });
+}
+
+let runtimeQuestions = buildRuntimeQuestions();
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const feedback = document.getElementById('feedback');
+const nextBtn = document.getElementById('nextBtn');
+const progressText = document.getElementById('progressText');
+const scoreText = document.getElementById('scoreText');
+const progressFill = document.getElementById('progressFill');
+const quizCard = document.getElementById('quizCard');
+const resultCard = document.getElementById('resultCard');
+const resultScore = document.getElementById('resultScore');
+const restartBtn = document.getElementById('restartBtn');
+
+function renderQuestion(){
+  answered = false;
+  nextBtn.disabled = true;
+  feedback.className = 'feedback';
+  feedback.innerHTML = '';
+
+  const total = runtimeQuestions.length;
+  const item = runtimeQuestions[currentIndex];
+
+  progressText.textContent = `Question ${currentIndex + 1} / ${total}`;
+  scoreText.textContent = `Score : ${score}`;
+  progressFill.style.width = `${(currentIndex / total) * 100}%`;
+
+  questionText.textContent = item.q;
+  optionsContainer.innerHTML = '';
+
+  item.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt.text;
+    btn.addEventListener('click', () => selectOption(btn, opt));
+    optionsContainer.appendChild(btn);
+  });
+
+  nextBtn.textContent = (currentIndex === total - 1) ? 'Voir le résultat' : 'Question suivante';
+}
+
+function selectOption(btn, opt){
+  if(answered) return;
+  answered = true;
+
+  const allBtns = optionsContainer.querySelectorAll('.option');
+  allBtns.forEach(b => b.classList.add('disabled'));
+
+  const item = runtimeQuestions[currentIndex];
+  const explanationHtml = `<span class="explanation">${item.explanation}</span>`;
+
+  if(opt.isCorrect){
+    btn.classList.add('correct');
+    score++;
+    feedback.className = 'feedback show ok';
+    feedback.innerHTML = `<strong>Bonne réponse.</strong>${explanationHtml}`;
+  } else {
+    btn.classList.add('incorrect');
+    feedback.className = 'feedback show ko';
+    const correctOpt = item.options.find(o => o.isCorrect);
+    feedback.innerHTML = `<strong>La bonne réponse était : ${correctOpt.text}</strong>${explanationHtml}`;
+    allBtns.forEach(b => {
+      const idx = Array.from(allBtns).indexOf(b);
+      if(item.options[idx].isCorrect){
+        b.classList.add('correct');
+      }
+    });
+  }
+
+  scoreText.textContent = `Score : ${score}`;
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', () => {
+  if(currentIndex < runtimeQuestions.length - 1){
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult(){
+  quizCard.classList.add('hidden');
+  resultCard.classList.remove('hidden');
+  progressFill.style.width = '100%';
+  progressText.textContent = `Question ${runtimeQuestions.length} / ${runtimeQuestions.length}`;
+  resultScore.textContent = `${score} / 20`;
+}
+
+restartBtn.addEventListener('click', () => {
+  runtimeQuestions = buildRuntimeQuestions();
+  currentIndex = 0;
+  score = 0;
+  resultCard.classList.add('hidden');
+  quizCard.classList.remove('hidden');
+  renderQuestion();
+});
+
+renderQuestion();
+</script>
+
+</body>
+</html>
