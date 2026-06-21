@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Incoterms® 2020 multimodaux</title>
+<style>
+  :root{
+    --dark-green:#1A5C38;
+    --steel-blue:#1B4F8A;
+    --text-gray:#3A3A3A;
+    --light-green:#E8F2EC;
+    --light-blue:#EAF1F8;
+    --red:#B3261E;
+    --bg:#F7F9F8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--bg);
+    margin:0;
+    padding:0;
+    color:var(--text-gray);
+  }
+  .wrap{
+    max-width:680px;
+    margin:0 auto;
+    padding:20px 16px 40px;
+  }
+  .header{
+    margin-bottom:18px;
+  }
+  .header h1{
+    color:var(--dark-green);
+    font-size:22px;
+    margin:0 0 4px 0;
+  }
+  .progress-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    color:var(--steel-blue);
+    margin-bottom:6px;
+  }
+  .progress-bar-bg{
+    width:100%;
+    height:8px;
+    background:#DCE6E0;
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .progress-bar-fill{
+    height:100%;
+    background:var(--dark-green);
+    width:0%;
+    transition:width .3s ease;
+  }
+  .card{
+    background:#FFFFFF;
+    border-radius:12px;
+    padding:24px 22px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  }
+  .question-text{
+    font-size:17px;
+    font-weight:bold;
+    color:var(--steel-blue);
+    margin:0 0 18px 0;
+    line-height:1.4;
+  }
+  .option{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:13px 14px;
+    margin-bottom:10px;
+    border:1.5px solid #D9E2EC;
+    border-radius:8px;
+    background:#FFFFFF;
+    font-family:inherit;
+    font-size:15px;
+    color:var(--text-gray);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .option:hover:not(.disabled){
+    border-color:var(--steel-blue);
+    background:var(--light-blue);
+  }
+  .option.correct{
+    border-color:var(--dark-green);
+    background:var(--light-green);
+    color:var(--dark-green);
+    font-weight:bold;
+  }
+  .option.incorrect{
+    border-color:var(--red);
+    background:#FBEAE9;
+    color:var(--red);
+    font-weight:bold;
+  }
+  .option.disabled{
+    cursor:default;
+  }
+  .feedback{
+    display:none;
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:8px;
+    font-size:14px;
+    line-height:1.5;
+  }
+  .feedback.show{
+    display:block;
+  }
+  .feedback.ok{
+    background:var(--light-green);
+    color:var(--dark-green);
+  }
+  .feedback.ko{
+    background:#FBEAE9;
+    color:var(--red);
+  }
+  .feedback strong{
+    display:block;
+    margin-bottom:4px;
+  }
+  .feedback .explanation{
+    color:var(--text-gray);
+    font-weight:normal;
+  }
+  .nav-row{
+    margin-top:20px;
+    text-align:right;
+  }
+  .btn{
+    display:inline-block;
+    background:var(--steel-blue);
+    color:#fff;
+    border:none;
+    padding:12px 26px;
+    border-radius:8px;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .btn:hover{
+    background:var(--dark-green);
+  }
+  .btn:disabled{
+    background:#B9C4CE;
+    cursor:not-allowed;
+  }
+  .result-card{
+    text-align:center;
+    padding:34px 22px;
+  }
+  .result-score{
+    font-size:46px;
+    font-weight:bold;
+    color:var(--dark-green);
+    margin:6px 0 4px 0;
+  }
+  .result-label{
+    font-size:15px;
+    color:var(--steel-blue);
+    margin-bottom:22px;
+  }
+  .hidden{
+    display:none;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <h1>QCM — Incoterms® 2020 multimodaux</h1>
+    <div class="progress-row">
+      <span id="progressText">Question 1 / 20</span>
+      <span id="scoreText">Score : 0</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="card" id="quizCard">
+    <p class="question-text" id="questionText"></p>
+    <div id="optionsContainer"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="nav-row">
+      <button class="btn" id="nextBtn" disabled>Question suivante</button>
+    </div>
+  </div>
+
+  <div class="card result-card hidden" id="resultCard">
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-label">bonnes réponses sur 20</div>
+    <button class="btn" id="restartBtn">Recommencer</button>
+  </div>
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// Banque de questions — chaque question porte sa bonne réponse
+// (index "correct") et une courte explication ("explanation")
+// directement consultable ici en lisant le code.
+// ---------------------------------------------------------------
+const questionsData = [
+  {
+    "q": "En EXW, la marchandise est endommagée pendant son chargement par le transporteur de l'acheteur, dans les locaux du vendeur. Qui supporte ce risque ?",
+    "options": [
+      "Le vendeur, car la marchandise est encore dans ses locaux",
+      "Le transporteur, systématiquement",
+      "Les deux parties à parts égales",
+      "L'acheteur, car le risque est déjà transféré dès la mise à disposition de la marchandise"
+    ],
+    "correct": 3,
+    "explanation": "En EXW, le risque est transféré dès que la marchandise est mise à disposition de l'acheteur dans les locaux du vendeur — avant même le chargement, qui est sous la responsabilité de l'acheteur."
+  },
+  {
+    "q": "Quel Incoterm® choisir pour qu'un vendeur exportateur gère lui-même le dédouanement export, sans pour autant prendre en charge le transport principal payé par l'acheteur ?",
+    "options": [
+      "EXW",
+      "FCA",
+      "CPT",
+      "DDP"
+    ],
+    "correct": 1,
+    "explanation": "En FCA, contrairement à l'EXW, le dédouanement export reste à la charge du vendeur, ce qui évite à l'acheteur des difficultés pour obtenir les justificatifs de sortie."
+  },
+  {
+    "q": "Le FCA permet de :",
+    "options": [
+      "Obtenir, depuis la réforme 2020, un connaissement avec la mention « on board » pour répondre aux exigences d'un crédit documentaire",
+      "Dispenser totalement le vendeur de toute formalité à l'export",
+      "Transférer le risque uniquement à l'arrivée à destination",
+      "Imposer systématiquement une assurance tous risques au vendeur"
+    ],
+    "correct": 0,
+    "explanation": "Depuis 2020, le FCA permet d'obtenir un connaissement avec la mention « on board », ce qui répond aux exigences d'un crédit documentaire — une option qui n'existait pas avant cette réforme."
+  },
+  {
+    "q": "En FCA « autre lieu convenu », à quel moment précis le risque est-il transféré à l'acheteur ?",
+    "options": [
+      "Dès la sortie des locaux du vendeur",
+      "À l'arrivée à destination finale",
+      "Quand la marchandise est mise à disposition du transporteur, prête à être déchargée, au lieu convenu",
+      "Au moment du paiement de la marchandise"
+    ],
+    "correct": 2,
+    "explanation": "En FCA « autre lieu convenu », le risque se transfère quand la marchandise est mise à disposition du transporteur, prête à être déchargée — pas avant."
+  },
+  {
+    "q": "Quel Incoterm® choisir si le vendeur doit payer le transport jusqu'à destination, sans pour autant être responsable de la marchandise pendant le trajet ni souscrire d'assurance ?",
+    "options": [
+      "CIP",
+      "CPT",
+      "DAP",
+      "FOB"
+    ],
+    "correct": 1,
+    "explanation": "En CPT, le vendeur paie le transport jusqu'à destination, mais le risque est transféré dès la remise au premier transporteur — c'est la dissociation typique des règles C, sans obligation d'assurance."
+  },
+  {
+    "q": "Pendant un transport sous CPT, le camion du transporteur a un accident juste après avoir récupéré la marchandise chez le vendeur. Qui supporte cette perte ?",
+    "options": [
+      "Le vendeur, puisqu'il paie le transport jusqu'à destination",
+      "Le transporteur, systématiquement",
+      "Personne, le risque n'est jamais transféré en CPT",
+      "L'acheteur, car le risque a été transféré dès la remise au premier transporteur"
+    ],
+    "correct": 3,
+    "explanation": "Même si le vendeur paie le transport, le risque a déjà basculé vers l'acheteur dès que la marchandise est remise au transporteur — donc l'accident est à la charge de l'acheteur."
+  },
+  {
+    "q": "Le CIP permet de :",
+    "options": [
+      "Faire bénéficier l'acheteur d'une couverture d'assurance « tous risques » jusqu'à destination, en plus du paiement du transport par le vendeur",
+      "Dispenser le vendeur de toute obligation d'assurance",
+      "Transférer le risque uniquement à l'arrivée à destination",
+      "Réserver la règle au seul transport maritime"
+    ],
+    "correct": 0,
+    "explanation": "Contrairement au CPT, le CIP impose au vendeur de souscrire une assurance « tous risques » couvrant le trajet jusqu'à destination."
+  },
+  {
+    "q": "Quel Incoterm® choisir pour du fret conteneurisé, lorsque le vendeur doit à la fois payer le transport ET garantir à l'acheteur une couverture d'assurance maximale ?",
+    "options": [
+      "FOB",
+      "CFR",
+      "CIP",
+      "FAS"
+    ],
+    "correct": 2,
+    "explanation": "Le CIP est la règle multimodale recommandée pour le conteneurisé, combinant paiement du transport par le vendeur et assurance « tous risques »."
+  },
+  {
+    "q": "En DAP, le camion arrive à destination mais n'est pas encore déchargé lorsqu'un vol de marchandise se produit sur le site de l'acheteur. Qui supporte ce risque ?",
+    "options": [
+      "L'acheteur, car la marchandise est livrée dès sa mise à disposition sur le moyen de transport arrivant, sans déchargement",
+      "Le vendeur, qui reste responsable jusqu'au déchargement",
+      "Le transporteur, systématiquement",
+      "Personne, le risque n'est jamais transféré en DAP"
+    ],
+    "correct": 0,
+    "explanation": "En DAP, la marchandise est livrée dès sa mise à disposition sur le moyen de transport arrivant — sans déchargement, qui reste à la charge de l'acheteur."
+  },
+  {
+    "q": "Quel Incoterm® choisir si le vendeur accepte de transporter la marchandise jusqu'au site de l'acheteur, mais ne veut gérer ni le déchargement ni le dédouanement import ?",
+    "options": [
+      "DPU",
+      "DDP",
+      "FCA",
+      "DAP"
+    ],
+    "correct": 3,
+    "explanation": "Le DAP convient quand le vendeur transporte jusqu'au site de l'acheteur mais laisse à ce dernier le déchargement et le dédouanement import."
+  },
+  {
+    "q": "Le DPU permet de :",
+    "options": [
+      "Livrer la marchandise sans la décharger, comme le DAP",
+      "Garantir que la marchandise soit livrée déchargée chez l'acheteur, le vendeur assumant ce risque jusqu'au bout",
+      "Transférer le risque dès le départ chez le vendeur",
+      "Dispenser le vendeur de toute formalité douanière à l'export"
+    ],
+    "correct": 1,
+    "explanation": "Le DPU est la seule règle Incoterms® qui oblige le vendeur à décharger la marchandise au lieu de destination."
+  },
+  {
+    "q": "En DPU, lors du déchargement du camion par le vendeur sur le site de l'acheteur, un colis tombe et se casse. Qui supporte ce dommage ?",
+    "options": [
+      "L'acheteur, le risque étant déjà transféré",
+      "Le transporteur, systématiquement",
+      "Le vendeur, car le déchargement fait partie de ses obligations et le risque ne se transfère qu'une fois la marchandise déchargée",
+      "Les deux parties à parts égales"
+    ],
+    "correct": 2,
+    "explanation": "Le déchargement faisant partie des obligations du vendeur en DPU, le risque ne se transfère qu'une fois la marchandise déchargée et mise à disposition."
+  },
+  {
+    "q": "Pourquoi l'ICC a-t-elle remplacé le DAT (2010, obsolète) par le DPU lors de la réforme 2020 ?",
+    "options": [
+      "Le DAT était jugé trop risqué pour le vendeur",
+      "Le DAT ne couvrait plus le transport maritime",
+      "Le DAT a fusionné avec le DAP",
+      "Parce que le lieu de destination n'est plus uniquement un terminal, mais peut être tout lieu convenu"
+    ],
+    "correct": 3,
+    "explanation": "Le DAT a été renommé DPU en 2020 car le lieu de destination peut désormais être tout lieu convenu, pas seulement un terminal."
+  },
+  {
+    "q": "Quelles nouvelles dispositions ont été intégrées dans l'ensemble des règles Incoterms® 2020, dont le DPU ?",
+    "options": [
+      "Des dispositions relatives à la sûreté-sécurité, ainsi que les coûts associés",
+      "Une obligation d'assurance tous risques pour tous les Incoterms®",
+      "La suppression du transfert de risque",
+      "Une réduction du nombre de règles de 11 à 7"
+    ],
+    "correct": 0,
+    "explanation": "La réforme 2020 a intégré des dispositions sûreté-sécurité (et leurs coûts) dans l'ensemble des 11 Incoterms®, dont le DPU."
+  },
+  {
+    "q": "En DDP, la marchandise est bloquée en douane à l'arrivée car les droits d'importation n'ont pas été payés. À qui incombe cette défaillance ?",
+    "options": [
+      "À l'acheteur",
+      "Au transporteur",
+      "Au vendeur, puisqu'en DDP il assume le dédouanement import et le paiement des droits et taxes",
+      "Aux douanes elles-mêmes"
+    ],
+    "correct": 2,
+    "explanation": "En DDP, le vendeur assume le dédouanement import et le paiement des droits et taxes — un retard à ce niveau lui est donc imputable."
+  },
+  {
+    "q": "Quel Incoterm® choisir pour un envoi où le vendeur veut offrir à son client une livraison totalement « clé en main », sans aucune formalité à gérer côté acheteur ?",
+    "options": [
+      "DPU",
+      "DDP",
+      "DAP",
+      "FCA"
+    ],
+    "correct": 1,
+    "explanation": "Le DDP est la règle « clé en main » : le vendeur gère tout jusqu'à la livraison, l'acheteur n'ayant rien à organiser."
+  },
+  {
+    "q": "Le DDP permet de :",
+    "options": [
+      "Transférer tous les risques à l'acheteur dès le départ",
+      "Dispenser le vendeur de toute assurance",
+      "Imposer le dédouanement export à l'acheteur",
+      "Livrer la marchandise dédouanée à l'import, prête à être déchargée, l'acheteur ne prenant en charge que l'assurance et le déchargement"
+    ],
+    "correct": 3,
+    "explanation": "Le DDP impose le niveau maximal d'obligations au vendeur, qui livre une marchandise dédouanée à l'import, prête à être déchargée."
+  },
+  {
+    "q": "Pourquoi l'ICC recommande-t-elle de privilégier le FCA plutôt que l'EXW, pour limiter le risque du vendeur sans pénaliser l'acheteur à l'export ?",
+    "options": [
+      "Parce qu'en EXW, l'acheteur peut avoir du mal à obtenir les justificatifs de sortie de marchandise dans le pays du vendeur",
+      "Parce que le FCA est toujours moins cher que l'EXW",
+      "Parce que l'EXW est réservé au transport maritime",
+      "Parce que l'EXW n'existe plus depuis 2020"
+    ],
+    "correct": 0,
+    "explanation": "L'ICC recommande le FCA car en EXW, l'acheteur (responsable de l'export) peut avoir du mal à obtenir les justificatifs de sortie dans le pays du vendeur."
+  },
+  {
+    "q": "Quel Incoterm® choisir lorsque le vendeur veut transférer le risque le plus tôt possible (dès la remise à un transporteur), tout en finançant le transport jusqu'à destination, sans obligation d'assurance ?",
+    "options": [
+      "CIP",
+      "CPT",
+      "DAP",
+      "DDP"
+    ],
+    "correct": 1,
+    "explanation": "Le CPT convient quand le vendeur veut financer le transport sans assumer le risque ni l'obligation d'assurance — contrairement au CIP."
+  },
+  {
+    "q": "Parmi les 7 Incoterms® multimodaux 2020, lequel est la seule règle qui impose au vendeur d'assumer le risque jusqu'à destination ET de décharger lui-même la marchandise ?",
+    "options": [
+      "DAP",
+      "DDP",
+      "DPU",
+      "CIP"
+    ],
+    "correct": 2,
+    "explanation": "Seul le DPU oblige le vendeur à décharger ; en DAP comme en DDP, le déchargement reste à la charge de l'acheteur."
+  }
+];
+
+// ---- Fisher-Yates shuffle ----
+function shuffle(array){
+  const arr = array.slice();
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildRuntimeQuestions(){
+  return shuffle(questionsData).map(item => {
+    const optionObjs = item.options.map((text, idx) => ({text, isCorrect: idx === item.correct}));
+    const shuffledOptions = shuffle(optionObjs);
+    return {q: item.q, explanation: item.explanation, options: shuffledOptions};
+  });
+}
+
+let runtimeQuestions = buildRuntimeQuestions();
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const feedback = document.getElementById('feedback');
+const nextBtn = document.getElementById('nextBtn');
+const progressText = document.getElementById('progressText');
+const scoreText = document.getElementById('scoreText');
+const progressFill = document.getElementById('progressFill');
+const quizCard = document.getElementById('quizCard');
+const resultCard = document.getElementById('resultCard');
+const resultScore = document.getElementById('resultScore');
+const restartBtn = document.getElementById('restartBtn');
+
+function renderQuestion(){
+  answered = false;
+  nextBtn.disabled = true;
+  feedback.className = 'feedback';
+  feedback.innerHTML = '';
+
+  const total = runtimeQuestions.length;
+  const item = runtimeQuestions[currentIndex];
+
+  progressText.textContent = `Question ${currentIndex + 1} / ${total}`;
+  scoreText.textContent = `Score : ${score}`;
+  progressFill.style.width = `${(currentIndex / total) * 100}%`;
+
+  questionText.textContent = item.q;
+  optionsContainer.innerHTML = '';
+
+  item.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt.text;
+    btn.addEventListener('click', () => selectOption(btn, opt));
+    optionsContainer.appendChild(btn);
+  });
+
+  nextBtn.textContent = (currentIndex === total - 1) ? 'Voir le résultat' : 'Question suivante';
+}
+
+function selectOption(btn, opt){
+  if(answered) return;
+  answered = true;
+
+  const allBtns = optionsContainer.querySelectorAll('.option');
+  allBtns.forEach(b => b.classList.add('disabled'));
+
+  const item = runtimeQuestions[currentIndex];
+  const explanationHtml = `<span class="explanation">${item.explanation}</span>`;
+
+  if(opt.isCorrect){
+    btn.classList.add('correct');
+    score++;
+    feedback.className = 'feedback show ok';
+    feedback.innerHTML = `<strong>Bonne réponse.</strong>${explanationHtml}`;
+  } else {
+    btn.classList.add('incorrect');
+    feedback.className = 'feedback show ko';
+    const correctOpt = item.options.find(o => o.isCorrect);
+    feedback.innerHTML = `<strong>La bonne réponse était : ${correctOpt.text}</strong>${explanationHtml}`;
+    allBtns.forEach(b => {
+      const idx = Array.from(allBtns).indexOf(b);
+      if(item.options[idx].isCorrect){
+        b.classList.add('correct');
+      }
+    });
+  }
+
+  scoreText.textContent = `Score : ${score}`;
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', () => {
+  if(currentIndex < runtimeQuestions.length - 1){
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult(){
+  quizCard.classList.add('hidden');
+  resultCard.classList.remove('hidden');
+  progressFill.style.width = '100%';
+  progressText.textContent = `Question ${runtimeQuestions.length} / ${runtimeQuestions.length}`;
+  resultScore.textContent = `${score} / 20`;
+}
+
+restartBtn.addEventListener('click', () => {
+  runtimeQuestions = buildRuntimeQuestions();
+  currentIndex = 0;
+  score = 0;
+  resultCard.classList.add('hidden');
+  quizCard.classList.remove('hidden');
+  renderQuestion();
+});
+
+renderQuestion();
+</script>
+
+</body>
+</html>
