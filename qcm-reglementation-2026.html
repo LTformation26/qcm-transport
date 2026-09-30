@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM – Réglementation transport routier 2026</title>
+<style>
+  :root{--bleu:#1F3864;--bleu-clair:#E8EDF5;--vert:#1E7B34;--vert-clair:#E3F4E7;--rouge:#B42318;--rouge-clair:#FDECEA;--gris:#6B7280;--bord:#D1D5DB}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111;min-height:100vh;padding:16px}
+  .wrap{max-width:780px;margin:0 auto}
+  h1{font-size:24px;color:var(--bleu);text-align:center;margin-bottom:4px}
+  .sous-titre{text-align:center;color:var(--gris);font-size:16px;margin-bottom:18px}
+  .haut{display:flex;justify-content:space-between;font-size:16px;color:var(--gris);margin-bottom:6px}
+  .barre{height:10px;background:var(--bleu-clair);border-radius:5px;overflow:hidden;margin-bottom:22px}
+  .barre div{height:100%;background:var(--bleu);width:0;transition:width .3s}
+  .question{font-size:21px;font-weight:bold;line-height:1.4;margin-bottom:18px}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;font:inherit;font-size:18px;line-height:1.35;
+       padding:13px 15px;border:2px solid var(--bord);border-radius:8px;background:#fff;cursor:pointer;color:#111}
+  .opt:hover:not(:disabled){border-color:var(--bleu);background:var(--bleu-clair)}
+  .opt:disabled{cursor:default}
+  .lettre{font-weight:bold;color:var(--bleu);min-width:22px}
+  .opt.juste{border-color:var(--vert);background:var(--vert-clair)}
+  .opt.faux{border-color:var(--rouge);background:var(--rouge-clair)}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:8px;font-size:17px;line-height:1.45;display:none}
+  .feedback.ok{display:block;background:var(--vert-clair);border-left:5px solid var(--vert)}
+  .feedback.ko{display:block;background:var(--rouge-clair);border-left:5px solid var(--rouge)}
+  .btn{display:block;margin:18px auto 0;padding:13px 30px;font:inherit;font-size:18px;font-weight:bold;color:#fff;background:var(--bleu);border:none;border-radius:8px;cursor:pointer}
+  .btn:hover{opacity:.9}
+  .cache{display:none}
+  .resultat{text-align:center;padding-top:20px}
+  .score{font-size:52px;font-weight:bold;color:var(--bleu);margin:12px 0}
+  .mention{font-size:20px;margin-bottom:8px}
+  .detail{color:var(--gris);font-size:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Réglementation transport routier 2026</h1>
+  <p class="sous-titre">Capacité de transport de marchandises – QCM de révision</p>
+
+  <div id="quiz">
+    <div class="haut"><span id="compteur"></span><span id="pts"></span></div>
+    <div class="barre"><div id="progress"></div></div>
+    <p class="question" id="question"></p>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn cache" id="suivant">Question suivante</button>
+  </div>
+
+  <div id="fin" class="resultat cache">
+    <p class="mention">Votre résultat</p>
+    <p class="score" id="score"></p>
+    <p class="mention" id="appreciation"></p>
+    <p class="detail">Relisez les explications des questions manquées avant l'examen.</p>
+    <button class="btn" id="recommencer">Recommencer le QCM</button>
+  </div>
+</div>
+
+<script>
+// Bonne réponse fixe par question (index 0=a, 1=b, 2=c, 3=d) — répartition équilibrée 5a / 5b / 5c / 5d
+const QUESTIONS = [
+ {q:"Lors d'un contrôle, combien de jours d'enregistrements le conducteur doit-il pouvoir présenter ?",
+  o:["14 jours","28 jours","56 jours","90 jours"],c:2,
+  e:"Le conducteur doit présenter le jour en cours et les 56 jours précédents."},
+ {q:"Un VUL de 3 t qui fait uniquement du transport national en France au 1er juillet 2026 :",
+  o:["N'est pas concerné par l'obligation de tachygraphe G2V2","Doit être équipé d'un tachygraphe G2V2","Doit être équipé d'un tachygraphe à disque","Doit détenir une autorisation CEMT"],c:0,
+  e:"L'obligation du 1er juillet 2026 ne concerne que l'international et le cabotage. Le transport purement national en VUL n'est pas visé."},
+ {q:"Le décret du 25 juillet 2022 prévoyait une expérimentation à 46 t de PTRA. Pour quels véhicules ?",
+  o:["Tous les ensembles articulés de 5 essieux","Les convois exceptionnels","Les porteurs de 4 essieux","Les ensembles de plus de 4 essieux en pré ou post-acheminement de transport combiné"],c:3,
+  e:"L'expérimentation (décret n° 2022-1045, 18 mois) visait uniquement la partie routière du transport combiné rail-route ou fleuve-route, en France. Elle n'a pas été pérennisée : le plafond reste de 44 t (art. R. 312-4 du Code de la route)."},
+ {q:"Depuis le 1er octobre 2025, la circulation à 44 t est réservée aux véhicules :",
+  o:["Euro 5 et Euro 6","Euro 6","100 % électriques","De moins de 5 ans"],c:1,
+  e:"Depuis le 1er octobre 2025, seuls les véhicules répondant à la norme Euro 6 peuvent circuler à 44 t."},
+ {q:"Facturation électronique : quelle obligation s'applique à TOUTES les entreprises assujetties à la TVA dès septembre 2026 ?",
+  o:["Émettre toutes leurs factures en électronique","Utiliser la lettre de voiture électronique (eCMR)","Supprimer les factures papier pour les clients étrangers","Être en mesure de recevoir des factures électroniques"],c:3,
+  e:"En septembre 2026, toutes les entreprises doivent pouvoir recevoir des factures électroniques. L'émission n'est obligatoire que pour les grandes entreprises et les ETI."},
+ {q:"En 2026, en France, la lettre de voiture électronique (eCMR) est :",
+  o:["Obligatoire pour tout transport national","Autorisée mais pas obligatoire","Interdite","Obligatoire uniquement à l'international"],c:1,
+  e:"La France a ratifié le protocole eCMR, mais son usage reste facultatif. La lettre de voiture papier reste valable."},
+ {q:"Pour chaque prestation, le transporteur doit informer son client :",
+  o:["Du coût du carburant consommé","Du nom du conducteur","De la quantité de CO₂ émise","De l'itinéraire exact emprunté"],c:2,
+  e:"Le transporteur doit communiquer à son client la quantité de CO₂ émise par la prestation."},
+ {q:"Selon quelle méthode la quantité de CO₂ d'une prestation de transport est-elle calculée ?",
+  o:["Méthode INSEE","Méthode DREAL","Méthode Euro 6","Méthode ADEME"],c:3,
+  e:"Le calcul se fait selon la méthode de l'ADEME (Agence de la transition écologique)."},
+ {q:"Depuis le 7 juillet 2026, quel équipement est obligatoire sur tous les camions neufs ?",
+  o:["Le système de freinage d'urgence avancé","Le limiteur de vitesse à 80 km/h","Le tachygraphe analogique à disque","La caméra de recul"],c:0,
+  e:"Depuis le 7 juillet 2026, le freinage d'urgence avancé (AEB) est obligatoire sur les camions neufs, en application des règles européennes de sécurité des véhicules."},
+ {q:"Quel est le montant maximum de l'aide exceptionnelle carburant 2026 par entreprise de transport ?",
+  o:["10 000 €","60 000 €","100 000 €","30 000 €"],c:1,
+  e:"L'aide exceptionnelle (décret du 17 avril 2026) est plafonnée à 60 000 € par entreprise, pour les entreprises de moins de 1 000 salariés."},
+ {q:"Quelle est la situation des Zones à Faibles Émissions (ZFE) en 2026 ?",
+  o:["Elles ont été supprimées par la loi de simplification","Elles sont suspendues jusqu'en 2030","Elles sont maintenues après la censure du Conseil constitutionnel de mai 2026","Elles ne concernent plus que Paris et Lyon"],c:2,
+  e:"Le 21 mai 2026, le Conseil constitutionnel a censuré la suppression des ZFE. Elles restent en vigueur dans plus de 43 agglomérations."},
+ {q:"Quel est le plafond mensuel de la Sécurité sociale en 2026 ?",
+  o:["4 005 €","3 925 €","3 864 €","4 250 €"],c:0,
+  e:"Le plafond mensuel de la Sécurité sociale est de 4 005 € en 2026 (+2 % par rapport à 2025)."},
+ {q:"Quel est le montant de l'indemnité de repas conventionnelle du transport routier en 2026 ?",
+  o:["16,36 €","15,20 €","16,20 €","17,50 €"],c:0,
+  e:"L'indemnité de repas est de 16,36 € en 2026, après une hausse de 1 % des frais de déplacement."},
+ {q:"Quel est l'objectif européen de réduction des émissions de CO₂ des poids lourds neufs pour 2030 ?",
+  o:["−30 %","−45 %","−65 %","−90 %"],c:1,
+  e:"Le règlement UE 2024/1610 fixe −45 % en 2030, −65 % en 2035 et −90 % en 2040."}
+];
+
+const L = ["a","b","c","d"];
+let ordre = [], i = 0, points = 0;
+
+function melanger(t){ // Fisher-Yates sur l'ordre des questions (les réponses gardent leur position)
+  for(let k=t.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[t[k],t[j]]=[t[j],t[k]];}
+  return t;
+}
+function demarrer(){
+  ordre = melanger(QUESTIONS.map((_,k)=>k)); i = 0; points = 0;
+  document.getElementById("fin").classList.add("cache");
+  document.getElementById("quiz").classList.remove("cache");
+  afficher();
+}
+function afficher(){
+  const Q = QUESTIONS[ordre[i]];
+  document.getElementById("compteur").textContent = "Question " + (i+1) + " / " + QUESTIONS.length;
+  document.getElementById("pts").textContent = "Score : " + points;
+  document.getElementById("progress").style.width = (i / QUESTIONS.length * 100) + "%";
+  document.getElementById("question").textContent = Q.q;
+  const fb = document.getElementById("feedback"); fb.className = "feedback"; fb.innerHTML = "";
+  document.getElementById("suivant").classList.add("cache");
+  const box = document.getElementById("options"); box.innerHTML = "";
+  Q.o.forEach((txt,k)=>{
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = '<span class="lettre">' + L[k] + ')</span><span></span>';
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    box.appendChild(b);
+  });
+}
+function repondre(k){
+  const Q = QUESTIONS[ordre[i]];
+  const btns = document.querySelectorAll(".opt");
+  btns.forEach(b=>b.disabled=true);
+  btns[Q.c].classList.add("juste");
+  const fb = document.getElementById("feedback");
+  if(k === Q.c){
+    points++;
+    fb.className = "feedback ok";
+    fb.innerHTML = "<strong>Bonne réponse.</strong> ";
+  } else {
+    btns[k].classList.add("faux");
+    fb.className = "feedback ko";
+    fb.innerHTML = "<strong>Faux. La bonne réponse est " + L[Q.c] + ") " + Q.o[Q.c] + ".</strong> ";
+  }
+  fb.appendChild(document.createTextNode(Q.e));
+  document.getElementById("pts").textContent = "Score : " + points;
+  const s = document.getElementById("suivant");
+  s.textContent = (i === QUESTIONS.length-1) ? "Voir mon résultat" : "Question suivante";
+  s.classList.remove("cache");
+}
+document.getElementById("suivant").onclick = () => {
+  i++;
+  if(i < QUESTIONS.length){ afficher(); }
+  else {
+    document.getElementById("progress").style.width = "100%";
+    document.getElementById("quiz").classList.add("cache");
+    document.getElementById("fin").classList.remove("cache");
+    document.getElementById("score").textContent = points + " / " + QUESTIONS.length;
+    const pc = points / QUESTIONS.length;
+    document.getElementById("appreciation").textContent =
+      pc >= 0.8 ? "Très bien, vous maîtrisez l'actualité réglementaire 2026." :
+      pc >= 0.5 ? "Correct, mais quelques points sont à revoir." :
+      "Insuffisant : reprenez la fiche « Nouveautés 2026 » avant de recommencer.";
+  }
+};
+document.getElementById("recommencer").onclick = demarrer;
+demarrer();
+</script>
+</body>
+</html>
