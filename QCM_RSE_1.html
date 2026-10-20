@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QCM RSE 1</title>
+<style>
+  :root { --texte:#0F2A1D; --sapin:#095228; --rouge:#C62828; --vert-ok:#1e7d45; --fond-ok:#e7f4ec; --fond-ko:#fbeaea; --filet:#cfd8d2; --gris:#5d6f64; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: Verdana, "DejaVu Sans", sans-serif; font-size:17px; line-height:1.5; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  header { display:flex; align-items:center; gap:14px; border-bottom: 3px solid var(--sapin); padding-bottom: 12px; margin-bottom: 18px; }
+  header img { width: 52px; height: auto; }
+  header .marque { font-size: 13px; color: var(--gris); letter-spacing: .5px; }
+  header h1 { margin: 0; font-size: 22px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
+  .question { font-size: 19px; font-weight: bold; margin: 0 0 18px; white-space: pre-line; }
+  .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--rouge); margin-top: 10px; }
+  .choix { display:flex; flex-direction:column; gap: 10px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix button:hover:not(:disabled) { border-color: var(--sapin); }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button:disabled { cursor: default; }
+  .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
+  .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
+  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour.ko { border-left-color: var(--rouge); }
+  .retour .exp { white-space: pre-line; }
+  .retour .titre { font-weight: bold; color: var(--rouge); }
+  .retour .titre:empty { display: none; }
+  .retour.okk .titre { color: var(--vert-ok); }
+  .retour.ko .titre { color: var(--rouge); }
+  .actions { margin-top: 22px; text-align: right; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn:hover { background: #0b6a32; }
+  .btn[hidden] { display:none; }
+  .resultat { text-align:center; padding-top: 10px; }
+  .resultat .score { font-size: 56px; font-weight: bold; color: var(--sapin); line-height:1.1; }
+  .resultat .sur { color: var(--gris); margin-bottom: 14px; }
+  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="data:image/png;base64,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" alt="Kaply Academy">
+    <div><div class="marque">Kaply Academy · Réglementation du transport</div><h1>QCM RSE 1</h1></div>
+  </header>
+  <div id="zone"></div>
+</div>
+<script>
+const QUESTIONS = [
+  { q: "Le retrait de licence intervient notamment en cas :",
+    r: ["d'infractions graves ou répétées", "de baisse d'activité", "de changement de gérant", "de déménagement du siège"], b: 0,
+    e: "Les licences peuvent être retirées à titre temporaire ou définitif en cas d'infractions graves ou d'infractions mineures et répétées.", u: true },
+  { q: "Une entreprise qui ne dépose pas de comptes annuels doit les transmettre au préfet de région :",
+    r: ["dans les 3 mois", "dans les 6 mois", "dans les 9 mois", "dans les 12 mois"], b: 1,
+    e: "Dans les 6 mois qui suivent la clôture de l'exercice. Pour les autres entreprises, c'est l'administration fiscale qui transmet les comptes annuels.", u: true },
+  { q: "Les garanties financières peuvent couvrir au maximum :",
+    r: ["25 % de la capacité financière", "50 % de la capacité financière", "75 % de la capacité financière", "100 % de la capacité financière"], b: 1,
+    e: "Le montant des garanties ne doit pas représenter plus de la moitié du montant de la capacité financière.", u: false },
+  { q: "Le gestionnaire de transport doit avoir :",
+    r: ["un lien réel avec l'entreprise", "un capital minimum", "un diplôme universitaire", "un statut de salarié obligatoire"], b: 0,
+    e: "Le gestionnaire de transport doit justifier d'un lien réel avec l'entreprise.", u: false },
+  { q: "La sous-traitance est :",
+    r: ["la location d'un véhicule", "la vente d'un transport", "l'organisation d'un transport multimodal", "l'opération par laquelle un transporteur confie un trafic à un autre transporteur"], b: 3,
+    e: "C'est l'opération par laquelle un transporteur ou un commissionnaire confie l'ensemble de l'exécution d'un trafic à un autre transporteur.", u: false },
+  { q: "La sous-traitance est possible sans être commissionnaire si elle ne dépasse pas :",
+    r: ["10 % du chiffre d'affaires", "15 % du chiffre d'affaires", "20 % du chiffre d'affaires", "25 % du chiffre d'affaires"], b: 1,
+    e: "Le montant des opérations ne doit pas dépasser 15 % du chiffre d'affaires annuel.", u: false },
+  { q: "Le commissionnaire agit :",
+    r: ["au nom du transporteur", "au nom du conducteur", "au nom de l'administration", "en son nom propre"], b: 3,
+    e: "Il organise et fait exécuter le transport sous sa responsabilité et en son propre nom, pour le compte d'un commettant.", u: true },
+  { q: "L'inscription au registre des commissionnaires exige :",
+    r: ["capacité financière et honorabilité", "capital minimum", "capacité professionnelle et honorabilité", "licence communautaire"], b: 2,
+    e: "Deux conditions : l'honorabilité et la capacité professionnelle.", u: false },
+  { q: "La capacité financière pour un commissionnaire :",
+    r: ["est obligatoire", "est facultative", "n'existe pas", "dépend du nombre de véhicules"], b: 2,
+    e: "Il n'y a pas de conditions financières pour un commissionnaire de transport.", u: false },
+  { q: "Une opération de regroupement de marchandises est :",
+    r: ["l'affrètement", "le groupage", "la traction", "la consignation"], b: 1,
+    e: "Le groupage réunit les envois de plusieurs expéditeurs ou destinataires en un lot unique.", u: true },
+  { q: "Confier un transport directement à un transporteur sans regroupement correspond à :",
+    r: ["la traction", "le transit", "l'affrètement", "la consignation"], b: 2,
+    e: "L'affrètement : les envois sont confiés sans groupage préalable à des transporteurs publics.", u: false },
+  { q: "Un commissionnaire peut être radié du registre notamment :",
+    r: ["en cas de cessation d'activité pendant un an", "en cas de baisse du chiffre d'affaires", "en cas de changement de siège", "en cas de licenciement d'un salarié"], b: 0,
+    e: "Radiation possible pour manquements graves ou répétés, si l'une des deux conditions n'est plus remplie, ou après un an de cessation d'activité.", u: true },
+  { q: "Dans le transport privé, les marchandises appartiennent :",
+    r: ["au transporteur", "à l'une des parties au contrat", "au conducteur", "à l'État"], b: 1,
+    e: "Les marchandises transportées sont la propriété de l'une des parties au contrat.", u: false },
+  { q: "Pour prouver un transport pour compte propre, la marchandise peut être accompagnée :",
+    r: ["d'une licence", "d'une lettre de voiture", "d'un certificat d'assurance", "d'une facture d'achat"], b: 3,
+    e: "Pour que la police ne requalifie pas le transport en \"transport public illégal\", ces 4 conditions doivent être réunies :\nPropriété : La marchandise appartient à l'entreprise (ou est vendue, achetée, louée, produite par elle).\nActivité accessoire : Le transport n'est qu'un outil pour l'activité principale (ex: un maçon qui transporte son sable).\nConducteur : Le chauffeur doit être le patron ou un salarié de l'entreprise.\nVéhicule : Le camion doit appartenir à l'entreprise ou être pris en location (sans chauffeur).", u: true },
+  { q: "L'entraide agricole est autorisée si :",
+    r: ["elle est rémunérée", "elle est occasionnelle et gratuite", "elle est permanente", "elle est internationale"], b: 1,
+    e: "Elle doit rester occasionnelle, à titre gracieux, et ne pas dépasser 100 km.", u: true },
+  { q: "La distance maximale pour l'entraide agricole est :",
+    r: ["80 km", "90 km", "100 km", "120 km"], b: 2,
+    e: "La distance du transport ne doit pas excéder 100 km.", u: false },
+  { q: "Le transport de véhicules accidentés est :",
+    r: ["un transport exceptionnel", "un transport réglementé", "un transport non réglementé", "un transport privé"], b: 2,
+    e: "Il fait partie des transports publics non réglementés, entre le lieu de l'accident ou de la panne et le lieu de réparation.", u: true },
+  { q: "Les engins dont la vitesse maximale est 25 km/h relèvent :",
+    r: ["des transports réglementés", "des transports exceptionnels", "des transports non réglementés", "du transport international"], b: 2,
+    e: "Ce sont des véhicules à emplois très spéciaux : transports non réglementés.", u: true },
+  { q: "Les transports au sein de groupements agricoles sont autorisés si :",
+    r: ["les véhicules appartiennent au groupement ou à ses membres", "ils sont rémunérés", "ils dépassent 200 km", "ils sont internationaux"], b: 0,
+    e: "Les véhicules doivent appartenir au groupement ou à ses membres, ou avoir été pris en location.", u: true },
+  { q: "Une entreprise de transport public routier de marchandises possède :\n2 véhicules de 19 T de PMA\n1 véhicule de 7,5 T de PMA\n3 véhicules de 3,5 T de PTAC\nQuel est le montant minimal de capacité financière exigé pour l'entreprise ?",
+    r: ["21 700 €", "23 700 €", "24 600 €", "24 700 €"], b: 0,
+    e: "9 000 € + 5 000 € + 5 000 € = 19 000 €\n900 € + 900 € + 900 € = 2 700 €\n19 000 € + 2 700 € = 21 700 €", u: true }
+];
+const POINTS = 2, LETTRES = ["A","B","C","D"];
+let ordre = [], i = 0, score = 0;
+const zone = document.getElementById("zone");
+
+function melange(t) { for (let k = t.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [t[k], t[j]] = [t[j], t[k]]; } return t; }
+
+function demarrer() {
+  ordre = melange(QUESTIONS.map((q, k) => {
+    const idx = melange([0, 1, 2, 3]);
+    return { q: q.q, e: q.e, u: q.u, r: idx.map(n => q.r[n]), b: idx.indexOf(q.b) };
+  }));
+  i = 0; score = 0; afficher();
+}
+
+function afficher() {
+  const Q = ordre[i], n = ordre.length;
+  zone.innerHTML = `
+    <div class="progres"><span>Question ${i + 1} / ${n}</span><span>${score} / ${n * POINTS} points</span></div>
+    <div class="barre"><div style="width:${(i / n) * 100}%"></div></div>
+    <p class="question"></p>
+    <div class="choix"></div>
+    <div class="retour"><div class="titre"></div><div class="exp"></div></div>
+    <div class="actions"><button class="btn" id="suivant" hidden>${i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button></div>`;
+  zone.querySelector(".question").textContent = Q.q;
+  const choix = zone.querySelector(".choix");
+  Q.r.forEach((txt, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="l">${LETTRES[k]}.</span><span></span>`;
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    choix.appendChild(b);
+  });
+}
+
+function repondre(k) {
+  const Q = ordre[i], btns = zone.querySelectorAll(".choix button"), ret = zone.querySelector(".retour");
+  btns.forEach(b => b.disabled = true);
+  btns[Q.b].classList.add("ok");
+  if (k === Q.b) {
+    score += POINTS;
+    ret.className = "retour okk";
+  } else {
+    btns[k].classList.add("ko");
+    ret.className = "retour ko";
+  }
+  const faux = (k !== Q.b);
+  ret.querySelector(".titre").textContent = faux ? "Mauvaise réponse" : "";
+  ret.querySelector(".exp").textContent = Q.e;
+  if (faux || Q.u) ret.style.display = "block";
+  zone.querySelector(".progres span:last-child").textContent = `${score} / ${ordre.length * POINTS} points`;
+  const s = document.getElementById("suivant");
+  s.hidden = false;
+  s.onclick = () => { i++; i < ordre.length ? afficher() : resultat(); };
+}
+
+function resultat() {
+  const total = ordre.length * POINTS, pct = score / total;
+  const msg = pct >= 0.8 ? "Très bon résultat, vous maîtrisez l'accès à la profession."
+            : pct >= 0.5 ? "Résultat correct. Relisez le cours sur les points où vous vous êtes trompé."
+            : "Résultat insuffisant. Reprenez le cours « Réglementation du transport » avant de recommencer.";
+  zone.innerHTML = `
+    <div class="barre"><div style="width:100%"></div></div>
+    <div class="resultat">
+      <div class="score">${score}</div><div class="sur">sur ${total} points</div>
+      <div class="msg">${msg}</div>
+      <button class="btn" id="recommencer">Recommencer le QCM</button>
+    </div>`;
+  document.getElementById("recommencer").onclick = demarrer;
+}
+
+demarrer();
+</script>
+</body>
+</html>
