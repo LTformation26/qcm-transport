@@ -8,25 +8,25 @@
   @import url("https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Open+Sans:wght@400;600;700&display=swap");
   :root { --texte:#0B0D0C; --sapin:#007A4E; --marque:#00A86C; --rouge:#C62828; --vert-ok:#00A86C; --fond-ok:#F1FAF6; --fond-ko:#fbeaea; --filet:#D6E6DE; --gris:#6B716E; }
   * { box-sizing: border-box; }
-  body { margin:0; background:#fff; color:var(--texte); font-family: "Open Sans", Arial, sans-serif; font-size:17px; line-height:1.5; }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: "Open Sans", Arial, sans-serif; font-size:20px; line-height:1.55; }
+  .wrap { max-width: none; margin: 0; padding: 22px 18px 30px; }
   header { border-bottom: 3px solid var(--sapin); padding-bottom: 14px; margin-bottom: 18px; }
-  header img { width: 170px; height: auto; display:block; margin-bottom: 14px; }
-  header .marque { font-family:"Sora",Arial,sans-serif; font-weight:600; font-size: 11px; color: var(--gris); letter-spacing: 1.2px; text-transform: uppercase; }
-  header h1 { margin: 2px 0 0; font-family:"Sora",Arial,sans-serif; font-weight:700; font-size: 24px; color: var(--sapin); line-height:1.2; }
-  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
-  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  header img { width: 190px; height: auto; display:block; margin-bottom: 14px; }
+  header .marque { font-family:"Sora",Arial,sans-serif; font-weight:600; font-size: 13px; color: var(--gris); letter-spacing: 1.2px; text-transform: uppercase; }
+  header h1 { margin: 2px 0 0; font-family:"Sora",Arial,sans-serif; font-weight:700; font-size: 30px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 15px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 8px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
   .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
-  .question { font-size: 19px; font-weight: 700; margin: 0 0 18px; white-space: pre-line; }
+  .question { font-size: 24px; font-weight: 700; margin: 0 0 22px; line-height: 1.4; white-space: pre-line; }
   .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--marque); margin-top: 10px; }
-  .choix { display:flex; flex-direction:column; gap: 10px; }
-  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix { display:flex; flex-direction:column; gap: 12px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 10px; padding: 16px 20px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
   .choix button:hover:not(:disabled) { border-color: var(--sapin); }
-  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 26px; }
   .choix button:disabled { cursor: default; }
   .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
   .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
-  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour { margin-top: 22px; padding-left: 16px; border-left: 4px solid var(--sapin); display:none; }
   .retour.ko { border-left-color: var(--rouge); }
   .retour .exp { white-space: pre-line; }
   .retour .titre { font-weight: bold; color: var(--rouge); }
@@ -34,14 +34,14 @@
   .retour.okk .titre { color: var(--vert-ok); }
   .retour.ko .titre { color: var(--rouge); }
   .actions { margin-top: 22px; text-align: right; }
-  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 10px; padding: 15px 30px; cursor:pointer; }
   .btn:hover { background: #06623F; }
   .btn[hidden] { display:none; }
   .resultat { text-align:center; padding-top: 10px; }
-  .resultat .score { font-family:"Sora",Arial,sans-serif; font-size: 56px; font-weight: 700; color: var(--sapin); line-height:1.1; }
+  .resultat .score { font-family:"Sora",Arial,sans-serif; font-size: 76px; font-weight: 700; color: var(--sapin); line-height:1.1; }
   .resultat .sur { color: var(--gris); margin-bottom: 14px; }
-  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
-  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+  .resultat .msg { font-size: 22px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 18px; } .question { font-size: 20px; } header h1 { font-size: 24px; } .choix button { padding: 14px 16px; } }
 </style>
 </head>
 <body>
