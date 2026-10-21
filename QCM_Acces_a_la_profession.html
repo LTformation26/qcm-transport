@@ -9,7 +9,7 @@
   :root { --texte:#0B0D0C; --sapin:#007A4E; --marque:#00A86C; --rouge:#C62828; --vert-ok:#00A86C; --fond-ok:#F1FAF6; --fond-ko:#fbeaea; --filet:#D6E6DE; --gris:#6B716E; }
   * { box-sizing: border-box; }
   body { margin:0; background:#fff; color:var(--texte); font-family: "Open Sans", Arial, sans-serif; font-size:20px; line-height:1.55; }
-  .wrap { max-width: none; margin: 0; padding: 22px 18px 30px; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 40px 32px; }
   header { border-bottom: 3px solid var(--sapin); padding-bottom: 14px; margin-bottom: 18px; }
   header img { width: 190px; height: auto; display:block; margin-bottom: 14px; }
   header .marque { font-family:"Sora",Arial,sans-serif; font-weight:600; font-size: 13px; color: var(--gris); letter-spacing: 1.2px; text-transform: uppercase; }
@@ -41,7 +41,7 @@
   .resultat .score { font-family:"Sora",Arial,sans-serif; font-size: 76px; font-weight: 700; color: var(--sapin); line-height:1.1; }
   .resultat .sur { color: var(--gris); margin-bottom: 14px; }
   .resultat .msg { font-size: 22px; margin-bottom: 22px; }
-  @media (max-width: 520px) { body { font-size: 18px; } .question { font-size: 20px; } header h1 { font-size: 24px; } .choix button { padding: 14px 16px; } }
+  @media (max-width: 520px) { .wrap { padding: 18px 16px 24px; } body { font-size: 18px; } .question { font-size: 20px; } header h1 { font-size: 24px; } .choix button { padding: 14px 16px; } }
 </style>
 </head>
 <body>
