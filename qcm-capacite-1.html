@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QCM Notions de droit n°1</title>
+<style>
+  :root { --texte:#0F2A1D; --sapin:#095228; --rouge:#C62828; --vert-ok:#1e7d45; --fond-ok:#e7f4ec; --fond-ko:#fbeaea; --filet:#cfd8d2; --gris:#5d6f64; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: Verdana, "DejaVu Sans", sans-serif; font-size:17px; line-height:1.5; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  header { display:flex; align-items:center; gap:14px; border-bottom: 3px solid var(--sapin); padding-bottom: 12px; margin-bottom: 18px; }
+  header img { width: 52px; height: auto; }
+  header .marque { font-size: 13px; color: var(--gris); letter-spacing: .5px; }
+  header h1 { margin: 0; font-size: 22px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
+  .question { font-size: 19px; font-weight: bold; margin: 0 0 18px; white-space: pre-line; }
+  .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--rouge); margin-top: 10px; }
+  .choix { display:flex; flex-direction:column; gap: 10px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix button:hover:not(:disabled) { border-color: var(--sapin); }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button:disabled { cursor: default; }
+  .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
+  .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
+  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour.ko { border-left-color: var(--rouge); }
+  .retour .exp { white-space: pre-line; }
+  .retour .titre { font-weight: bold; color: var(--rouge); }
+  .retour .titre:empty { display: none; }
+  .retour.okk .titre { color: var(--vert-ok); }
+  .retour.ko .titre { color: var(--rouge); }
+  .actions { margin-top: 22px; text-align: right; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn:hover { background: #0b6a32; }
+  .btn[hidden] { display:none; }
+  .resultat { text-align:center; padding-top: 10px; }
+  .resultat .score { font-size: 56px; font-weight: bold; color: var(--sapin); line-height:1.1; }
+  .resultat .sur { color: var(--gris); margin-bottom: 14px; }
+  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="data:image/png;base64,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" alt="Kaply Academy">
+    <div><div class="marque">Kaply Academy · Capacité de transport</div><h1>QCM Notions de droit n°1</h1></div>
+  </header>
+  <div id="zone"></div>
+</div>
+<script>
+const QUESTIONS = [
+  {"q": "Une lettre de change est :", "r": ["un paiement immédiat", "un ordre de paiement différé donné par un fournisseur à son client", "un paiement bancaire direct", "un paiement en espèces"], "b": 1, "e": "Contrairement au chèque (paiement immédiat), la lettre de change est un instrument de crédit : le tireur (le fournisseur ou le transporteur) donne l'ordre à son client (le tiré) de payer une certaine somme à une date fixée (l'échéance), généralement à 30, 45 ou 60 jours.", "u": true},
+  {"q": "Dans le transport routier, la durée maximale de congés pouvant être pris en une seule fois est :", "r": ["4 semaines", "5 semaines", "6 semaines", "sans limite"], "b": 0, "e": "La bonne réponse est : 4 semaines.", "u": false},
+  {"q": "En dehors des heures de délégation, un membre de la commission santé, sécurité et conditions de travail (CSSCT) peut bénéficier :", "r": ["d'un congé exceptionnel payé de 3 jours", "d'une prime mensuelle prévue par la convention collective", "d'un congé de formation de 3 à 5 jours rémunéré et pris sur le temps de travail", "d'un jour de congé payé supplémentaire"], "b": 2, "e": "La bonne réponse est : d'un congé de formation de 3 à 5 jours rémunéré et pris sur le temps de travail.", "u": false},
+  {"q": "Parmi les documents suivants, lequel fait partie des documents de fin de contrat ?", "r": ["le registre unique du personnel", "la DPAE", "le DUER", "le certificat de travail"], "b": 3, "e": "La bonne réponse est : le certificat de travail.", "u": false},
+  {"q": "Les salariés sont informés de la convention collective applicable par une mention :", "r": ["affichée en mairie", "affichée au tribunal", "figurant sur le bulletin de paie", "affichée au conseil de prud'hommes"], "b": 2, "e": "La bonne réponse est : figurant sur le bulletin de paie.", "u": false},
+  {"q": "Dans le transport routier, un salarié a droit à une indemnité légale de licenciement s'il justifie d'une ancienneté minimale de :", "r": ["6 mois", "8 mois", "1 an", "2 ans"], "b": 1, "e": "La bonne réponse est : 8 mois.", "u": false},
+  {"q": "Avant toute embauche, il y a lieu de :", "r": ["prévenir l'inspection du travail", "faire une déclaration préalable à l'URSSAF", "établir un contrat de travail obligatoirement", "transmettre le contrat à l'inspection du travail"], "b": 1, "e": "La bonne réponse est : faire une déclaration préalable à l'URSSAF.", "u": false},
+  {"q": "Une EI est une entreprise :", "r": ["avec minimum deux associés", "avec un associé unique", "dirigée par une personne physique seule", "avec capital minimum"], "b": 2, "e": "La bonne réponse est : dirigée par une personne physique seule.", "u": false},
+  {"q": "La visite d'information et de prévention d'un salarié nouvellement embauché doit, en principe, avoir lieu :", "r": ["dans les 8 jours", "dans le mois", "dans les 3 mois suivant la prise de poste", "dans les 6 mois"], "b": 2, "e": "La bonne réponse est : dans les 3 mois suivant la prise de poste.", "u": false},
+  {"q": "Le document unique d'évaluation des risques professionnels (DUER) doit être tenu à disposition :", "r": ["des seuls dirigeants", "du seul CSE", "du seul médecin du travail", "notamment des salariés, du CSE, du médecin du travail et de l'inspection du travail"], "b": 3, "e": "La bonne réponse est : notamment des salariés, du CSE, du médecin du travail et de l'inspection du travail.", "u": false},
+  {"q": "Un contrat où les prestations sont connues à l'avance est un contrat :", "r": ["aléatoire", "réel", "commutatif", "d'adhésion"], "b": 2, "e": "La bonne réponse est : commutatif.", "u": false},
+  {"q": "Une personne morale est :", "r": ["uniquement un individu", "un groupe de personnes physiques réunies pour une activité commune", "un commerçant individuel", "un salarié d'entreprise"], "b": 1, "e": "La bonne réponse est : un groupe de personnes physiques réunies pour une activité commune.", "u": false},
+  {"q": "L'entreprise doit adhérer à une caisse de retraite complémentaire :", "r": ["lors de l'embauche du premier salarié", "uniquement à partir de 11 salariés", "à la création de la société, même sans salarié", "uniquement lors de l'embauche d'un cadre"], "b": 0, "e": "Dès l'embauche du premier salarié, l'employeur doit adhérer à une caisse de retraite complémentaire Agirc-Arrco. Aucune démarche n'est à effectuer : l'adhésion est automatique avec la première DSN.", "u": true},
+  {"q": "Le CSE a pour rôle principal :", "r": ["de diriger l'entreprise", "de représenter les salariés auprès de l'employeur", "de fixer les salaires", "de remplacer l'employeur"], "b": 1, "e": "La bonne réponse est : de représenter les salariés auprès de l'employeur.", "u": false},
+  {"q": "Dans les entreprises de moins de 50 salariés, les membres suppléants du CSE, lorsqu'ils remplacent les titulaires, bénéficient de :", "r": ["10 h de délégation par mois, payées", "5 h de délégation par mois, payées", "15 h de délégation par mois, payées", "50 % du temps légal imparti aux titulaires, payé"], "b": 0, "e": "La bonne réponse est : 10 h de délégation par mois, payées.", "u": false},
+  {"q": "La prescription pénale pour un délit est de :", "r": ["10 ans", "20 ans", "1 an", "6 ans"], "b": 3, "e": "La bonne réponse est : 6 ans.", "u": false},
+  {"q": "Le SIREN est :", "r": ["un code d'activité", "un numéro d'établissement", "un numéro d'identification de l'entreprise à 9 chiffres", "un numéro fiscal"], "b": 2, "e": "La bonne réponse est : un numéro d'identification de l'entreprise à 9 chiffres.", "u": false},
+  {"q": "La visite médicale de reprise est obligatoire après une absence suite à un accident du travail de :", "r": ["15 jours calendaires", "15 jours ouvrables", "30 jours calendaires", "8 jours ouvrables"], "b": 2, "e": "La bonne réponse est : 30 jours calendaires.", "u": false},
+  {"q": "L'organisme chargé du recouvrement des cotisations sociales est :", "r": ["la CNAM", "la CARSAT", "l'URSSAF", "l'INSEE"], "b": 2, "e": "A. La CNAM (Caisse nationale d'assurance maladie) gère la branche santé (remboursement des soins, accidents du travail). Elle reçoit l'argent de l'URSSAF mais ne le collecte pas elle-même.\nB. La CARSAT (Caisse d'assurance retraite et de la santé au travail) s'occupe de la préparation et du paiement des retraites et de la prévention des risques professionnels.\nD. L'INSEE (Institut national de la statistique et des études économiques) gère les statistiques et les numéros d'identification des entreprises (SIREN, SIRET, code APE). Il ne touche jamais aux cotisations.", "u": true},
+  {"q": "Un contrat qui se forme par le seul échange de consentement est :", "r": ["solennel", "consensuel", "réel", "aléatoire"], "b": 1, "e": "La bonne réponse est : consensuel.", "u": false},
+  {"q": "Dans le transport routier, en cas de licenciement d'un ouvrier ayant plus de 2 ans d'ancienneté, le préavis est de :", "r": ["1 semaine", "1 mois", "2 mois", "3 mois"], "b": 2, "e": "La bonne réponse est : 2 mois.", "u": false},
+  {"q": "Le grand livre sert à :", "r": ["enregistrer les opérations journalières", "regrouper l'ensemble des comptes de l'entreprise", "enregistrer les factures", "suivre les clients"], "b": 1, "e": "La bonne réponse est : regrouper l'ensemble des comptes de l'entreprise.", "u": false},
+  {"q": "Au-delà de 10 ans d'ancienneté, l'indemnité devient :", "r": ["1/5 de mois de salaire par année", "1/4 de mois de salaire par année", "1/3 de mois de salaire par année", "1/2 mois de salaire par année"], "b": 2, "e": "La bonne réponse est : 1/3 de mois de salaire par année.", "u": false},
+  {"q": "L'employeur doit verser au CSE :", "r": ["tous les frais sans limite", "un budget minimum de fonctionnement et activités sociales basé sur la masse salariale", "uniquement un budget social", "un budget libre"], "b": 1, "e": "La bonne réponse est : un budget minimum de fonctionnement et activités sociales basé sur la masse salariale.", "u": false},
+  {"q": "Un bien corporel est :", "r": ["un bien que l'on peut toucher", "un droit juridique", "un brevet", "une créance"], "b": 0, "e": "La bonne réponse est : un bien que l'on peut toucher.", "u": false},
+  {"q": "Dans une SARL, la responsabilité des associés est :", "r": ["illimitée", "indéfinie", "limitée aux apports", "solidaire sur les biens personnels"], "b": 2, "e": "La bonne réponse est : limitée aux apports.", "u": false},
+  {"q": "Depuis la mise en place du guichet unique, les CFE (centres de formalités des entreprises) :", "r": ["ont été supprimés", "restent obligatoires pour les sociétés", "restent obligatoires pour les entreprises individuelles", "n'existent plus que pour les commerçants"], "b": 0, "e": "La bonne réponse est : ont été supprimés.", "u": false},
+  {"q": "Dans une entreprise, le CSE est obligatoire à partir de :", "r": ["20 salariés", "11 salariés", "il n'y en a pas", "50 salariés"], "b": 1, "e": "La bonne réponse est : 11 salariés.", "u": false},
+  {"q": "Le droit de propriété est un droit :", "r": ["extrapatrimonial", "patrimonial", "civil uniquement", "administratif"], "b": 1, "e": "La bonne réponse est : patrimonial.", "u": false},
+  {"q": "Dans une SAS, le dirigeant principal est :", "r": ["un gérant", "un administrateur", "un directeur général", "un président"], "b": 3, "e": "La bonne réponse est : un président.", "u": false},
+  {"q": "Si le congé principal est fractionné, le salarié peut bénéficier :", "r": ["obligatoirement de 3 jours supplémentaires", "de jours supplémentaires sous conditions", "d'aucun avantage", "uniquement d'une indemnité"], "b": 1, "e": "La bonne réponse est : de jours supplémentaires sous conditions.", "u": false},
+  {"q": "Qui présente les réclamations individuelles et collectives à l'employeur ?", "r": ["les représentants du personnel du CSE", "le chef d'entreprise", "les membres de la CSSCT", "les représentants syndicaux uniquement"], "b": 0, "e": "Le CSE a fusionné les anciennes instances (délégués du personnel, CE et CHSCT). C'est désormais lui qui est l'interlocuteur unique pour les réclamations individuelles (par exemple, un conducteur qui conteste le calcul de ses heures supplémentaires ou une prime de non-accident) et pour les réclamations collectives (par exemple, un problème de chauffage dans les entrepôts).", "u": true},
+  {"q": "Un contrat qui exige une formalité particulière est un contrat :", "r": ["réel", "solennel", "consensuel", "d'adhésion"], "b": 1, "e": "La bonne réponse est : solennel.", "u": false},
+  {"q": "Le contrat de travail suppose la réunion de trois éléments cumulatifs :", "r": ["une prestation, un écrit, une durée minimale", "une rémunération, un horaire fixe, un règlement intérieur", "une prestation de travail, une rémunération et un lien de subordination", "une prestation de travail, un statut cadre et une ancienneté minimale"], "b": 2, "e": "La bonne réponse est : une prestation de travail, une rémunération et un lien de subordination.", "u": false},
+  {"q": "La DPAE doit être effectuée :", "r": ["au plus tard 15 jours avant l'embauche", "uniquement le jour de l'embauche", "uniquement par lettre recommandée", "au plus tôt dans les 8 jours précédant l'embauche"], "b": 3, "e": "La DPAE (déclaration préalable à l'embauche) doit être transmise à l'URSSAF.\nAu plus tôt : dans les 8 jours qui précèdent la date prévisible de l'embauche.\nAu plus tard : immédiatement avant la mise au travail.", "u": true},
+  {"q": "Dans toute entreprise, le chef d'entreprise doit, au niveau du CSE :", "r": ["présenter uniquement les comptes annuels", "faire assister un expert-comptable à chaque réunion", "informer le CSE sur la marche et l'évolution de l'entreprise", "présenter uniquement un bilan annuel"], "b": 2, "e": "La bonne réponse est : informer le CSE sur la marche et l'évolution de l'entreprise.", "u": false},
+  {"q": "Le chef d'une entreprise de 20 salariés doit :", "r": ["organiser les élections des membres du CSE", "organiser les élections du comité d'entreprise", "désigner les délégués syndicaux", "désigner les membres de la CSSCT"], "b": 0, "e": "La bonne réponse est : organiser les élections des membres du CSE.", "u": false},
+  {"q": "Un salarié doit passer une visite d'information lors de l'embauche dans un délai de :", "r": ["1 mois", "2 mois", "3 mois", "1 an"], "b": 2, "e": "Pour les travailleurs de nuit, la visite d'information et de prévention doit obligatoirement avoir lieu avant leur affectation sur le poste.\nEst travailleur de nuit le salarié qui accomplit au moins 3 heures de son temps de travail quotidien entre 21 h et 6 h, au moins deux fois par semaine, ou un nombre minimal d'heures de nuit sur l'année (270 heures, selon les conventions collectives).", "u": true},
+  {"q": "Le guichet unique des formalités des entreprises est opéré par :", "r": ["l'URSSAF", "l'INPI", "le tribunal de commerce", "la DGFIP"], "b": 1, "e": "La bonne réponse est : l'INPI.", "u": false},
+  {"q": "La prescription pour les créances issues d'un contrat de transport est de :", "r": ["2 ans", "1 an", "5 ans", "10 ans"], "b": 1, "e": "La bonne réponse est : 1 an.", "u": false},
+  {"q": "Un salarié absent pour accident du travail acquiert des congés payés :", "r": ["non", "oui sans limite", "oui mais dans certaines limites", "uniquement avec accord de l'employeur"], "b": 1, "e": "La bonne réponse est : oui sans limite.", "u": false},
+  {"q": "Les documents fiscaux doivent être conservés pendant :", "r": ["10 ans", "6 ans", "3 ans", "5 ans"], "b": 1, "e": "Documents fiscaux (impôts, TVA) : 6 ans.\nDocuments comptables (factures, bilans) : 10 ans.\nDocuments sociaux (bulletins de paie) : 5 ans (mais 50 ans conseillés pour la retraite).\nDocuments de transport (lettres de voiture) : 1 an.", "u": true},
+  {"q": "Le temps passé en réunion mensuelle avec l'employeur par les membres titulaires du CSE :", "r": ["n'est pas rémunéré", "est rémunéré comme temps de délégation", "est rémunéré et ne s'impute pas sur les heures de délégation", "est rémunéré à 50 %"], "b": 2, "e": "La bonne réponse est : est rémunéré et ne s'impute pas sur les heures de délégation.", "u": false},
+  {"q": "Dans le transport routier, le droit à congés payés s'acquiert à raison de :", "r": ["2 jours ouvrables par mois", "2,5 jours ouvrables par mois", "2 jours ouvrés par mois", "3 jours ouvrables par mois"], "b": 1, "e": "La bonne réponse est : 2,5 jours ouvrables par mois.", "u": false},
+  {"q": "Pour être électeur aux élections des représentants du personnel, il faut :", "r": ["être majeur", "être de nationalité française ou assimilée", "avoir 16 ans au moins et 3 mois d'ancienneté", "savoir lire et écrire le français"], "b": 2, "e": "La bonne réponse est : avoir 16 ans au moins et 3 mois d'ancienneté.", "u": false},
+  {"q": "Les élections du CSE ont lieu :", "r": ["à la décision du chef d'entreprise uniquement", "à la demande des salariés uniquement", "à la demande de l'inspection du travail", "à l'initiative de l'employeur et en général tous les 4 ans"], "b": 3, "e": "La bonne réponse est : à l'initiative de l'employeur et en général tous les 4 ans.", "u": false},
+  {"q": "Un contrat synallagmatique est un contrat :", "r": ["où une seule partie s'engage", "avec obligations réciproques", "obligatoire pour les entreprises", "aléatoire"], "b": 1, "e": "La bonne réponse est : avec obligations réciproques.", "u": false},
+  {"q": "L'affacturage consiste :", "r": ["à emprunter auprès d'une banque", "à vendre ses créances à un organisme appelé factor", "à payer ses dettes en plusieurs fois", "à bloquer des fonds en garantie"], "b": 1, "e": "La bonne réponse est : à vendre ses créances à un organisme appelé factor.", "u": false},
+  {"q": "En France, tous les salariés sont régis par :", "r": ["le Code du travail et la convention collective", "uniquement la convention collective", "uniquement le Code civil", "le Code du travail et le Code de la sécurité sociale"], "b": 0, "e": "La bonne réponse est : le Code du travail et la convention collective.", "u": false},
+  {"q": "Le code NAF (APE) correspond :", "r": ["au numéro de sécurité sociale", "au code qui identifie l'activité principale exercée", "au numéro de TVA", "au capital social"], "b": 1, "e": "La bonne réponse est : au code qui identifie l'activité principale exercée.", "u": false}
+];
+const POINTS = 2, LETTRES = ["A","B","C","D"];
+let ordre = [], i = 0, score = 0;
+const zone = document.getElementById("zone");
+
+function melange(t) { for (let k = t.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [t[k], t[j]] = [t[j], t[k]]; } return t; }
+
+function demarrer() {
+  ordre = melange(QUESTIONS.map((q, k) => {
+    const idx = melange([0, 1, 2, 3]);
+    return { q: q.q, e: q.e, u: q.u, r: idx.map(n => q.r[n]), b: idx.indexOf(q.b) };
+  }));
+  i = 0; score = 0; afficher();
+}
+
+function afficher() {
+  const Q = ordre[i], n = ordre.length;
+  zone.innerHTML = `
+    <div class="progres"><span>Question ${i + 1} / ${n}</span><span>${score} / ${n * POINTS} points</span></div>
+    <div class="barre"><div style="width:${(i / n) * 100}%"></div></div>
+    <p class="question"></p>
+    <div class="choix"></div>
+    <div class="retour"><div class="titre"></div><div class="exp"></div></div>
+    <div class="actions"><button class="btn" id="suivant" hidden>${i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button></div>`;
+  zone.querySelector(".question").textContent = Q.q;
+  const choix = zone.querySelector(".choix");
+  Q.r.forEach((txt, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="l">${LETTRES[k]}.</span><span></span>`;
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    choix.appendChild(b);
+  });
+}
+
+function repondre(k) {
+  const Q = ordre[i], btns = zone.querySelectorAll(".choix button"), ret = zone.querySelector(".retour");
+  btns.forEach(b => b.disabled = true);
+  btns[Q.b].classList.add("ok");
+  if (k === Q.b) {
+    score += POINTS;
+    ret.className = "retour okk";
+  } else {
+    btns[k].classList.add("ko");
+    ret.className = "retour ko";
+  }
+  const faux = (k !== Q.b);
+  ret.querySelector(".titre").textContent = faux ? "Mauvaise réponse" : "";
+  ret.querySelector(".exp").textContent = Q.e;
+  if (faux || Q.u) ret.style.display = "block";
+  zone.querySelector(".progres span:last-child").textContent = `${score} / ${ordre.length * POINTS} points`;
+  const s = document.getElementById("suivant");
+  s.hidden = false;
+  s.onclick = () => { i++; i < ordre.length ? afficher() : resultat(); };
+}
+
+function resultat() {
+  const total = ordre.length * POINTS, pct = score / total;
+  const msg = pct >= 0.8 ? "Très bon résultat, vous maîtrisez bien le programme."
+            : pct >= 0.5 ? "Résultat correct. Relisez le cours sur les points où vous vous êtes trompé."
+            : "Résultat insuffisant. Reprenez les cours avant de recommencer.";
+  zone.innerHTML = `
+    <div class="barre"><div style="width:100%"></div></div>
+    <div class="resultat">
+      <div class="score">${score}</div><div class="sur">sur ${total} points</div>
+      <div class="msg">${msg}</div>
+      <button class="btn" id="recommencer">Recommencer le QCM</button>
+    </div>`;
+  document.getElementById("recommencer").onclick = demarrer;
+}
+
+demarrer();
+</script>
+</body>
+</html>
