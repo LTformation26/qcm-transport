@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QCM Le contrat de transport n°2</title>
+<style>
+  :root { --texte:#0F2A1D; --sapin:#095228; --rouge:#C62828; --vert-ok:#1e7d45; --fond-ok:#e7f4ec; --fond-ko:#fbeaea; --filet:#cfd8d2; --gris:#5d6f64; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: Verdana, "DejaVu Sans", sans-serif; font-size:17px; line-height:1.5; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  header { display:flex; align-items:center; gap:14px; border-bottom: 3px solid var(--sapin); padding-bottom: 12px; margin-bottom: 18px; }
+  header img { width: 52px; height: auto; }
+  header .marque { font-size: 13px; color: var(--gris); letter-spacing: .5px; }
+  header h1 { margin: 0; font-size: 22px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
+  .question { font-size: 19px; font-weight: bold; margin: 0 0 18px; white-space: pre-line; }
+  .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--rouge); margin-top: 10px; }
+  .choix { display:flex; flex-direction:column; gap: 10px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix button:hover:not(:disabled) { border-color: var(--sapin); }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button:disabled { cursor: default; }
+  .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
+  .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
+  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour.ko { border-left-color: var(--rouge); }
+  .retour .exp { white-space: pre-line; }
+  .retour .titre { font-weight: bold; color: var(--rouge); }
+  .retour .titre:empty { display: none; }
+  .retour.okk .titre { color: var(--vert-ok); }
+  .retour.ko .titre { color: var(--rouge); }
+  .actions { margin-top: 22px; text-align: right; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn:hover { background: #0b6a32; }
+  .btn[hidden] { display:none; }
+  .resultat { text-align:center; padding-top: 10px; }
+  .resultat .score { font-size: 56px; font-weight: bold; color: var(--sapin); line-height:1.1; }
+  .resultat .sur { color: var(--gris); margin-bottom: 14px; }
+  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="data:image/png;base64,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" alt="Kaply Academy">
+    <div><div class="marque">Kaply Academy · Contrat de transport</div><h1>QCM Le contrat de transport n°2</h1></div>
+  </header>
+  <div id="zone"></div>
+</div>
+<script>
+const QUESTIONS = [
+  {"q": "Une entreprise confie au transporteur 2 cartons de 20 kg chacun.\nUn seul carton est perdu. Sa valeur réelle est de 1 800 €.\nAucune déclaration de valeur n'a été faite.\n\nQuelle est l'indemnité maximale due pour ce carton perdu ?", "r": ["660 €", "1 000 €", "1 800 €", "3 200 €"], "b": 0, "e": "Envoi inférieur à 3 tonnes : 33 € par kilo, avec un maximum de 1 000 € par colis.\n20 kg × 33 € = 660 €.", "u": true},
+  {"q": "Un envoi de 2 tonnes comprend une machine unique emballée en 1 seul colis de 80 kg.\nLe colis est totalement avarié. Valeur réelle : 4 500 €.\nAucune déclaration de valeur.\n\nQuelle est l'indemnité maximale ?", "r": ["2 640 €", "1 000 €", "3 200 €", "4 500 €"], "b": 1, "e": "80 × 33 = 2 640 €, mais il existe un plafond de 1 000 € par colis.", "u": true},
+  {"q": "Un envoi de 4 tonnes est totalement perdu.\nValeur réelle : 18 000 €.\nAucune déclaration de valeur.\n\nQuelle est l'indemnité maximale ?", "r": ["8 000 €", "12 800 €", "18 000 €", "80 000 €"], "b": 1, "e": "Envoi de 3 tonnes et plus : 20 € par kilo, avec un plafond global de 3 200 € par tonne de l'envoi.\n4 tonnes × 3 200 € = 12 800 €.", "u": true},
+  {"q": "Un transporteur prend en charge un envoi de 6 tonnes.\nPendant le transport, 900 kg sont perdus.\nAucune déclaration de valeur.\n\nQuelle est l'indemnité maximale ?", "r": ["18 000 €", "19 200 €", "28 800 €", "120 000 €"], "b": 0, "e": "20 € × 900 kg = 18 000 €.\nPlafond : 3 200 € × 6 t = 19 200 €.\n18 000 € est inférieur à 19 200 €, donc l'indemnité est de 18 000 €.\nLe contrat type précise que l'indemnité ne peut pas dépasser, par envoi, le poids brut de l'envoi en tonnes multiplié par 3 200 €.", "u": true},
+  {"q": "Un envoi de 2 tonnes est constitué d'un seul matériel de 50 000 €.\nLe donneur d'ordre a fait, avant la conclusion du contrat, une déclaration de valeur régulière et a payé le prix convenu correspondant.\n\nQuel est l'effet principal ?", "r": ["Elle ne change rien à l'indemnisation", "Elle remplace le plafond légal par le montant déclaré", "Elle supprime toute responsabilité du transporteur", "Elle ne joue qu'en cas de retard"], "b": 1, "e": "La déclaration de valeur régulière, faite avant la conclusion du contrat et payée, remplace le plafond légal par le montant déclaré.", "u": false},
+  {"q": "Le donneur d'ordre veut augmenter le plafond d'indemnisation en cas de retard de livraison.\nQue doit-il faire ?", "r": ["Faire une déclaration de valeur", "Demander un écrit du chauffeur", "Envoyer une LRAR après le retard", "Faire une déclaration d'intérêt spécial à la livraison"], "b": 3, "e": "La déclaration d'intérêt spécial à la livraison (DISL) vise le préjudice commercial causé par un retard (arrêt d'une chaîne de montage, perte d'une vente, pénalités de retard d'un client final).\nElle doit être inscrite sur le document de transport (lettre de voiture).\nLe donneur d'ordre fixe librement une somme qui correspond au préjudice maximal estimé en cas de retard.\nElle donne lieu au paiement d'un supplément de prix (une prime) au transporteur.\nAttention : pour que la DISL soit valable, le transporteur doit l'avoir acceptée. Il peut refuser si le risque lui semble trop élevé par rapport au prix du transport.", "u": true},
+  {"q": "Une marchandise laissée pour compte pouvait être sauvée partiellement, mais le donneur d'ordre impose sa destruction.\nLe transporteur est responsable, sans dol ni faute inexcusable.\n\nQue devient l'indemnité ?", "r": ["Elle reste inchangée", "Elle est réduite de moitié", "Elle est réduite d'un tiers", "Elle est doublée"], "b": 2, "e": "Contrat type, article 22.3 : l'indemnité est réduite d'un tiers lorsque le donneur d'ordre impose la destruction de la marchandise laissée pour compte ou en interdit le sauvetage. Cette réduction n'a pas lieu en cas de dol ou de faute inexcusable du transporteur.", "u": true},
+  {"q": "Une UTI est perdue. La marchandise à l'intérieur est également perdue.\n\nConcernant l'UTI elle-même, l'indemnité maximale est de :", "r": ["1 000 €", "2 875 €", "3 200 €", "33 €/kg"], "b": 1, "e": "L'indemnité pour l'UTI perdue ou avariée est limitée à 2 875 €. La marchandise qu'elle contient est indemnisée en plus, selon les plafonds habituels.", "u": true},
+  {"q": "Un transporteur se présente au lieu de chargement pour un envoi de 80 kg composé de 10 colis.\n\nQuelle est la durée maximale de mise à disposition du véhicule pour effectuer le chargement ?", "r": ["1 heure", "30 minutes", "15 minutes", "10 minutes"], "b": 2, "e": "Pour un envoi inférieur à 100 kg, composé de moins de 20 colis, la durée maximale de mise à disposition du véhicule est de 15 minutes.", "u": true},
+  {"q": "Le transporteur se présente pour un envoi de 1,2 tonne.\n\nQuelle est la durée maximale de mise à disposition ?", "r": ["15 minutes", "20 minutes", "30 minutes", "1 heure"], "b": 2, "e": "La bonne réponse est : 30 minutes.", "u": false},
+  {"q": "Un véhicule vient charger 8 tonnes.\nLe rendez-vous est respecté.\n\nQuelle est la durée maximale de mise à disposition ?", "r": ["1 heure", "1 h 30", "2 heures", "3 heures"], "b": 0, "e": "La bonne réponse est : 1 heure.", "u": false},
+  {"q": "Le transporteur se présente pour 7 tonnes, dans la plage horaire convenue.\n\nDurée maximale de mise à disposition ?", "r": ["1 heure", "1 h 30", "2 heures", "3 heures"], "b": 1, "e": "Rendez-vous = heure précise et ferme. Plage horaire = intervalle de temps.\nEnvoi de 3 à 10 tonnes :\n- rendez-vous respecté : 1 h ;\n- plage horaire respectée : 1 h 30 ;\n- autres cas : 2 h.", "u": true},
+  {"q": "Le véhicule vient charger 14 tonnes.\nLa plage horaire est respectée.\n\nDurée maximale de mise à disposition ?", "r": ["1 heure", "1 h 30", "2 heures", "3 heures"], "b": 2, "e": "La bonne réponse est : 2 heures.", "u": false},
+  {"q": "Le transporteur se présente pour 18 tonnes.\nIl n'y a ni rendez-vous respecté ni plage horaire respectée.\n\nDurée maximale ?", "r": ["1 heure", "2 heures", "3 heures", "4 heures"], "b": 2, "e": "Envoi de plus de 10 tonnes ou de plus de 30 m³ :\n- rendez-vous respecté : 1 h ;\n- plage horaire respectée : 2 h ;\n- autres cas : 3 h.", "u": true},
+  {"q": "Pour un envoi de 9 tonnes, avec plage horaire respectée, l'immobilisation dure 2 h 15 sans faute du transporteur.\n\nQue peut demander le transporteur ?", "r": ["Rien", "Une indemnité forfaitaire de 40 € seulement", "Un complément de rémunération pour frais d'immobilisation facturé séparément", "La résolution immédiate du contrat uniquement"], "b": 2, "e": "La bonne réponse est : Un complément de rémunération pour frais d'immobilisation facturé séparément.", "u": false},
+  {"q": "Un rendez-vous de chargement est fixé à 8 h 00.\nÀ 6 h 30, le transporteur informe le donneur d'ordre qu'il arrivera avec 2 h 30 de retard, ce retard risquant de causer un préjudice.\n\nQue prévoit le contrat type ?", "r": ["Le donneur d'ordre peut immédiatement rechercher un autre transporteur", "Le donneur d'ordre doit attendre le transporteur", "Le transporteur n'a aucune obligation d'information", "Le contrat est automatiquement annulé"], "b": 0, "e": "La bonne réponse est : Le donneur d'ordre peut immédiatement rechercher un autre transporteur.", "u": false},
+  {"q": "Le donneur d'ordre annule le transport 12 heures avant l'heure convenue de mise à disposition du véhicule.\nLe transporteur prouve un préjudice.\n\nQuelle indemnité maximale peut être due ?", "r": ["40 €", "50 % du prix de transport", "le prix du transport convenu", "le double du prix du transport"], "b": 2, "e": "Lorsque l'annulation intervient moins de 24 heures avant le jour ou l'heure convenus, le préjudice prouvé du transporteur est réparé dans la limite du prix du transport.", "u": true},
+  {"q": "Le transport est définitivement empêché par un cas de force majeure après qu'une partie du trajet a déjà été réalisée.\n\nÀ quoi le transporteur a-t-il droit ?", "r": ["À rien", "À l'intégralité du prix", "À la partie du prix correspondant au trajet effectué jusqu'à l'arrêt", "Seulement aux frais de carburant"], "b": 2, "e": "La bonne réponse est : À la partie du prix correspondant au trajet effectué jusqu'à l'arrêt.", "u": false},
+  {"q": "Le destinataire est absent lors d'une livraison à domicile.\n\nQuelle formalité doit être accomplie ?", "r": ["Déposer immédiatement la marchandise chez un voisin", "Déposer un avis de passage daté, puis le confirmer par écrit ou moyen électronique", "Retourner automatiquement à l'expéditeur", "Attendre 24 h sur place"], "b": 1, "e": "La bonne réponse est : Déposer un avis de passage daté, puis le confirmer par écrit ou moyen électronique.", "u": false},
+  {"q": "Après un avis de passage lors d'une livraison à domicile, l'envoi peut être retiré dans un délai de :", "r": ["24 heures", "2 jours ouvrables", "3 jours ouvrables", "5 jours ouvrables"], "b": 2, "e": "La bonne réponse est : 3 jours ouvrables.", "u": false}
+];
+const POINTS = 2, LETTRES = ["A","B","C","D"];
+let ordre = [], i = 0, score = 0;
+const zone = document.getElementById("zone");
+
+function melange(t) { for (let k = t.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [t[k], t[j]] = [t[j], t[k]]; } return t; }
+
+function demarrer() {
+  ordre = melange(QUESTIONS.map((q, k) => {
+    const idx = melange([0, 1, 2, 3]);
+    return { q: q.q, e: q.e, u: q.u, r: idx.map(n => q.r[n]), b: idx.indexOf(q.b) };
+  }));
+  i = 0; score = 0; afficher();
+}
+
+function afficher() {
+  const Q = ordre[i], n = ordre.length;
+  zone.innerHTML = `
+    <div class="progres"><span>Question ${i + 1} / ${n}</span><span>${score} / ${n * POINTS} points</span></div>
+    <div class="barre"><div style="width:${(i / n) * 100}%"></div></div>
+    <p class="question"></p>
+    <div class="choix"></div>
+    <div class="retour"><div class="titre"></div><div class="exp"></div></div>
+    <div class="actions"><button class="btn" id="suivant" hidden>${i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button></div>`;
+  zone.querySelector(".question").textContent = Q.q;
+  const choix = zone.querySelector(".choix");
+  Q.r.forEach((txt, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="l">${LETTRES[k]}.</span><span></span>`;
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    choix.appendChild(b);
+  });
+}
+
+function repondre(k) {
+  const Q = ordre[i], btns = zone.querySelectorAll(".choix button"), ret = zone.querySelector(".retour");
+  btns.forEach(b => b.disabled = true);
+  btns[Q.b].classList.add("ok");
+  if (k === Q.b) {
+    score += POINTS;
+    ret.className = "retour okk";
+  } else {
+    btns[k].classList.add("ko");
+    ret.className = "retour ko";
+  }
+  const faux = (k !== Q.b);
+  ret.querySelector(".titre").textContent = faux ? "Mauvaise réponse" : "";
+  ret.querySelector(".exp").textContent = Q.e;
+  if (faux || Q.u) ret.style.display = "block";
+  zone.querySelector(".progres span:last-child").textContent = `${score} / ${ordre.length * POINTS} points`;
+  const s = document.getElementById("suivant");
+  s.hidden = false;
+  s.onclick = () => { i++; i < ordre.length ? afficher() : resultat(); };
+}
+
+function resultat() {
+  const total = ordre.length * POINTS, pct = score / total;
+  const msg = pct >= 0.8 ? "Très bon résultat, vous maîtrisez le contrat de transport."
+            : pct >= 0.5 ? "Résultat correct. Relisez le cours sur les points où vous vous êtes trompé."
+            : "Résultat insuffisant. Reprenez le cours « Le contrat de transport » avant de recommencer.";
+  zone.innerHTML = `
+    <div class="barre"><div style="width:100%"></div></div>
+    <div class="resultat">
+      <div class="score">${score}</div><div class="sur">sur ${total} points</div>
+      <div class="msg">${msg}</div>
+      <button class="btn" id="recommencer">Recommencer le QCM</button>
+    </div>`;
+  document.getElementById("recommencer").onclick = demarrer;
+}
+
+demarrer();
+</script>
+</body>
+</html>
