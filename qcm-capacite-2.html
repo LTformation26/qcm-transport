@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QCM Notions de droit n°2</title>
+<style>
+  :root { --texte:#0F2A1D; --sapin:#095228; --rouge:#C62828; --vert-ok:#1e7d45; --fond-ok:#e7f4ec; --fond-ko:#fbeaea; --filet:#cfd8d2; --gris:#5d6f64; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: Verdana, "DejaVu Sans", sans-serif; font-size:17px; line-height:1.5; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  header { display:flex; align-items:center; gap:14px; border-bottom: 3px solid var(--sapin); padding-bottom: 12px; margin-bottom: 18px; }
+  header img { width: 52px; height: auto; }
+  header .marque { font-size: 13px; color: var(--gris); letter-spacing: .5px; }
+  header h1 { margin: 0; font-size: 22px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
+  .question { font-size: 19px; font-weight: bold; margin: 0 0 18px; white-space: pre-line; }
+  .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--rouge); margin-top: 10px; }
+  .choix { display:flex; flex-direction:column; gap: 10px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix button:hover:not(:disabled) { border-color: var(--sapin); }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button:disabled { cursor: default; }
+  .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
+  .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
+  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour.ko { border-left-color: var(--rouge); }
+  .retour .exp { white-space: pre-line; }
+  .retour .titre { font-weight: bold; color: var(--rouge); }
+  .retour .titre:empty { display: none; }
+  .retour.okk .titre { color: var(--vert-ok); }
+  .retour.ko .titre { color: var(--rouge); }
+  .actions { margin-top: 22px; text-align: right; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn:hover { background: #0b6a32; }
+  .btn[hidden] { display:none; }
+  .resultat { text-align:center; padding-top: 10px; }
+  .resultat .score { font-size: 56px; font-weight: bold; color: var(--sapin); line-height:1.1; }
+  .resultat .sur { color: var(--gris); margin-bottom: 14px; }
+  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="data:image/png;base64,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" alt="Kaply Academy">
+    <div><div class="marque">Kaply Academy · Capacité de transport</div><h1>QCM Notions de droit n°2</h1></div>
+  </header>
+  <div id="zone"></div>
+</div>
+<script>
+const QUESTIONS = [
+  {"q": "Lorsqu'un transporteur reçoit une lettre de change acceptée par son client, mais qu'il a un besoin immédiat de trésorerie avant la date d'échéance, quelle opération peut-il effectuer auprès de sa banque ?", "r": ["l'escompte", "l'affacturage", "le virement SEPA", "la mise en demeure"], "b": 0, "e": "La bonne réponse est : l'escompte.", "u": false},
+  {"q": "Dans le transport routier, l'employeur fixe les congés :", "r": ["librement sans contrainte", "uniquement selon le choix du salarié", "en tenant compte des nécessités de service et de la situation familiale", "uniquement selon l'ancienneté"], "b": 2, "e": "La bonne réponse est : en tenant compte des nécessités de service et de la situation familiale.", "u": false},
+  {"q": "La commission santé, sécurité et conditions de travail (CSSCT) dispose :", "r": ["d'un pouvoir de décision en matière de sécurité", "d'un droit d'alerte en cas de danger grave et imminent", "d'un pouvoir de décision sur l'emploi", "d'un droit d'information uniquement après décision"], "b": 1, "e": "La bonne réponse est : d'un droit d'alerte en cas de danger grave et imminent.", "u": false},
+  {"q": "Le guichet unique permet notamment de réaliser :", "r": ["uniquement les créations d'entreprises", "uniquement les radiations", "uniquement les modifications statutaires", "les créations, modifications et cessations d'activité"], "b": 3, "e": "La bonne réponse est : les créations, modifications et cessations d'activité.", "u": false},
+  {"q": "Une convention collective étendue est obligatoire :", "r": ["uniquement pour les employeurs signataires", "uniquement sur demande", "pour tous les employeurs entrant dans son champ d'application", "uniquement pour les entreprises de plus de 10 salariés"], "b": 2, "e": "La bonne réponse est : pour tous les employeurs entrant dans son champ d'application.", "u": false},
+  {"q": "En cas de départ volontaire à la retraite, le salarié :", "r": ["ne perçoit aucune indemnité", "perçoit obligatoirement l'indemnité légale de licenciement", "perçoit une indemnité spécifique prévue par la convention collective ou le Code du travail", "perçoit uniquement ses congés payés"], "b": 2, "e": "La bonne réponse est : perçoit une indemnité spécifique prévue par la convention collective ou le Code du travail.", "u": false},
+  {"q": "L'inspecteur du travail a un droit d'entrée dans les établissements :", "r": ["uniquement pendant les heures de travail de jour", "tous les jours sauf le dimanche", "tous les jours sauf le 1er mai", "de jour comme de nuit"], "b": 3, "e": "La bonne réponse est : de jour comme de nuit.", "u": false},
+  {"q": "Le capital minimum d'une SA est :", "r": ["10 000 €", "37 000 €", "50 000 €", "aucun minimum"], "b": 1, "e": "Pour une SA non cotée en bourse : 2 actionnaires minimum. Pour une SA cotée en bourse : 7 actionnaires minimum.\nIl n'y a pas de plafond maximum (contrairement aux 100 associés de la SARL).\nLes apports en industrie (travail, savoir-faire) sont interdits dans une SA.", "u": true},
+  {"q": "Le non-respect de l'obligation d'établir le DUER expose notamment une personne physique à une amende maximale de :", "r": ["750 €", "1 500 €", "3 750 €", "7 500 €"], "b": 1, "e": "La bonne réponse est : 1 500 €.", "u": false},
+  {"q": "Parmi les organismes suivants, lequel n'est PAS directement géré par les formalités du guichet unique pour une entreprise de transport ?", "r": ["le tribunal de commerce", "l'URSSAF", "l'INSEE (SIRET)", "la DREAL"], "b": 3, "e": "La bonne réponse est : la DREAL.", "u": false},
+  {"q": "La prescription commerciale est de :", "r": ["2 ans", "3 ans", "5 ans", "10 ans"], "b": 2, "e": "La bonne réponse est : 5 ans.", "u": false},
+  {"q": "Le respect de l'intégrité physique relève des droits :", "r": ["patrimoniaux", "commerciaux", "extrapatrimoniaux", "financiers"], "b": 2, "e": "La bonne réponse est : extrapatrimoniaux.", "u": false},
+  {"q": "Depuis le 1er janvier 2023, les formalités de création, modification et cessation d'activité d'une entreprise doivent être effectuées :", "r": ["auprès du greffe du tribunal de commerce uniquement", "auprès du CFE compétent", "en ligne sur le guichet unique des formalités des entreprises", "auprès de l'URSSAF uniquement"], "b": 2, "e": "La bonne réponse est : en ligne sur le guichet unique des formalités des entreprises.", "u": false},
+  {"q": "Le CSE contribue notamment :", "r": ["à la gestion financière de l'entreprise", "à la signature des contrats commerciaux", "à la protection de la santé, de la sécurité et des conditions de travail des salariés", "à la gestion des licenciements"], "b": 2, "e": "La bonne réponse est : à la protection de la santé, de la sécurité et des conditions de travail des salariés.", "u": false},
+  {"q": "Dans une entreprise :", "r": ["un seul représentant du personnel doit représenter l'ensemble des salariés", "il faut obligatoirement un représentant par catégorie de salariés", "le nombre de représentants dépend du nombre de salariés", "il faut au moins un représentant syndical par catégorie"], "b": 2, "e": "La bonne réponse est : le nombre de représentants dépend du nombre de salariés.", "u": false},
+  {"q": "Pour les 10 premières années d'ancienneté, l'indemnité minimale est de :", "r": ["1/10 de mois de salaire par année", "1/5 de mois de salaire par année", "1/4 de mois de salaire par année", "1/3 de mois de salaire par année"], "b": 2, "e": "La bonne réponse est : 1/4 de mois de salaire par année.", "u": false},
+  {"q": "Le SIRET correspond :", "r": ["au SIREN uniquement", "au SIREN + 5 chiffres identifiant l'établissement", "à un numéro fiscal", "à un code d'activité"], "b": 1, "e": "La bonne réponse est : au SIREN + 5 chiffres identifiant l'établissement.", "u": false},
+  {"q": "Qui peut dresser procès-verbal en entreprise ?", "r": ["le médecin du travail", "l'inspection du travail", "le médecin de la CPAM", "un agent de l'URSSAF"], "b": 1, "e": "La bonne réponse est : l'inspection du travail.", "u": false},
+  {"q": "Le livre journal sert à :", "r": ["enregistrer les opérations quotidiennes", "regrouper les comptes de l'entreprise", "enregistrer les salariés", "suivre les stocks"], "b": 0, "e": "La bonne réponse est : enregistrer les opérations quotidiennes.", "u": false},
+  {"q": "Les créances d'un commerçant contre un consommateur se prescrivent en :", "r": ["2 ans", "3 ans", "5 ans", "1 an"], "b": 0, "e": "La bonne réponse est : 2 ans.", "u": false},
+  {"q": "Un salarié ayant 9 ans et 6 mois d'ancienneté aura une indemnité calculée :", "r": ["sur 9 ans uniquement", "sur 10 ans automatiquement", "au prorata des années complètes uniquement", "au prorata exact de son ancienneté"], "b": 3, "e": "Pour 9 ans et 6 mois, on ne calcule pas sur 9 ans mais sur 9,5 ans.\nExemple : un conducteur avec un salaire de référence de 2 000 € et 9 ans et 6 mois d'ancienneté.\nTaux : 1/4 de mois par année (car moins de 10 ans).\nPour les 9 ans : (2 000 × 1/4) × 9 = 500 × 9 = 4 500 €.\nPour les 6 mois (soit 0,5 an) : (2 000 × 1/4) × 0,5 = 250 €.\nTotal : 4 500 + 250 = 4 750 €.", "u": true},
+  {"q": "Les documents comptables doivent être conservés pendant :", "r": ["5 ans", "6 ans", "8 ans", "10 ans"], "b": 3, "e": "La bonne réponse est : 10 ans.", "u": false},
+  {"q": "L'indemnité de licenciement :", "r": ["est toujours soumise à cotisations sociales", "est assimilée à un salaire", "n'est pas soumise à cotisations dans certaines limites", "est exonérée dans tous les cas"], "b": 2, "e": "La bonne réponse est : n'est pas soumise à cotisations dans certaines limites.", "u": false},
+  {"q": "Les membres de la CSSCT sont :", "r": ["choisis par l'employeur", "élus par les salariés", "désignés par des organismes extérieurs", "désignés par les membres du CSE"], "b": 3, "e": "La bonne réponse est : désignés par les membres du CSE.", "u": false},
+  {"q": "Un contrat dont la prestation dépend d'un événement incertain est un contrat :", "r": ["consensuel", "commutatif", "aléatoire", "réel"], "b": 2, "e": "La bonne réponse est : aléatoire.", "u": false},
+  {"q": "Une SASU est :", "r": ["une SARL avec un seul associé", "une SAS avec un seul associé", "une SA avec un seul actionnaire", "une SNC avec un seul associé"], "b": 1, "e": "La bonne réponse est : une SAS avec un seul associé.", "u": false},
+  {"q": "Dans le transport routier, le congé principal doit être au minimum de :", "r": ["10 jours ouvrables", "12 jours ouvrables", "15 jours ouvrables", "20 jours ouvrables"], "b": 1, "e": "La bonne réponse est : 12 jours ouvrables.", "u": false},
+  {"q": "La protection des représentants du personnel signifie que :", "r": ["ils ne peuvent pas être licenciés pendant leur mandat", "ils ne peuvent subir aucune sanction", "ils ne peuvent être licenciés qu'après autorisation de l'inspection du travail", "ils ne peuvent être licenciés que pour motif économique"], "b": 2, "e": "La bonne réponse est : ils ne peuvent être licenciés qu'après autorisation de l'inspection du travail.", "u": false},
+  {"q": "Un contrat dont les clauses sont imposées par une partie est un contrat :", "r": ["d'adhésion", "consensuel", "aléatoire", "réel"], "b": 0, "e": "La bonne réponse est : d'adhésion.", "u": false},
+  {"q": "Dans une SNC, les associés ont une responsabilité :", "r": ["limitée aux apports", "indéfinie et solidaire", "uniquement pénale", "limitée au capital social"], "b": 1, "e": "La bonne réponse est : indéfinie et solidaire.", "u": false},
+  {"q": "Le patrimoine d'une personne correspond :", "r": ["uniquement aux biens immobiliers", "uniquement aux biens matériels", "à l'ensemble des biens et droits d'une personne", "uniquement aux droits juridiques"], "b": 2, "e": "La bonne réponse est : à l'ensemble des biens et droits d'une personne.", "u": false},
+  {"q": "Lors des élections des représentants du personnel :", "r": ["le premier tour est ouvert à tous", "le premier tour sert uniquement à mesurer la représentativité des syndicats", "le premier tour est réservé aux candidatures présentées par les syndicats", "le premier tour est valable quel que soit le nombre de votants"], "b": 2, "e": "La bonne réponse est : le premier tour est réservé aux candidatures présentées par les syndicats.", "u": false},
+  {"q": "La prescription pénale pour un crime est de :", "r": ["20 ans", "10 ans", "6 ans", "1 an"], "b": 0, "e": "La bonne réponse est : 20 ans.", "u": false},
+  {"q": "Lorsque le contrat de travail est verbal, l'employeur doit au minimum remettre au salarié :", "r": ["un règlement intérieur signé", "un document écrit reprenant les informations déclarées dans la DPAE", "une attestation de médecine du travail", "une copie du DUER"], "b": 1, "e": "La bonne réponse est : un document écrit reprenant les informations déclarées dans la DPAE.", "u": false},
+  {"q": "Pour certains salariés exposés à des risques particuliers, l'employeur doit organiser :", "r": ["un examen médical d'aptitude avant l'affectation au poste", "uniquement une visite de reprise", "uniquement une visite facultative", "une visite médicale après la période d'essai"], "b": 0, "e": "La bonne réponse est : un examen médical d'aptitude avant l'affectation au poste.", "u": false},
+  {"q": "Le CSE dans les entreprises de plus de 50 salariés possède :", "r": ["un droit de veto sur la gestion", "un pouvoir de décision sur la formation", "un droit de veto sur l'emploi", "un pouvoir consultatif sur l'économie, l'emploi et la formation"], "b": 3, "e": "La bonne réponse est : un pouvoir consultatif sur l'économie, l'emploi et la formation.", "u": false},
+  {"q": "Les représentants du personnel :", "r": ["sont désignés par le chef d'entreprise", "sont généralement élus pour 4 ans par les salariés", "bénéficient de 20 h de délégation automatiquement", "ne peuvent jamais être licenciés"], "b": 1, "e": "La bonne réponse est : sont généralement élus pour 4 ans par les salariés.", "u": false},
+  {"q": "Le paiement des cotisations d'assurance chômage est effectué auprès de :", "r": ["l'URSSAF", "France Travail", "la caisse de retraite complémentaire", "la caisse de congés payés"], "b": 0, "e": "Même si le chômage est géré par France Travail, ce n'est pas cet organisme qui encaisse les cotisations : l'URSSAF joue le rôle de collecteur unique des cotisations sociales.", "u": true},
+  {"q": "La période de référence pour l'acquisition des congés payés est en principe :", "r": ["du 1er janvier au 31 décembre", "du 1er mars au 28 février", "du 1er avril au 31 mars", "du 1er juin au 31 mai"], "b": 3, "e": "La bonne réponse est : du 1er juin au 31 mai.", "u": false},
+  {"q": "Pendant le préavis, le salarié bénéficie :", "r": ["d'aucun droit spécifique", "d'heures pour recherche d'emploi", "d'un congé obligatoire", "d'une dispense automatique"], "b": 1, "e": "La bonne réponse est : d'heures pour recherche d'emploi.", "u": false},
+  {"q": "Une marque commerciale est un :", "r": ["bien meuble", "bien corporel", "bien incorporel", "bien immobilier"], "b": 2, "e": "La bonne réponse est : bien incorporel.", "u": false},
+  {"q": "Le paiement en espèces maximum pour un résident fiscal français est de :", "r": ["500 €", "1 000 €", "3 000 €", "10 000 €"], "b": 1, "e": "La bonne réponse est : 1 000 €.", "u": false},
+  {"q": "Les attributions du CSE dans les entreprises de plus de 50 salariés sont :", "r": ["uniquement sociales", "uniquement syndicales", "économiques, sociales et professionnelles", "définies au cas par cas"], "b": 2, "e": "La bonne réponse est : économiques, sociales et professionnelles.", "u": false},
+  {"q": "L'indemnité de congés payés est calculée selon :", "r": ["une seule méthode obligatoire", "le salaire de base uniquement", "la méthode la plus favorable entre maintien de salaire et 1/10", "uniquement le 1/10"], "b": 2, "e": "La bonne réponse est : la méthode la plus favorable entre maintien de salaire et 1/10.", "u": false},
+  {"q": "Pour être éligible aux élections des représentants du personnel, il faut :", "r": ["adhérer à un syndicat", "avoir 18 ans et un an d'ancienneté", "avoir un niveau BEPC", "être dégagé des obligations militaires"], "b": 1, "e": "La bonne réponse est : avoir 18 ans et un an d'ancienneté.", "u": false},
+  {"q": "Lors de l'organisation des élections du CSE, il faut rédiger :", "r": ["un accord d'entreprise", "un accord d'établissement", "une procédure électorale", "un protocole d'accord pré-électoral"], "b": 3, "e": "La bonne réponse est : un protocole d'accord pré-électoral.", "u": false},
+  {"q": "Un contrat qui nécessite la remise de la chose pour être formé est un contrat :", "r": ["consensuel", "commutatif", "réel", "unilatéral"], "b": 2, "e": "Exemple : le prêt d'un véhicule.", "u": true},
+  {"q": "Parmi les contrats suivants, celui qui peut en principe être conclu verbalement est :", "r": ["le CDI à temps plein", "le CDD", "le contrat de travail temporaire", "le contrat à temps partiel"], "b": 0, "e": "La bonne réponse est : le CDI à temps plein.", "u": false},
+  {"q": "La convention collective nationale :", "r": ["est obligatoirement affichée intégralement", "seule la grille des salaires est affichée", "seuls les coefficients sont affichés", "peut être consultée par tout salarié qui en fait la demande"], "b": 3, "e": "La bonne réponse est : peut être consultée par tout salarié qui en fait la demande.", "u": false},
+  {"q": "L'immatriculation d'une entreprise commerciale se fait au :", "r": ["registre du commerce et des sociétés", "registre fiscal", "registre social", "registre des sociétés civiles"], "b": 0, "e": "La bonne réponse est : registre du commerce et des sociétés.", "u": false}
+];
+const POINTS = 2, LETTRES = ["A","B","C","D"];
+let ordre = [], i = 0, score = 0;
+const zone = document.getElementById("zone");
+
+function melange(t) { for (let k = t.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [t[k], t[j]] = [t[j], t[k]]; } return t; }
+
+function demarrer() {
+  ordre = melange(QUESTIONS.map((q, k) => {
+    const idx = melange([0, 1, 2, 3]);
+    return { q: q.q, e: q.e, u: q.u, r: idx.map(n => q.r[n]), b: idx.indexOf(q.b) };
+  }));
+  i = 0; score = 0; afficher();
+}
+
+function afficher() {
+  const Q = ordre[i], n = ordre.length;
+  zone.innerHTML = `
+    <div class="progres"><span>Question ${i + 1} / ${n}</span><span>${score} / ${n * POINTS} points</span></div>
+    <div class="barre"><div style="width:${(i / n) * 100}%"></div></div>
+    <p class="question"></p>
+    <div class="choix"></div>
+    <div class="retour"><div class="titre"></div><div class="exp"></div></div>
+    <div class="actions"><button class="btn" id="suivant" hidden>${i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button></div>`;
+  zone.querySelector(".question").textContent = Q.q;
+  const choix = zone.querySelector(".choix");
+  Q.r.forEach((txt, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="l">${LETTRES[k]}.</span><span></span>`;
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    choix.appendChild(b);
+  });
+}
+
+function repondre(k) {
+  const Q = ordre[i], btns = zone.querySelectorAll(".choix button"), ret = zone.querySelector(".retour");
+  btns.forEach(b => b.disabled = true);
+  btns[Q.b].classList.add("ok");
+  if (k === Q.b) {
+    score += POINTS;
+    ret.className = "retour okk";
+  } else {
+    btns[k].classList.add("ko");
+    ret.className = "retour ko";
+  }
+  const faux = (k !== Q.b);
+  ret.querySelector(".titre").textContent = faux ? "Mauvaise réponse" : "";
+  ret.querySelector(".exp").textContent = Q.e;
+  if (faux || Q.u) ret.style.display = "block";
+  zone.querySelector(".progres span:last-child").textContent = `${score} / ${ordre.length * POINTS} points`;
+  const s = document.getElementById("suivant");
+  s.hidden = false;
+  s.onclick = () => { i++; i < ordre.length ? afficher() : resultat(); };
+}
+
+function resultat() {
+  const total = ordre.length * POINTS, pct = score / total;
+  const msg = pct >= 0.8 ? "Très bon résultat, vous maîtrisez bien le programme."
+            : pct >= 0.5 ? "Résultat correct. Relisez le cours sur les points où vous vous êtes trompé."
+            : "Résultat insuffisant. Reprenez les cours avant de recommencer.";
+  zone.innerHTML = `
+    <div class="barre"><div style="width:100%"></div></div>
+    <div class="resultat">
+      <div class="score">${score}</div><div class="sur">sur ${total} points</div>
+      <div class="msg">${msg}</div>
+      <button class="btn" id="recommencer">Recommencer le QCM</button>
+    </div>`;
+  document.getElementById("recommencer").onclick = demarrer;
+}
+
+demarrer();
+</script>
+</body>
+</html>
