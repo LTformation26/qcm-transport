@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La RSE</title>
+<style>
+  :root { --texte:#0F2A1D; --sapin:#095228; --rouge:#C62828; --vert-ok:#1e7d45; --fond-ok:#e7f4ec; --fond-ko:#fbeaea; --filet:#cfd8d2; --gris:#5d6f64; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: Verdana, "DejaVu Sans", sans-serif; font-size:17px; line-height:1.5; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  header { display:flex; align-items:center; gap:14px; border-bottom: 3px solid var(--sapin); padding-bottom: 12px; margin-bottom: 18px; }
+  header img { width: 52px; height: auto; }
+  header .marque { font-size: 13px; color: var(--gris); letter-spacing: .5px; }
+  header h1 { margin: 0; font-size: 22px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
+  .question { font-size: 19px; font-weight: bold; margin: 0 0 18px; white-space: pre-line; }
+  .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--rouge); margin-top: 10px; }
+  .choix { display:flex; flex-direction:column; gap: 10px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix button:hover:not(:disabled) { border-color: var(--sapin); }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button:disabled { cursor: default; }
+  .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
+  .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
+  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour.ko { border-left-color: var(--rouge); }
+  .retour .exp { white-space: pre-line; }
+  .retour .titre { font-weight: bold; color: var(--rouge); }
+  .retour .titre:empty { display: none; }
+  .retour.okk .titre { color: var(--vert-ok); }
+  .retour.ko .titre { color: var(--rouge); }
+  .actions { margin-top: 22px; text-align: right; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn:hover { background: #0b6a32; }
+  .btn[hidden] { display:none; }
+  .resultat { text-align:center; padding-top: 10px; }
+  .resultat .score { font-size: 56px; font-weight: bold; color: var(--sapin); line-height:1.1; }
+  .resultat .sur { color: var(--gris); margin-bottom: 14px; }
+  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="data:image/png;base64,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" alt="Kaply Academy">
+    <div><div class="marque">Kaply Academy · Capacité de transport</div><h1>La RSE</h1></div>
+  </header>
+  <div id="zone"></div>
+</div>
+<script>
+const QUESTIONS = [
+  {"q": "Le repos hebdomadaire d'un conducteur ne peut jamais être inférieur à :", "r": ["24 h consécutives", "36 h consécutives", "45 h consécutives", "48 h consécutives"], "b": 0, "e": "La bonne réponse est : 24 h consécutives.", "u": false},
+  {"q": "Le repos hebdomadaire normal doit être pris :", "r": ["obligatoirement au domicile", "obligatoirement à l'hôtel", "hors du véhicule", "au dépôt uniquement"], "b": 2, "e": "La bonne réponse est : hors du véhicule.", "u": false},
+  {"q": "Concernant l'utilisation du tachygraphe lors du franchissement d'une frontière dans l'Union européenne, quelle affirmation est correcte ?", "r": ["Le conducteur doit saisir le symbole du pays immédiatement au moment exact du passage de la frontière.", "Le conducteur doit enregistrer le symbole du pays au premier arrêt possible après la frontière.", "Le conducteur n'a aucune obligation d'enregistrer le pays.", "Le conducteur doit enregistrer le pays uniquement à la fin de la journée."], "b": 1, "e": "La bonne réponse est : Le conducteur doit enregistrer le symbole du pays au premier arrêt possible après la frontière..", "u": false},
+  {"q": "Un conducteur conduit :\nlundi : 9 h\nmardi : 10 h\nmercredi : 9 h\njeudi : 10 h\n\nVendredi, il peut conduire au maximum :", "r": ["9 h", "10 h", "8 h", "11 h"], "b": 0, "e": "La conduite journalière est de 9 h, avec 2 dépassements possibles à 10 h par semaine. Les deux ont déjà été utilisés (mardi et jeudi) : vendredi, la limite est de 9 h.", "u": true},
+  {"q": "Une semaine, au sens du règlement CE, est un intervalle de temps :", "r": ["de 7 jours consécutifs", "compris entre lundi 0 h et dimanche 24 h", "compris entre deux repos hebdomadaires", "compris entre deux week-ends"], "b": 1, "e": "Au sens du règlement, la semaine va du lundi 0 h au dimanche 24 h.", "u": true},
+  {"q": "Un repos journalier réduit en simple équipage ne doit jamais être inférieur à :", "r": ["8 h consécutives", "9 h consécutives", "11 h consécutives", "12 h consécutives"], "b": 1, "e": "La bonne réponse est : 9 h consécutives.", "u": false},
+  {"q": "Le conducteur peut prendre son repos hebdomadaire normal :", "r": ["uniquement au siège de l'entreprise", "uniquement dans le véhicule", "soit au lieu d'établissement de l'entreprise, soit à son domicile", "uniquement dans un hôtel choisi par l'entreprise"], "b": 2, "e": "Au cours de chaque période de trois ou quatre semaines consécutives, l'employeur doit permettre au conducteur de retourner dans l'un des deux lieux suivants (lieu d'établissement de l'entreprise ou domicile) en vue de prendre son repos hebdomadaire normal.", "u": true},
+  {"q": "Un conducteur prend un repos journalier réduit mardi.\nCombien de fois peut-il encore réduire son repos avant le repos hebdomadaire ?", "r": ["1", "2", "3", "4"], "b": 1, "e": "Le repos journalier peut être réduit 3 fois au maximum entre deux repos hebdomadaires. Une réduction a déjà été prise : il en reste 2.", "u": true},
+  {"q": "Un conducteur termine son service lundi à 20 h.\nÀ quelle heure au plus tard doit-il reprendre avec un repos normal ?", "r": ["6 h", "7 h", "8 h", "9 h"], "b": 1, "e": "Repos normal de 11 h : 20 h + 11 h = 7 h le mardi.", "u": true},
+  {"q": "Un conducteur prend un repos hebdomadaire réduit de 24 h.\nLa compensation doit être prise :", "r": ["la semaine suivante", "dans les deux semaines", "avant la fin de la troisième semaine", "avant la fin du mois"], "b": 2, "e": "La bonne réponse est : avant la fin de la troisième semaine.", "u": false},
+  {"q": "Un conducteur conduit 4 h, puis effectue 30 minutes de chargement, puis reprend la conduite.\nQuelle activité doit-il enregistrer sur le tachygraphe pendant le chargement ?", "r": ["symbole repos (lit)", "symbole disponibilité (carré)", "symbole travail (marteaux)", "symbole conduite (volant)"], "b": 2, "e": "La bonne réponse est : symbole travail (marteaux).", "u": false},
+  {"q": "Après combien de temps maximum doit intervenir un repos hebdomadaire ?", "r": ["5 périodes de 24 h", "6 périodes de 24 h", "7 périodes de 24 h", "8 périodes de 24 h"], "b": 1, "e": "La bonne réponse est : 6 périodes de 24 h.", "u": false},
+  {"q": "Aucun conducteur routier ne peut conduire, par semaine, plus de :", "r": ["35 h", "39 h", "48 h", "56 h"], "b": 3, "e": "La bonne réponse est : 56 h.", "u": false},
+  {"q": "Le temps de travail effectif comprend :", "r": ["la conduite + pauses", "le chargement et le déchargement", "le repos journalier", "le repos fractionné"], "b": 1, "e": "La bonne réponse est : le chargement et le déchargement.", "u": false},
+  {"q": "Un conducteur effectuant du transport international de marchandises souhaite prendre deux repos hebdomadaires réduits consécutifs à l'étranger.\nQuelle affirmation est correcte ?", "r": ["Cela est interdit dans tous les cas.", "Cela est possible à condition de prendre au moins quatre repos hebdomadaires sur quatre semaines, dont au moins deux repos hebdomadaires normaux, et de compenser les repos réduits avant le repos normal suivant.", "Cela est possible uniquement si l'employeur l'autorise.", "Cela est possible uniquement si le conducteur revient au dépôt chaque semaine."], "b": 1, "e": "La bonne réponse est : Cela est possible à condition de prendre au moins quatre repos hebdomadaires sur quatre semaines, dont au moins deux repos hebdomadaires normaux, et de compenser les repos réduits avant le repos normal suivant..", "u": false},
+  {"q": "Sur le tachygraphe, quel symbole correspond au temps de conduite ?", "r": ["carré", "lit", "marteaux", "volant"], "b": 3, "e": "La bonne réponse est : volant.", "u": false},
+  {"q": "Le conducteur peut fractionner sa pause de 45 minutes de la façon suivante :", "r": ["en trois tranches d'au moins 15 minutes", "en une tranche de 30 minutes suivie d'une tranche de 15 minutes", "en une tranche de 15 minutes suivie d'une tranche de 30 minutes", "en une tranche de 20 minutes suivie d'une tranche de 25 minutes"], "b": 2, "e": "La bonne réponse est : en une tranche de 15 minutes suivie d'une tranche de 30 minutes.", "u": false},
+  {"q": "La pause prévue dans le règlement CE 561/2006 est de :", "r": ["20 minutes", "30 minutes", "45 minutes", "60 minutes"], "b": 2, "e": "La bonne réponse est : 45 minutes.", "u": false},
+  {"q": "Un conducteur conduit :\n4 h 30 → pause de 15 min → déchargement → pause de 30 min → conduite de 2 h.\n\nLa situation est :", "r": ["conforme", "non conforme", "conforme uniquement en international", "conforme uniquement si arrêt moteur"], "b": 0, "e": "La pause de 45 minutes peut être fractionnée en une pause de 15 minutes suivie d'une pause de 30 minutes. Elle a bien été prise après 4 h 30 de conduite.", "u": true},
+  {"q": "Le logement fourni par l'employeur doit comporter :", "r": ["uniquement un lit", "uniquement une salle d'eau", "un matériel de couchage et des installations sanitaires convenables", "uniquement une cuisine"], "b": 2, "e": "La bonne réponse est : un matériel de couchage et des installations sanitaires convenables.", "u": false},
+  {"q": "Un conducteur commence lundi à 6 h.\nIl prend son repos journalier à 21 h.\nCe repos sera :", "r": ["normal", "réduit", "hebdomadaire", "interdit"], "b": 1, "e": "L'amplitude est de 15 h (de 6 h à 21 h) : le repos sera donc réduit.", "u": true},
+  {"q": "Le règlement européen prévoit que la durée totale de conduite ne doit pas dépasser, sur deux semaines consécutives :", "r": ["70 h", "80 h", "90 h", "100 h"], "b": 2, "e": "La bonne réponse est : 90 h.", "u": false},
+  {"q": "Un conducteur commence lundi à 6 h.\nIl prend un repos journalier réduit à 21 h.\n\nÀ quelle heure au plus tôt peut-il reprendre mardi ?", "r": ["5 h", "6 h", "7 h", "8 h"], "b": 1, "e": "Repos journalier réduit de 9 h : 21 h + 9 h = 6 h le mardi.", "u": true},
+  {"q": "Lorsque le conducteur prend son repos hebdomadaire normal hors du véhicule :", "r": ["le conducteur doit payer son logement", "l'employeur doit payer un logement approprié", "le client doit payer l'hôtel", "aucune obligation n'existe"], "b": 1, "e": "La bonne réponse est : l'employeur doit payer un logement approprié.", "u": false},
+  {"q": "L'amplitude correspond :", "r": ["uniquement au temps de conduite", "au temps de conduite + temps de disponibilité", "au temps entre la prise et la fin de service", "au temps de conduite + temps de disponibilité + autres tâches"], "b": 2, "e": "La bonne réponse est : au temps entre la prise et la fin de service.", "u": false}
+];
+const POINTS = 2, LETTRES = ["A","B","C","D"];
+let ordre = [], i = 0, score = 0;
+const zone = document.getElementById("zone");
+
+function melange(t) { for (let k = t.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [t[k], t[j]] = [t[j], t[k]]; } return t; }
+
+function demarrer() {
+  ordre = melange(QUESTIONS.map((q, k) => {
+    const idx = melange([0, 1, 2, 3]);
+    return { q: q.q, e: q.e, u: q.u, r: idx.map(n => q.r[n]), b: idx.indexOf(q.b) };
+  }));
+  i = 0; score = 0; afficher();
+}
+
+function afficher() {
+  const Q = ordre[i], n = ordre.length;
+  zone.innerHTML = `
+    <div class="progres"><span>Question ${i + 1} / ${n}</span><span>${score} / ${n * POINTS} points</span></div>
+    <div class="barre"><div style="width:${(i / n) * 100}%"></div></div>
+    <p class="question"></p>
+    <div class="choix"></div>
+    <div class="retour"><div class="titre"></div><div class="exp"></div></div>
+    <div class="actions"><button class="btn" id="suivant" hidden>${i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button></div>`;
+  zone.querySelector(".question").textContent = Q.q;
+  const choix = zone.querySelector(".choix");
+  Q.r.forEach((txt, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="l">${LETTRES[k]}.</span><span></span>`;
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    choix.appendChild(b);
+  });
+}
+
+function repondre(k) {
+  const Q = ordre[i], btns = zone.querySelectorAll(".choix button"), ret = zone.querySelector(".retour");
+  btns.forEach(b => b.disabled = true);
+  btns[Q.b].classList.add("ok");
+  if (k === Q.b) {
+    score += POINTS;
+    ret.className = "retour okk";
+  } else {
+    btns[k].classList.add("ko");
+    ret.className = "retour ko";
+  }
+  const faux = (k !== Q.b);
+  ret.querySelector(".titre").textContent = faux ? "Mauvaise réponse" : "";
+  ret.querySelector(".exp").textContent = Q.e;
+  if (faux || Q.u) ret.style.display = "block";
+  zone.querySelector(".progres span:last-child").textContent = `${score} / ${ordre.length * POINTS} points`;
+  const s = document.getElementById("suivant");
+  s.hidden = false;
+  s.onclick = () => { i++; i < ordre.length ? afficher() : resultat(); };
+}
+
+function resultat() {
+  const total = ordre.length * POINTS, pct = score / total;
+  const msg = pct >= 0.8 ? "Très bon résultat, vous maîtrisez la réglementation sociale."
+            : pct >= 0.5 ? "Résultat correct. Relisez le cours sur les points où vous vous êtes trompé."
+            : "Résultat insuffisant. Reprenez le cours avant de recommencer.";
+  zone.innerHTML = `
+    <div class="barre"><div style="width:100%"></div></div>
+    <div class="resultat">
+      <div class="score">${score}</div><div class="sur">sur ${total} points</div>
+      <div class="msg">${msg}</div>
+      <button class="btn" id="recommencer">Recommencer le QCM</button>
+    </div>`;
+  document.getElementById("recommencer").onclick = demarrer;
+}
+
+demarrer();
+</script>
+</body>
+</html>
