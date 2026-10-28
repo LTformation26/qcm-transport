@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Annale 2026 – QCM</title>
+<style>
+  :root { --texte:#0F2A1D; --sapin:#095228; --rouge:#C62828; --vert-ok:#1e7d45; --fond-ok:#e7f4ec; --fond-ko:#fbeaea; --filet:#cfd8d2; --gris:#5d6f64; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: Verdana, "DejaVu Sans", sans-serif; font-size:17px; line-height:1.5; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  header { display:flex; align-items:center; gap:14px; border-bottom: 3px solid var(--sapin); padding-bottom: 12px; margin-bottom: 18px; }
+  header img { width: 52px; height: auto; }
+  header .marque { font-size: 13px; color: var(--gris); letter-spacing: .5px; }
+  header h1 { margin: 0; font-size: 22px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
+  .question { font-size: 19px; font-weight: bold; margin: 0 0 18px; white-space: pre-line; }
+  .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--rouge); margin-top: 10px; }
+  .choix { display:flex; flex-direction:column; gap: 10px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix button:hover:not(:disabled) { border-color: var(--sapin); }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button:disabled { cursor: default; }
+  .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
+  .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
+  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour.ko { border-left-color: var(--rouge); }
+  .retour .exp { white-space: pre-line; }
+  .retour .titre { font-weight: bold; color: var(--rouge); }
+  .retour .titre:empty { display: none; }
+  .retour.okk .titre { color: var(--vert-ok); }
+  .retour.ko .titre { color: var(--rouge); }
+  .actions { margin-top: 22px; text-align: right; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn:hover { background: #0b6a32; }
+  .btn[hidden] { display:none; }
+  .resultat { text-align:center; padding-top: 10px; }
+  .resultat .score { font-size: 56px; font-weight: bold; color: var(--sapin); line-height:1.1; }
+  .resultat .sur { color: var(--gris); margin-bottom: 14px; }
+  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH4AAABsCAYAAACsPQYYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAn1SURBVHhe7d1pbBTnGQfw/17e+7S9672M78Vrg6mxF2xSHHMWYxBKUaOgRoESTBO1HFVUREqgIEC5CClY/dYqafulVVpVFaTiMFADIVWcUkJjAvYau9gc8YXxgdfHbj/Eq6K31N5jrt15fx+fx7Ls+Wt2npl5Z1YSDE6GQImOlCxQ4kCDFykavEjR4EWKBi9SNHiRosGLFA1epGjwIiURy5W7hh4/rg8+QCA4AQDQyFJQZnSgwpxJ/qgoJH3wv7rzOd5ua0T32DDZAgDkaiw47FmB5Wl5ZCupJW3wzUNfY0fzx2ga6CRbT7XGNhtveVYiQ6knW0kp6YIfDU7gbX8j6js+xUQoSLanpZEpsCunCq/OWgCZREK2k0pSBX+utw07b5zEnccDZCsqHl06flFYA5/JTbaSRlIE3z02jN03T+FP95vJVswkADY4SrC/YBksCjXZTngJHXwIwAed/8CBlnMYmBgl24wwK9TYl78ULzrnIZk+/BM2+FvDPfjRlyciHt7iNd/oRL23Fh5dOtlKSAkXfCA4OTW8XcF4lMNbvGQSCba6fdidVwWtLIVsJ5SECv5cbxteu/FXtD/uJ1ucsiv1OORZgXW2QrKVMBIi+O6xYbx+8zT+eP9LssWrxZYsHPPWIlNtIluCJ+jgQwB+03kV+1sb8HCcneEtXkqpHDuzFmFHdiVSpDKyLViCDZ7r4S1e2RozjhauxmJLFtkSJMEFHwhO4h1/I47zMLwx4bkMLw4XrIBVqSNbgiKo4C/2dWB78wneh7d46eVK7M6tQp27HFKBXvoVRPC94yPYffMUPronrOEtXkV6G+q9tSgx2MkW73gNPgTgt13/xM9bzgp2eIuXBMBGZyn2FiyBUa4i27zhLfhEG97ilZaiwf78ZXjBMZds8YLz4APBSbzbdhHH2j9JyOEtXj6TG8e9tcjXppItTnEafLIMb/FSSKR4NXMBfpq7GGqZgmxzgpPge8dH8LObp/GHe/8iW6LmUhnxpmclaqwFZIt1rAf/zfDWgP7xx2SLmrI0NQfve2vhVBnIFmtYC/7WcA923vgYV/r/Tbaop1DLFHgt+xn8OKsCcgn7q94ZDz4QnMSRtos41nEFY8FJsk3NIF+biqOFNag0zyJbjGI0eDq8Med79mIcLFiBtBQN2WIEI8H3jo9gz80z+P2962SLioNRrsIbedXY5J7P+LKvuIP/Xdc17Gs5S4c3FpUY7Kj31qJIbyNbMYs5eP9IH7Y1n6DDG0ekEgk2u+ZjT1419HIl2Y5a1MGPBSfx3u1LeL/9Ezq88cCq1OFg/nKstxeRrahEFfzFvg785MZJ+Ef6yBbFsUrzLBz31iJbYyZbEYk4+J3NJ/Fh11WyTPFsb94S7MiuJMsziij4jV98hL88+IosUwLxRl41dmYvIsvTmvES0bVH92joAvdO28Wo560Zg7/Q106WKIEZDU7gs4EusjytGYPvHxshS5QA9UWZ04zB5/C8YICKjFdvJUvTmjH4tdbZZIkSmFKjA7kaC1me1ozBmxQqHJldQ5YpgdDKUlDvXUOWZxTR6RwAnO+9je3NJ9A5Gt/bJijmlJtc+GXR2qj3dkQTPKbutde3X8HR9ssYmRwn2xRHnCoD9uUtjeuybVTBhz0IDGHPrTOCe3o12allCmybVYEd2ZVQSuVkOyoxBR/WNNCFbc0n8NVQN9miGCQBsN5ejAP5y2Bj6Jm8uIIHgGAohA87r+KQ/zz66D15xs0z2PFeYQ3mMfwYVtzBhz2aCOBQ63n8uvNzTIYY+ZWi5lAZsC9vCdbbixlffQMmgw9rGe7BtuaT+PvDO2SLioBKKsf2rEpsy6pg9WELxoMP+/ODG9h76yw9/YtCdVoOjhfWwsHB+voZL+DEap2tEJ8tegW7chZDFecEKhahUIiT0MHmHv+ku6OP8Pqt0/T2bgRO+zahzOgky4xjbY9/kkNlwAdz12ODowQWltaJJ4uDrefJEis4CT7MrTLiZVcZlqXl0o///6Oxrx1NUd5bjwWnwWPqYsR8gxN17nLMM9gh0FfE8OpA6zmyxDjOgw9TyxRYmZaPjY5SOETy5QCRutTXgcssP6/AW/BhVqUOLzq/hTVWDyMPCiSL/S0NZIlRvAcf5tXZUOcqw0JzJiePCQtd00AXGllc7yioLSyXylBlzsJmdxnyEnDJl1Wpwxx9BlmOGZsTvqCCDzPJVfiurQjPO+YkxLdDaGUKrErPxyZnKQwMHq6aBrpwofc2WWaEIIMPy1KZsdldhurUHEG+IFgmkWKhORNbMxdgrp7Zu2dhh/0XyBIjBB08AEghgc/owla3D8U65h4TjpdHm446VzmqzFlQsDiTNA104VxvG1mOG3t/McM0MgVWWz14yVmKDIYWI8TCqtTh+44SrLMVwqBg7mN9Om/6/0aW4pYwwYdlKHV4yVmK1TYPtCzetiRpZClYlV6ATc5SOFVGss2qpoEuNPT4yXJcEi74sGKtDXVuH3wmF6v/hHzqOP7DTB/mMjixR+sAwxM+m9uMdSlSGaotOdjsLkeWOrbnxKfj0aZhCwfH8UhcH7yPMz2tZDlm/P43DLEo1HjePgfPZXhhUsT/huj/Hse9nB3HI3GwlbkJPymCD8vXpGGL24cqS2x7qFamwHes/BzHI3F98D5OdbeQ5ZhEv3UETgpgoembc+tIHySUS6VYaHKjzu1DiY6/43gkDjM04Sdd8GFamQJr0mfjZVcZ5hntT/0E0MgUqDDPwituH6os2YK8SES6PngfDQyc13Oy9CrsLX8jWeLU4EQAQxNjkEgAg1wJDQvfFnmpvwOX+zvIMqM22OeivngtWY7K/+4GSUwvV8Ku0iNDqWcldK58MfSALEVNVMFzQSlj/3AhYeARCxo8w+wp7K8mKmdgFS4NnmEulRFpKVqyzKgt7jKyFDUaPAvWpHtYO0N4d/YqRr7DngbPAqtShxfsJUhlcM/XyBQ4UliDH7jnk62YiOp0jg9fB4ZwNzCIockxsgUAeGaGb6JQSGUo1KXjWUs2ow9R0uB5tit3MVniBP2oFykavEjR4EWKBi9SNHiR4jR4jTxxb4ywga2LPJHgNPhUBX0pwpPMPG4PToN3CXA5E5/cav62B6fBF2ijf9luMsuP4eXDTOE0+AylHjk8/rNCkqk2IVNtIsuc4TR4AHjGMv21abH4Ns/bgfPg7Uo9lqTmkGVRqU7N4X3e4Tx4TL1gn+3vRxeqCnMmfCYXWeYcp3fnSFcf3cWZbj9C4O1P4NTy9DyUGhxkmRe8Bg8AD8dH8enDO7j26B7ZShpFehsqTG6kCujljrwHHxYITqJtpBd3A0MYGB/FaHCC/JGEoZBIYZhayp2rsUArwKXcggme4hYvwx3FPxq8SNHgRYoGL1I0eJGiwYvUfwAe7yj5WKSpsQAAAABJRU5ErkJggg==" alt="Kaply Academy">
+    <div><div class="marque">Kaply Academy · Examen capacité marchandises</div><h1>Annale 2026 · QCM</h1></div>
+  </header>
+  <div id="zone"></div>
+</div>
+<script>
+const QUESTIONS = [
+  {"q": "Question 1. Quand une personne a pris en gérance libre une entreprise, cela signifie qu'elle est au moins locataire :", "r": ["du fonds de commerce", "du local commercial", "du matériel", "de l'ensemble fonds de commerce + local commercial"], "b": 0, "e": "La gérance libre est une location du fonds de commerce : le gérant exploite à ses risques, en payant une redevance.", "u": false},
+  {"q": "Question 2. La responsabilité du transporteur routier de marchandises peut être recherchée par son donneur d'ordre :", "r": ["toujours lorsqu'il y a mauvaise exécution du contrat de transport, que ce soit du fait du transporteur ou de celui d'un tiers", "seulement pour les fautes lourdes du préposé du transporteur", "seulement pour les dommages résultant des opérations de conduite et de chargement", "seulement si les clauses exonératoires figurant dans les conditions générales de vente du transporteur le permettent"], "b": 0, "e": "Le transporteur répond de la bonne exécution du contrat, y compris quand le dommage vient d'un tiers auquel il a eu recours.", "u": false},
+  {"q": "Question 3. En règle générale, le délai de prescription en matière commerciale est de :", "r": ["2 ans", "5 ans", "10 ans", "30 ans"], "b": 1, "e": "En matière commerciale, la prescription de droit commun est de 5 ans.", "u": false},
+  {"q": "Question 4. Lors de la création d'une société de capitaux, l'argent constituant le capital social libéré :", "r": ["reste bloqué pendant toute la durée de vie de la société sur un compte en banque spécial", "reste bloqué uniquement pendant l'accomplissement des formalités de création et est ensuite disponible pour rembourser les associés", "reste bloqué uniquement pendant l'accomplissement des formalités de création et est ensuite disponible pour les besoins de la société", "est fictif et n'est jamais disponible pour la société"], "b": 2, "e": "Après les formalités de création, le capital libéré est disponible pour les besoins de la société.", "u": false},
+  {"q": "Question 5. Sur les documents commerciaux d'une entreprise, quelle mention est facultative :", "r": ["le numéro unique d'identification de l'entreprise (SIREN)", "la mention RCS (Registre du commerce et des sociétés)", "le lieu du siège social", "le code NAF (Nomenclature des activités françaises)"], "b": 3, "e": "Le code NAF n'est pas une mention obligatoire des documents commerciaux, contrairement au SIREN, à la mention RCS et au siège social.", "u": false},
+  {"q": "Question 6. Dans une SARL (société à responsabilité limitée), le gérant est élu à la majorité des associés :", "r": ["représentant le tiers des parts sociales", "représentant un quart des parts sociales", "représentant plus des trois quarts des parts sociales", "représentant plus de la moitié des parts sociales"], "b": 3, "e": "Le gérant d'une SARL est nommé à la majorité de plus de la moitié des parts sociales.", "u": false},
+  {"q": "Question 7. En transport routier intérieur, en cas de retard, pour compenser le préjudice causé, le destinataire ou l'expéditeur peut réclamer, en application du contrat type général :", "r": ["le prix de la marchandise", "le montant du préjudice quel qu'il soit", "au plus le prix du transport", "deux fois le prix du transport"], "b": 2, "e": "En transport intérieur, l'indemnité pour retard ne peut pas dépasser le prix du transport.", "u": false},
+  {"q": "Question 8. Dans le cadre d'une créance liée à un contrat de transport, l'injonction de payer doit toujours être faite devant le tribunal du domicile du :", "r": ["débiteur ou de l'un des débiteurs s'ils sont plusieurs", "requérant", "destinataire", "transporteur obligatoirement"], "b": 0, "e": "L'injonction de payer est portée devant le tribunal du domicile du débiteur (ou de l'un des débiteurs).", "u": false},
+  {"q": "Question 9. Lors d'un transport routier Paris-Rome, la marchandise est considérée comme perdue si elle n'a pas été livrée dans les :", "r": ["15 jours suivant l'expiration du délai convenu", "30 jours suivant l'expiration du délai convenu", "35 jours suivant l'expiration du délai convenu", "60 jours suivant l'expiration du délai convenu"], "b": 1, "e": "En transport international, la marchandise est considérée comme perdue 30 jours après l'expiration du délai convenu.", "u": false},
+  {"q": "Question 10. Les associés d'une SARL (société à responsabilité limitée) peuvent demander communication des comptes annuels du dernier exercice complet :", "r": ["à tout moment", "seulement au gérant et si celui-ci accepte", "seulement lors de l'assemblée générale ordinaire", "seulement lors de l'assemblée générale d'approbation des comptes"], "b": 0, "e": "Les associés d'une SARL peuvent à tout moment consulter les documents sociaux, dont les comptes annuels.", "u": false},
+  {"q": "Question 11. Le président d'une société par actions simplifiée (SAS) :", "r": ["est toujours une personne morale", "est obligatoirement un associé de la SAS", "est toujours désigné par un conseil d'administration", "peut être une personne physique ou morale"], "b": 3, "e": "Le président d'une SAS peut être une personne physique ou une personne morale.", "u": false},
+  {"q": "Question 12. Le commerçant doit conserver ses documents comptables pendant :", "r": ["3 ans", "5 ans", "8 ans", "10 ans"], "b": 3, "e": "Les documents comptables se conservent 10 ans.", "u": false},
+  {"q": "Question 13. Les associés d'une SAS (société par actions simplifiée) ont signé leurs statuts le 13 janvier. L'inscription au RCS (registre du commerce et des sociétés) a été effectuée le 25 janvier. La publicité de la constitution de la société est parue dans un journal d'annonces légales le 30 janvier. L'activité de la société a débuté le 4 mars. À quelle date la société a-t-elle acquis la personnalité morale ?", "r": ["le 13 janvier", "le 30 janvier", "le 25 janvier", "le 4 mars"], "b": 2, "e": "La société acquiert la personnalité morale à la date de son immatriculation au RCS, ici le 25 janvier.", "u": false},
+  {"q": "Question 14. La trésorerie nette d'une entreprise correspond :", "r": ["au bénéfice qu'a réalisé l'entreprise au cours de l'exercice", "au montant des disponibilités de l'entreprise", "à la somme du bénéfice et des disponibilités de l'entreprise, diminuée des découverts bancaires", "aux disponibilités de l'entreprise, diminuées des concours bancaires"], "b": 3, "e": "La trésorerie nette correspond aux disponibilités diminuées des concours bancaires.", "u": false},
+  {"q": "Question 15. Une provision pour grosses réparations sera inscrite au bilan dans les :", "r": ["dotations aux amortissements et aux provisions exceptionnelles", "amortissements et provisions", "provisions pour risques et charges", "réserves réglementées"], "b": 2, "e": "Une provision pour grosses réparations est inscrite au bilan dans les provisions pour risques et charges.", "u": false},
+  {"q": "Question 16. Le seuil de rentabilité est atteint lorsque :", "r": ["l'entreprise dégage sa marge bénéficiaire prévisionnelle", "le chiffre d'affaires permet de couvrir les coûts fixes", "le chiffre d'affaires permet de couvrir tous les coûts", "le chiffre d'affaires permet de couvrir les coûts des charges sociales"], "b": 2, "e": "Le seuil de rentabilité est le chiffre d'affaires qui couvre l'ensemble des coûts, fixes et variables.", "u": false},
+  {"q": "Question 17. Dans les entreprises de plus de 50 salariés, la subvention au comité social et économique (CSE) destinée aux activités sociales et culturelles est calculée en tenant compte, entre autres, du pourcentage :", "r": ["des charges sociales", "du chiffre d'affaires hors taxe", "du chiffre d'affaires TTC", "de la masse salariale"], "b": 3, "e": "La subvention aux activités sociales et culturelles du CSE se calcule en pourcentage de la masse salariale.", "u": false},
+  {"q": "Question 18. Ne peut assister ou représenter un salarié lors d'une procédure prud'homale :", "r": ["un avocat", "un délégué permanent ou non d'une organisation syndicale", "un salarié de la même branche d'activité", "un inspecteur du travail"], "b": 3, "e": "L'inspecteur du travail ne peut ni assister ni représenter un salarié aux prud'hommes.", "u": false},
+  {"q": "Question 19. La formation initiale minimale obligatoire (FIMO) est une formation :", "r": ["non renouvelable et acquise une fois pour toutes", "renouvelable tous les 3 ans", "renouvelable tous les 5 ans", "non renouvelable en cas de suspension ou de retrait du permis de conduire"], "b": 0, "e": "La FIMO est acquise une fois pour toutes ; c'est la FCO qui se renouvelle tous les 5 ans.", "u": false},
+  {"q": "Question 20. Une convention collective de branche est conclue entre :", "r": ["les employeurs après consultation de l'inspection du travail", "le ministère du travail et les syndicats", "les représentants du personnel et les délégués syndicaux", "les organisations professionnelles d'employeurs et les organisations syndicales de salariés, représentatives au niveau de cette branche"], "b": 3, "e": "Une convention collective de branche est conclue entre les organisations d'employeurs et les organisations syndicales de salariés représentatives de la branche.", "u": false},
+  {"q": "Question 21. Selon le règlement (CE) n° 561/2006, la durée maximale de conduite par période de deux semaines consécutives est de :", "r": ["86 heures", "90 heures", "92 heures", "96 heures"], "b": 1, "e": "Le règlement (CE) n° 561/2006 limite la conduite à 90 heures par période de deux semaines consécutives.", "u": false},
+  {"q": "Question 22. L'engagement des poursuites disciplinaires par l'employeur, à partir de sa connaissance d'un fait considéré comme fautif, sauf exercice de poursuites pénales pour le même fait, doit être réalisé dans un délai maximum de :", "r": ["5 jours francs", "2 semaines", "2 mois", "6 mois"], "b": 2, "e": "L'employeur doit engager les poursuites disciplinaires dans un délai de 2 mois à compter de la connaissance du fait fautif.", "u": false},
+  {"q": "Question 23. Un employeur qui fait au salarié une avance sur salaire ne peut se rembourser qu'au moyen de retenues successives ne dépassant pas :", "r": ["un vingtième du montant du salaire net exigible", "un dixième du montant du salaire net exigible", "un cinquième du montant du salaire net exigible", "la moitié du montant du salaire net exigible"], "b": 1, "e": "Les retenues pour rembourser une avance sur salaire ne peuvent pas dépasser le dixième du salaire exigible.", "u": false},
+  {"q": "Question 24. Selon la convention collective nationale des transports routiers, la 44ème heure de travail hebdomadaire pour les personnels roulants « grands routiers » est majorée de :", "r": ["25 %", "33 %", "50 %", "75 %"], "b": 2, "e": "Pour les grands routiers, la majoration est de 50 % à partir de la 44e heure de travail hebdomadaire.", "u": false},
+  {"q": "Question 25. Dans le cas d'horaires individualisés, les employeurs doivent tenir à la disposition de l'inspecteur du travail les documents permettant de comptabiliser les heures de travail effectuées par chaque salarié pendant :", "r": ["deux mois", "un an", "trois ans", "cinq ans"], "b": 1, "e": "Avec des horaires individualisés, le décompte des heures de chaque salarié est tenu à la disposition de l'inspecteur du travail pendant un an.", "u": false},
+  {"q": "Question 26. La durée maximale de la période d'essai d'un employé embauché par un contrat à durée déterminée de 18 mois est de :", "r": ["1 mois", "2 mois", "3 mois", "6 mois"], "b": 0, "e": "Pour un CDD de plus de 6 mois, la période d'essai ne peut pas dépasser 1 mois.", "u": false},
+  {"q": "Question 27. Un examen médical de reprise doit être organisé au bénéfice d'un salarié après un arrêt de travail pour maladie non professionnelle d'une durée d'au moins :", "r": ["3 jours", "21 jours", "25 jours", "60 jours"], "b": 3, "e": "L'examen médical de reprise est obligatoire après une absence d'au moins 60 jours pour maladie non professionnelle.", "u": false},
+  {"q": "Question 28. Le repos hebdomadaire pris par un conducteur routier soumis au règlement (CE) n° 561/2006 peut être réduit, à un minimum de :", "r": ["42 heures", "36 heures", "28 heures", "24 heures"], "b": 3, "e": "Le repos hebdomadaire normal (45 heures) peut être réduit à 24 heures, avec compensation.", "u": false},
+  {"q": "Question 29. Selon le règlement (CE) n° 561/2006 du 15 mars 2006, le repos hebdomadaire normal doit être pris à compter du temps de repos hebdomadaire précédent, après au maximum :", "r": ["4 périodes de 24 h", "5 périodes de 24 h", "6 périodes de 24 h", "7 périodes de 24 h"], "b": 2, "e": "Un nouveau repos hebdomadaire doit commencer au plus tard à la fin de 6 périodes de 24 heures après le précédent.", "u": false},
+  {"q": "Question 30. Un transport pour compte propre effectué à l'aide d'un véhicule de 10 T de poids maximum autorisé pris en location avec conducteur, est couvert par :", "r": ["une copie conforme de la licence communautaire du transporteur et une feuille de location", "une copie conforme de la licence communautaire du loueur et une feuille de location ou copie du contrat de location", "une copie conforme de la licence communautaire du transporteur", "une copie conforme de la licence communautaire du loueur et une lettre de voiture"], "b": 0, "e": "Le transport est couvert par la copie conforme de la licence communautaire du transporteur et une feuille de location.", "u": false},
+  {"q": "Question 31. Les contrats types pour les transports routiers de marchandises :", "r": ["s'appliquent obligatoirement", "ne s'appliquent pas en cas de dispositions écrites illégales dans le contrat de transport", "s'appliquent à défaut de dispositions écrites définissant des rapports entre les parties", "s'appliquent uniquement aux transports routiers de plus de 150 km"], "b": 2, "e": "Les contrats types s'appliquent à défaut de dispositions écrites définissant les rapports entre les parties.", "u": false},
+  {"q": "Question 32. Le montant de la capacité financière exigible des entreprises est fonction du :", "r": ["type d'activité de l'entreprise : transport ou location", "nombre et du poids maximum autorisé (PMA) des véhicules à moteur exploités par l'entreprise", "statut juridique de l'entreprise", "nombre de salariés"], "b": 1, "e": "La capacité financière exigible dépend du nombre de véhicules exploités et de leur poids maximum autorisé.", "u": false},
+  {"q": "Question 33. Lorsque le conducteur est ressortissant d'un État tiers à l'EEE (Espace économique européen), l'attestation de conducteur est exigée quand le véhicule effectue un transport international dans l'EEE, sous le couvert d'une :", "r": ["copie certifiée conforme de licence de transport intérieur", "copie certifiée conforme de licence communautaire", "autorisation multilatérale FIT (ex CEMT)", "autorisation bilatérale"], "b": 1, "e": "Pour un conducteur ressortissant d'un État tiers à l'EEE, l'attestation de conducteur est exigée sous couvert d'une copie certifiée conforme de licence communautaire.", "u": false},
+  {"q": "Question 34. La commission territoriale des sanctions administratives a proposé au préfet de région de retirer un titre administratif de transport à une entreprise. Quelle peut en être la raison ?", "r": ["l'entreprise présente de mauvais bilans", "l'entreprise a commis des infractions à la réglementation du travail et de la sécurité", "l'entreprise n'a pas rempli ses obligations en matière de cotisations sociales", "un des conducteurs de l'entreprise a été verbalisé pour excès de vitesse en état d'ivresse"], "b": 1, "e": "La commission peut proposer une sanction en cas d'infractions à la réglementation du travail et de la sécurité.", "u": false},
+  {"q": "Question 35. Un contrat de transport routier de marchandises ne peut pas prévoir de délai de paiement du transporteur, à partir de l'émission de la facture, supérieur à :", "r": ["15 jours", "20 jours", "25 jours", "30 jours"], "b": 3, "e": "Le délai de paiement du transporteur ne peut pas dépasser 30 jours à compter de l'émission de la facture.", "u": false},
+  {"q": "Question 36. Le prix d'un transport public routier de marchandises :", "r": ["est fixe et ne peut pas être modifié pendant l'exécution du contrat", "peut être modifié en cas de variation des charges de carburant", "est modifié de plein droit en cas de variation des charges de carburant", "est modifié de plein droit en cas de variation des charges salariales"], "b": 2, "e": "Le prix d'un transport est révisé de plein droit en cas de variation des charges de carburant.", "u": false},
+  {"q": "Question 37. Une entreprise de transport ayant son siège en Allemagne peut être inscrite en France au registre électronique national des entreprises de transport par route, si elle dispose en France :", "r": ["de deux filiales au minimum inscrites au RCS (Registre du commerce et des sociétés)", "d'un garage lui permettant d'assurer l'entretien de ses véhicules", "d'un établissement principal inscrit au RCS", "d'un entrepôt lui permettant d'assurer le dépôt de ses marchandises"], "b": 2, "e": "Une entreprise étrangère s'inscrit au registre électronique national si elle dispose en France d'un établissement principal inscrit au RCS.", "u": false},
+  {"q": "Question 38. Pour un envoi de 20 T de marchandises, le contrat type dit « général » prévoit, en cas de plage horaire respectée, un délai de chargement de :", "r": ["1 heure", "2 heures", "3 heures", "4 heures"], "b": 1, "e": "Pour un envoi de 20 tonnes, avec une plage horaire respectée, le délai de chargement est de 2 heures.", "u": false},
+  {"q": "Question 39. La notion de sous-traitance dans le domaine du transport routier de marchandises s'applique aux contrats conclus entre :", "r": ["un transporteur routier de marchandises et un loueur de véhicules sans conducteur", "deux commissionnaires de transport", "un industriel et un transporteur routier de marchandises", "un transporteur routier de marchandises ou un commissionnaire de transport avec un autre transporteur routier de marchandises"], "b": 3, "e": "La sous-traitance concerne les contrats conclus entre un transporteur ou un commissionnaire de transport et un autre transporteur.", "u": false},
+  {"q": "Question 40. Le contrat type « général » applicable aux transports publics routiers de marchandises prévoit que lorsqu'une pesée du véhicule est effectuée, le coût de la pesée et du déplacement éventuel du véhicule est supporté par :", "r": ["le transporteur", "l'expéditeur", "le destinataire", "le demandeur"], "b": 3, "e": "Le coût de la pesée, et du déplacement éventuel du véhicule, est supporté par le demandeur.", "u": false},
+  {"q": "Question 41. Transporteur, vous prenez rendez-vous avec votre client afin de procéder au chargement de votre véhicule. Au jour et à l'heure prévus, vous ne vous présentez pas chez votre client. Le contrat type dit général prévoit que celui-ci :", "r": ["peut remettre immédiatement le chargement à un autre transporteur", "peut rechercher un autre transporteur deux heures après l'heure fixée pour la mise à disposition du véhicule", "peut rechercher un autre transporteur huit heures après l'heure fixée pour la mise à disposition du véhicule", "doit attendre votre véhicule pendant 24 heures"], "b": 1, "e": "Le client peut rechercher un autre transporteur deux heures après l'heure fixée pour la mise à disposition du véhicule.", "u": false},
+  {"q": "Question 42. Une entreprise effectue un transport public routier de marchandises sans être inscrite au registre électronique national des entreprises de transport par route. Le fait est constaté par procès-verbal lors d'un contrôle routier. La nature de l'infraction relevée est :", "r": ["une amende administrative", "un délit", "une contravention de la 4ème classe", "une contravention de la 5ème classe"], "b": 1, "e": "Transporter sans être inscrit au registre est un délit.", "u": false},
+  {"q": "Question 43. Le ralentisseur sur échappement est un dispositif :", "r": ["électrique, mais consommant plus d'énergie que le ralentisseur électromagnétique", "électrique, mais consommant moins d'énergie que le ralentisseur hydraulique", "mécanique et agissant sur les roues motrices", "mécanique et agissant sur toutes les roues du véhicule"], "b": 2, "e": "Le ralentisseur sur échappement est un dispositif mécanique qui agit sur les roues motrices.", "u": false},
+  {"q": "Question 44. Le poids maximum autorisé d'un ensemble de véhicules comportant 4 essieux ne doit pas excéder :", "r": ["32 tonnes", "35 tonnes", "38 tonnes", "40 tonnes"], "b": 2, "e": "Un ensemble de véhicules à 4 essieux est limité à 38 tonnes.", "u": false},
+  {"q": "Question 45. Sauf dérogation, les restrictions de circulation applicables en fin de semaine ou à l'occasion de jours fériés concernent les véhicules dont le PTAC excède :", "r": ["3,5 T", "6 T", "7,5 T", "10 T"], "b": 2, "e": "Les restrictions de circulation du week-end et des jours fériés concernent les véhicules de plus de 7,5 tonnes de PTAC.", "u": false},
+  {"q": "Question 46. Un retrait de 6 points du permis de conduire sanctionne un taux d'alcoolémie à partir de :", "r": ["0,50 g/litre de sang", "0,75 g/litre de sang", "0,85 g/litre de sang", "1,20 g/litre de sang"], "b": 0, "e": "Le retrait de 6 points sanctionne un taux d'alcoolémie à partir de 0,50 g par litre de sang.", "u": false},
+  {"q": "Question 47. Hors agglomération, la distance minimale à respecter entre 2 véhicules poids lourds roulant à la même vitesse, est de :", "r": ["30 mètres", "50 mètres", "60 mètres", "100 mètres"], "b": 1, "e": "Hors agglomération, un poids lourd respecte au moins 50 mètres avec le véhicule qui précède.", "u": false},
+  {"q": "Question 48. En transport international, l'indemnité pour retard à la livraison ne peut pas dépasser :", "r": ["la valeur de la marchandise", "la valeur de la marchandise plus le prix du transport", "le prix du transport", "deux fois le prix du transport"], "b": 2, "e": "En transport international, l'indemnité pour retard ne peut pas dépasser le prix du transport.", "u": false},
+  {"q": "Question 49. La convention CMR ne s'applique pas aux :", "r": ["transports d'animaux vivants", "transports de déménagement", "transports effectués au moyen de véhicules dont le PMA (poids maximum autorisé) n'excède pas 6 T", "transports de véhicules endommagés"], "b": 1, "e": "La CMR ne s'applique pas aux transports de déménagement.", "u": false},
+  {"q": "Question 50. En transport international, en cas de dommages non apparents, les formalités à accomplir sont :", "r": ["constat contradictoire ou réserves adressées au moment de la livraison", "constat non contradictoire ou réserves adressées au moment de la livraison", "réserves écrites dans les 7 jours à compter de la livraison, dimanches et jours fériés non compris", "réserves écrites dans les 3 jours à compter de la livraison, dimanches et jours fériés non compris"], "b": 2, "e": "En cas de dommages non apparents, les réserves écrites sont adressées dans les 7 jours suivant la livraison, dimanches et jours fériés non compris.", "u": false}
+];
+const POINTS = 2, LETTRES = ["A","B","C","D"];
+let ordre = [], i = 0, score = 0, rates = [];
+const zone = document.getElementById("zone");
+
+function melange(t) { for (let k = t.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [t[k], t[j]] = [t[j], t[k]]; } return t; }
+
+function demarrer() {
+  ordre = QUESTIONS.map(q => ({ q: q.q, e: q.e, u: q.u, r: q.r.slice(), b: q.b }));
+  i = 0; score = 0; rates = []; afficher();
+}
+
+function afficher() {
+  const Q = ordre[i], n = ordre.length;
+  zone.innerHTML = `
+    <div class="progres"><span>Question ${i + 1} / ${n}</span><span>${score} / ${n * POINTS} points</span></div>
+    <div class="barre"><div style="width:${(i / n) * 100}%"></div></div>
+    <p class="question"></p>
+    <div class="choix"></div>
+    <div class="retour"><div class="titre"></div><div class="exp"></div></div>
+    <div class="actions"><button class="btn" id="suivant" hidden>${i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button></div>`;
+  zone.querySelector(".question").textContent = Q.q;
+  const choix = zone.querySelector(".choix");
+  Q.r.forEach((txt, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="l">${LETTRES[k]}.</span><span></span>`;
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    choix.appendChild(b);
+  });
+}
+
+function repondre(k) {
+  const Q = ordre[i], btns = zone.querySelectorAll(".choix button"), ret = zone.querySelector(".retour");
+  btns.forEach(b => b.disabled = true);
+  btns[Q.b].classList.add("ok");
+  if (k === Q.b) {
+    score += POINTS;
+    ret.className = "retour okk";
+  } else {
+    btns[k].classList.add("ko");
+    rates.push(i + 1);
+    ret.className = "retour ko";
+  }
+  const faux = (k !== Q.b);
+  ret.querySelector(".titre").textContent = faux ? "Mauvaise réponse" : "";
+  ret.querySelector(".exp").textContent = Q.e;
+  if (faux || Q.u) ret.style.display = "block";
+  zone.querySelector(".progres span:last-child").textContent = `${score} / ${ordre.length * POINTS} points`;
+  const s = document.getElementById("suivant");
+  s.hidden = false;
+  s.onclick = () => { i++; i < ordre.length ? afficher() : resultat(); };
+}
+
+function resultat() {
+  const total = ordre.length * POINTS, pct = score / total;
+  const msg = pct >= 0.8 ? "Très bon résultat, vous êtes prêt pour l'examen."
+            : pct >= 0.5 ? "Résultat correct. Relisez le cours sur les points où vous vous êtes trompé."
+            : "Résultat insuffisant. Reprenez les cours avant de recommencer.";
+  zone.innerHTML = `
+    <div class="barre"><div style="width:100%"></div></div>
+    <div class="resultat">
+      <div class="score">${score}</div><div class="sur">sur ${total} points</div>
+      <div class="msg">${msg}</div>
+      <p>${rates.length ? "Questions à revoir : " + rates.join(", ") + "." : "Aucune erreur."}</p>
+      <button class="btn" id="recommencer">Recommencer l'annale</button>
+    </div>`;
+  document.getElementById("recommencer").onclick = demarrer;
+}
+
+demarrer();
+
+function envoyerHauteur() {
+  try { const h = Math.ceil(document.querySelector(".wrap").getBoundingClientRect().height) + 10; parent.postMessage({ annaleH: h }, "*"); } catch (e) {}
+}
+new MutationObserver(envoyerHauteur).observe(document.getElementById("zone"), { childList: true, subtree: true, attributes: true });
+window.addEventListener("resize", envoyerHauteur);
+envoyerHauteur();
+</script>
+</body>
+</html>
