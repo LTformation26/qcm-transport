@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QCM Le contrat de transport</title>
+<style>
+  :root { --texte:#0F2A1D; --sapin:#1A5C38; --rouge:#C62828; --vert-ok:#1F7A52; --fond-ok:#e7f4ec; --fond-ko:#fbeaea; --filet:#cfd8d2; --gris:#5d6f64; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: Verdana, "DejaVu Sans", sans-serif; font-size:17px; line-height:1.5; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  header { display:flex; align-items:center; gap:14px; border-bottom: 3px solid var(--sapin); padding-bottom: 12px; margin-bottom: 18px; }
+  header img { width: 52px; height: auto; }
+  header .marque { font-size: 13px; color: var(--gris); letter-spacing: .5px; }
+  header h1 { margin: 0; font-size: 22px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
+  .question { font-size: 19px; font-weight: bold; margin: 0 0 18px; white-space: pre-line; }
+  .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--rouge); margin-top: 10px; }
+  .choix { display:flex; flex-direction:column; gap: 10px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix button:hover:not(:disabled) { border-color: var(--sapin); }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button:disabled { cursor: default; }
+  .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
+  .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
+  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour.ko { border-left-color: var(--rouge); }
+  .retour .exp { white-space: pre-line; }
+  .retour .titre { font-weight: bold; color: var(--rouge); }
+  .retour .titre:empty { display: none; }
+  .retour.okk .titre { color: var(--vert-ok); }
+  .retour.ko .titre { color: var(--rouge); }
+  .actions { margin-top: 22px; text-align: right; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn:hover { background: #1F7A52; }
+  .btn[hidden] { display:none; }
+  .resultat { text-align:center; padding-top: 10px; }
+  .resultat .score { font-size: 56px; font-weight: bold; color: var(--sapin); line-height:1.1; }
+  .resultat .sur { color: var(--gris); margin-bottom: 14px; }
+  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><div class="marque">Licence Transport Formation · Contrat de transport</div><h1>QCM Le contrat de transport</h1></div>
+  </header>
+  <div id="zone"></div>
+</div>
+<script>
+const QUESTIONS = [
+  {"q": "Le contrat de transport est :", "r": ["un contrat réel", "un contrat consensuel", "un contrat administratif", "un contrat unilatéral"], "b": 1, "e": "Le contrat de transport est consensuel : il se forme par le seul accord des parties.", "u": false},
+  {"q": "Le contrat de transport porte juridiquement sur :", "r": ["un véhicule", "une marchandise", "un envoi", "un trajet"], "b": 2, "e": "Le contrat de transport porte sur l'envoi, c'est-à-dire la marchandise remise au transporteur pour être déplacée.", "u": false},
+  {"q": "Dans un transport international, la lettre de voiture doit mentionner :", "r": ["les temps de conduite", "les pays d'origine et de destination", "le prix du carburant", "la vitesse moyenne"], "b": 1, "e": "Dans un transport international, la lettre de voiture doit mentionner les pays d'origine et de destination.", "u": false},
+  {"q": "En l'absence de contrat écrit, la relation de transport est régie par :", "r": ["le Code civil", "les contrats types", "la CMR uniquement", "la convention collective"], "b": 1, "e": "À défaut de contrat écrit, ce sont les contrats types qui s'appliquent.", "u": false},
+  {"q": "La lettre de voiture est imposée par :", "r": ["le Code des transports", "le Code du travail", "le Code de commerce", "la convention collective"], "b": 2, "e": "Contrairement au bon de livraison simple, elle est régie par le Code de commerce et constitue une preuve irréfutable en cas de litige ou de contrôle routier.\n\nLes 3 rôles majeurs de ce document :\n- Preuve du contrat : elle atteste de l'accord sur la nature et le prix du transport.\n- Instruction pour le chauffeur : elle précise les lieux et dates d'enlèvement et de livraison.\n- Suivi de la marchandise : elle permet de noter les réserves en cas de dommages constatés.", "u": true},
+  {"q": "La lettre de voiture peut être rédigée par :", "r": ["uniquement le transporteur", "uniquement l'expéditeur", "uniquement le destinataire", "plusieurs parties au contrat"], "b": 3, "e": "La lettre de voiture est-elle obligatoire pour le transport routier ?\nOui. Son absence à bord du véhicule est passible d'une amende de 1 500 € et d'une immobilisation du camion.\n\nQui est responsable du remplissage de la lettre de voiture ?\nLa responsabilité est partagée :\n- l'expéditeur remplit les informations de chargement et de livraison ;\n- le transporteur indique ses informations de licence ;\n- le destinataire signe le document à la réception.", "u": true},
+  {"q": "Le document de suivi sert principalement à :", "r": ["calculer le prix du transport", "suivre l'exécution du contrat", "vérifier les temps de conduite", "assurer la marchandise"], "b": 1, "e": "Le document de suivi sert à suivre l'exécution du contrat de transport.", "u": false},
+  {"q": "Le destinataire devient partie au contrat de transport :", "r": ["au moment de la livraison", "à la prise en charge", "dès la formation du contrat", "après signature du document de transport"], "b": 2, "e": "Le destinataire devient partie au contrat dès sa formation.", "u": false},
+  {"q": "La distance de transport est celle :", "r": ["de l'itinéraire le plus court", "de l'itinéraire le moins coûteux", "de l'itinéraire le plus adapté compte tenu notamment de la sécurité et des infrastructures", "imposée par le donneur d'ordre, sans exception"], "b": 2, "e": "La distance de transport est celle de l'itinéraire le plus adapté, compte tenu notamment de la sécurité et des infrastructures, et pas forcément le plus court.", "u": false},
+  {"q": "La durée maximale d'une plage horaire est de :", "r": ["2 heures", "3 heures", "4 heures", "6 heures"], "b": 2, "e": "La durée maximale d'une plage horaire est de 4 heures.", "u": false},
+  {"q": "La livraison contre-remboursement :", "r": ["vaut déclaration de valeur", "ne vaut pas déclaration de valeur", "ne peut jamais être prévue dans le contrat", "ne concerne que les envois de moins de 3 tonnes"], "b": 1, "e": "La livraison contre-remboursement ne vaut pas déclaration de valeur.", "u": false},
+  {"q": "Le « laissé pour compte » désigne :", "r": ["une marchandise perdue pendant le transport", "un envoi détruit par le transporteur", "un envoi refusé par le destinataire et laissé à la disposition du transporteur par le donneur d'ordre", "un colis non identifié au chargement"], "b": 2, "e": "Le laissé pour compte est un envoi refusé par le destinataire et laissé à la disposition du transporteur par le donneur d'ordre.", "u": false},
+  {"q": "Le donneur d'ordre peut modifier le contrat de transport :", "r": ["uniquement avant la prise en charge", "jusqu'au moment où le destinataire fait valoir ses droits", "jusqu'à la livraison matérielle seulement", "uniquement par acte d'huissier"], "b": 1, "e": "Le donneur d'ordre peut modifier le contrat jusqu'au moment où le destinataire fait valoir ses droits.", "u": false},
+  {"q": "Le transporteur n'est pas tenu d'accepter de nouvelles instructions :", "r": ["si elles augmentent son prix", "si elles sont orales", "si elles l'empêchent d'honorer des engagements de transport pris antérieurement", "si elles concernent un retour de marchandise"], "b": 2, "e": "Le transporteur peut refuser de nouvelles instructions qui l'empêchent d'honorer des engagements de transport pris antérieurement.", "u": false},
+  {"q": "Toute modification au contrat entraîne :", "r": ["une suspension du contrat", "un réajustement du prix initial", "la nullité du contrat", "une indemnité automatique au profit du donneur d'ordre"], "b": 1, "e": "Toute modification du contrat entraîne un réajustement du prix initial.", "u": false},
+  {"q": "Le transporteur doit utiliser :", "r": ["tout véhicule disponible", "un matériel adapté à la marchandise ainsi qu'aux accès et installations préalablement définis", "uniquement un véhicule bâché", "un véhicule choisi par le destinataire"], "b": 1, "e": "Le transporteur doit utiliser un matériel adapté à la marchandise ainsi qu'aux accès et installations préalablement définis.", "u": false},
+  {"q": "Lorsque l'état apparent de la marchandise ou de l'emballage ne peut pas être raisonnablement vérifié, le transporteur :", "r": ["doit accepter sans réserve", "doit établir une déclaration de valeur", "formule des réserves précises et motivées sur le document de transport", "doit systématiquement refuser la marchandise"], "b": 2, "e": "Le transporteur formule des réserves précises et motivées sur le document de transport.", "u": false},
+  {"q": "Les réserves prises par le transporteur au moment de la prise en charge n'engagent le donneur d'ordre que si :", "r": ["elles sont validées par le destinataire", "elles sont acceptées expressément sur le document de transport", "elles sont confirmées par lettre recommandée", "elles portent sur le poids uniquement"], "b": 1, "e": "A. Le destinataire n'intervient qu'à la livraison. Son rôle est de prendre des réserves à la réception, pas de valider celles prises au départ.\n\nC. La lettre recommandée est souvent utilisée pour confirmer des réserves après la livraison (litige), mais au moment de la prise en charge, tout se joue sur la lettre de voiture.\n\nD. Les réserves peuvent porter sur tout : l'état apparent de la marchandise, l'emballage, le nombre de colis, et pas seulement le poids.\n\nÀ noter : si le donneur d'ordre refuse de signer une réserve alors que le problème est réel, le transporteur peut refuser de prendre en charge la marchandise pour se protéger.", "u": true},
+  {"q": "Les supports de charge utilisés pour le transport, hors UTI :", "r": ["ne font pas partie de l'envoi", "font partie intégrante de l'envoi", "sont toujours consignés au transporteur", "donnent automatiquement lieu à location"], "b": 1, "e": "UTI : unité de transport intermodal (conteneur, caisse mobile…).", "u": true},
+  {"q": "Dans le cadre du contrat de transport, les supports de charge (exemple : palettes Europe) :", "r": ["donnent lieu à consignation", "donnent lieu à location au transporteur", "ne donnent lieu ni à consignation ni à location au transporteur", "doivent toujours être repris gratuitement par le transporteur"], "b": 2, "e": "Le transporteur n'est pas propriétaire des supports et n'a pas à payer pour leur utilisation.\n- Pas de consignation : le transporteur ne verse pas de caution pour les palettes qu'il transporte.\n- Pas de location : il ne paie pas de « loyer » pour l'usage des supports durant le trajet.", "u": true}
+];
+const POINTS = 2, LETTRES = ["A","B","C","D"];
+let ordre = [], i = 0, score = 0;
+const zone = document.getElementById("zone");
+
+function melange(t) { for (let k = t.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [t[k], t[j]] = [t[j], t[k]]; } return t; }
+
+function demarrer() {
+  ordre = melange(QUESTIONS.map((q, k) => {
+    const idx = melange([0, 1, 2, 3]);
+    return { q: q.q, e: q.e, u: q.u, r: idx.map(n => q.r[n]), b: idx.indexOf(q.b) };
+  }));
+  i = 0; score = 0; afficher();
+}
+
+function afficher() {
+  const Q = ordre[i], n = ordre.length;
+  zone.innerHTML = `
+    <div class="progres"><span>Question ${i + 1} / ${n}</span><span>${score} / ${n * POINTS} points</span></div>
+    <div class="barre"><div style="width:${(i / n) * 100}%"></div></div>
+    <p class="question"></p>
+    <div class="choix"></div>
+    <div class="retour"><div class="titre"></div><div class="exp"></div></div>
+    <div class="actions"><button class="btn" id="suivant" hidden>${i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button></div>`;
+  zone.querySelector(".question").textContent = Q.q;
+  const choix = zone.querySelector(".choix");
+  Q.r.forEach((txt, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="l">${LETTRES[k]}.</span><span></span>`;
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    choix.appendChild(b);
+  });
+}
+
+function repondre(k) {
+  const Q = ordre[i], btns = zone.querySelectorAll(".choix button"), ret = zone.querySelector(".retour");
+  btns.forEach(b => b.disabled = true);
+  btns[Q.b].classList.add("ok");
+  if (k === Q.b) {
+    score += POINTS;
+    ret.className = "retour okk";
+  } else {
+    btns[k].classList.add("ko");
+    ret.className = "retour ko";
+  }
+  const faux = (k !== Q.b);
+  ret.querySelector(".titre").textContent = faux ? "Mauvaise réponse" : "";
+  ret.querySelector(".exp").textContent = Q.e;
+  if (faux || Q.u) ret.style.display = "block";
+  zone.querySelector(".progres span:last-child").textContent = `${score} / ${ordre.length * POINTS} points`;
+  const s = document.getElementById("suivant");
+  s.hidden = false;
+  s.onclick = () => { i++; i < ordre.length ? afficher() : resultat(); };
+}
+
+function resultat() {
+  const total = ordre.length * POINTS, pct = score / total;
+  const msg = pct >= 0.8 ? "Très bon résultat, vous maîtrisez le contrat de transport."
+            : pct >= 0.5 ? "Résultat correct. Relisez le cours sur les points où vous vous êtes trompé."
+            : "Résultat insuffisant. Reprenez le cours « Le contrat de transport » avant de recommencer.";
+  zone.innerHTML = `
+    <div class="barre"><div style="width:100%"></div></div>
+    <div class="resultat">
+      <div class="score">${score}</div><div class="sur">sur ${total} points</div>
+      <div class="msg">${msg}</div>
+      <button class="btn" id="recommencer">Recommencer le QCM</button>
+    </div>`;
+  document.getElementById("recommencer").onclick = demarrer;
+}
+
+demarrer();
+</script>
+</body>
+</html>
