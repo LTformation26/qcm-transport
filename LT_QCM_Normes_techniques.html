@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QCM Normes techniques</title>
+<style>
+  :root { --texte:#0F2A1D; --sapin:#1A5C38; --rouge:#C62828; --vert-ok:#1F7A52; --fond-ok:#e7f4ec; --fond-ko:#fbeaea; --filet:#cfd8d2; --gris:#5d6f64; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--texte); font-family: Verdana, "DejaVu Sans", sans-serif; font-size:17px; line-height:1.5; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 30px; }
+  header { display:flex; align-items:center; gap:14px; border-bottom: 3px solid var(--sapin); padding-bottom: 12px; margin-bottom: 18px; }
+  header img { width: 52px; height: auto; }
+  header .marque { font-size: 13px; color: var(--gris); letter-spacing: .5px; }
+  header h1 { margin: 0; font-size: 22px; color: var(--sapin); line-height:1.2; }
+  .progres { display:flex; justify-content:space-between; font-size: 13px; color: var(--gris); margin-bottom: 6px; }
+  .barre { height: 6px; background: #e3e9e5; border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .barre div { height: 100%; width: 0; background: var(--sapin); transition: width .3s; }
+  .question { font-size: 19px; font-weight: bold; margin: 0 0 18px; white-space: pre-line; }
+  .question::after { content:""; display:block; width:48px; border-top: 3px solid var(--rouge); margin-top: 10px; }
+  .choix { display:flex; flex-direction:column; gap: 10px; }
+  .choix button { text-align:left; font: inherit; color: var(--texte); background:#fff; border: 1.5px solid var(--filet); border-radius: 8px; padding: 13px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start; }
+  .choix button:hover:not(:disabled) { border-color: var(--sapin); }
+  .choix button .l { font-weight:bold; color: var(--sapin); min-width: 20px; }
+  .choix button:disabled { cursor: default; }
+  .choix button.ok { background: var(--fond-ok); border-color: var(--vert-ok); }
+  .choix button.ko { background: var(--fond-ko); border-color: var(--rouge); }
+  .retour { margin-top: 18px; padding-left: 14px; border-left: 3px solid var(--sapin); display:none; }
+  .retour.ko { border-left-color: var(--rouge); }
+  .retour .exp { white-space: pre-line; }
+  .retour .titre { font-weight: bold; color: var(--rouge); }
+  .retour .titre:empty { display: none; }
+  .retour.okk .titre { color: var(--vert-ok); }
+  .retour.ko .titre { color: var(--rouge); }
+  .actions { margin-top: 22px; text-align: right; }
+  .btn { font: inherit; font-weight: bold; background: var(--sapin); color:#fff; border: none; border-radius: 8px; padding: 12px 24px; cursor:pointer; }
+  .btn:hover { background: #1F7A52; }
+  .btn[hidden] { display:none; }
+  .resultat { text-align:center; padding-top: 10px; }
+  .resultat .score { font-size: 56px; font-weight: bold; color: var(--sapin); line-height:1.1; }
+  .resultat .sur { color: var(--gris); margin-bottom: 14px; }
+  .resultat .msg { font-size: 18px; margin-bottom: 22px; }
+  @media (max-width: 520px) { body { font-size: 16px; } .question { font-size: 17px; } header h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><div class="marque">Licence Transport Formation · Capacité de transport</div><h1>Normes techniques : poids, PMA et charge utile</h1></div>
+  </header>
+  <div id="zone"></div>
+</div>
+<script>
+const QUESTIONS = [
+  {"q": "Le poids à vide (PV) d'un véhicule correspond au poids :", "r": ["du véhicule chargé, sans le conducteur", "du véhicule prêt à rouler, sans conducteur ni marchandises, réservoirs remplis", "du véhicule sans carburant ni conducteur", "du véhicule avec son conducteur, sans marchandises"], "b": 1, "e": "Le PV est le poids du véhicule prêt à rouler, sans le conducteur ni les marchandises. Tous les réservoirs sont remplis.", "u": false},
+  {"q": "La charge utile est égale à :", "r": ["PMA − poids à vide", "PTAC + poids à vide", "PTRA − PTAC", "PMA + poids à vide"], "b": 0, "e": "CU = PMA − poids à vide.", "u": false},
+  {"q": "Sur le certificat d'immatriculation, le PTAC apparaît sous l'appellation :", "r": ["MMA", "MCE", "MCV", "PMA"], "b": 2, "e": "Le PTAC apparaît sous l'appellation MCV (masse en charge du véhicule autorisée).", "u": false},
+  {"q": "Le PTRA est également appelé :", "r": ["MCV", "MCE", "MMA", "CU"], "b": 1, "e": "PTRA (poids total roulant autorisé) = MCE (masse en charge autorisée de l'ensemble).", "u": false},
+  {"q": "La longueur maximale d'un véhicule articulé est de :", "r": ["12 m", "15 m", "16,50 m", "18,75 m"], "b": 2, "e": "La longueur maximale d'un véhicule articulé est de 16,50 m.", "u": false},
+  {"q": "Le PTRA se trouve uniquement sur :", "r": ["les véhicules moteurs", "les remorques", "les semi-remorques", "les véhicules isolés sans moteur"], "b": 0, "e": "Le PTRA correspond au tonnage maximal d'un ensemble : il se trouve uniquement sur les véhicules moteurs.", "u": false},
+  {"q": "Un véhicule équipé d'un ralentisseur bénéficie, sur son PTAC et son PTRA, d'une majoration de :", "r": ["250 kg", "500 kg", "1 000 kg", "1 500 kg"], "b": 1, "e": "Majoration de 500 kg sur le PTAC et le PTRA.", "u": false},
+  {"q": "Le PTAC maximum d'un véhicule isolé à 2 essieux est de :", "r": ["16 t", "19 t", "26 t", "32 t"], "b": 1, "e": "2 essieux : 19 t.", "u": false},
+  {"q": "Le PTAC maximum d'un véhicule isolé à 3 essieux est de :", "r": ["19 t", "24 t", "26 t", "32 t"], "b": 2, "e": "3 essieux : 26 t.", "u": false},
+  {"q": "Le PTAC maximum d'un véhicule isolé à 4 essieux est de :", "r": ["26 t", "30 t", "32 t", "38 t"], "b": 2, "e": "4 essieux : 32 t.", "u": false},
+  {"q": "Le PTRA maximum d'un véhicule articulé ou d'un train routier à 4 essieux est de :", "r": ["32 t", "35 t", "38 t", "40 t"], "b": 2, "e": "Ensemble à 4 essieux : 38 t.", "u": false},
+  {"q": "Le PTRA maximum d'un véhicule articulé ou d'un train routier à 5 essieux et plus est de :", "r": ["38 t", "40 t", "42 t", "44 t"], "b": 3, "e": "Ensemble à 5 essieux et plus : 44 t.", "u": false},
+  {"q": "La plaque de tare, qui indique le PV, le PTAC et le PTRA, se trouve :", "r": ["à l'arrière gauche du véhicule", "dans la cabine, côté conducteur", "à l'avant droit du véhicule", "sur le certificat d'immatriculation"], "b": 2, "e": "La plaque de tare est située à l'avant droit du véhicule.", "u": false},
+  {"q": "Le PMA d'un véhicule isolé est égal à :", "r": ["son PTRA", "son PTAC", "son PV", "son PTAC + 500 kg"], "b": 1, "e": "PMA d'un véhicule isolé = PTAC.", "u": false},
+  {"q": "Pour calculer le PMA d'un véhicule articulé, on retient :", "r": ["le PTRA du tracteur dans tous les cas", "la somme du PTRA du tracteur et du PTAC de la semi-remorque", "la plus petite valeur entre le PTRA du tracteur, le PV du tracteur + PTAC de la semi-remorque, et le maximum du code de la route selon le nombre d'essieux", "la plus grande valeur entre le PTRA du tracteur et le PTAC de la semi-remorque"], "b": 2, "e": "On prend le plus petit des 3 nombres :\nPTRA du tracteur\nPV du tracteur + PTAC de la semi-remorque\nmaximum autorisé selon le nombre d'essieux", "u": false},
+  {"q": "Véhicule articulé à 4 essieux.\nTracteur : PTRA 44 T, PV 6 T\nSemi-remorque : PTAC 22 T, PV 4 T\nQuel est le PMA de l'ensemble ?", "r": ["22 T", "28 T", "38 T", "44 T"], "b": 1, "e": "PTRA du tracteur : 44 T\nPV tracteur + PTAC semi-remorque : 6 + 22 = 28 T\nMaxi pour 4 essieux : 38 T\nOn retient le plus petit : 28 T", "u": true},
+  {"q": "Véhicule articulé à 5 essieux.\nTracteur : PTRA 44 T, PV 7,5 T\nSemi-remorque : PTAC 34 T, PV 7,5 T\nQuel est le PMA de l'ensemble ?", "r": ["34 T", "38 T", "41,5 T", "44 T"], "b": 2, "e": "PTRA du tracteur : 44 T\nPV tracteur + PTAC semi-remorque : 7,5 + 34 = 41,5 T\nMaxi pour 5 essieux : 44 T\nOn retient le plus petit : 41,5 T", "u": true},
+  {"q": "Train routier à 5 essieux.\nPorteur : PTRA 44 T, PTAC 19 T, PV 8 T\nRemorque : PTAC 26 T, PV 7 T\nQuel est le PMA de l'ensemble ?", "r": ["38 T", "44 T", "45 T", "26 T"], "b": 1, "e": "PTRA du porteur : 44 T\nPTAC porteur + PTAC remorque : 19 + 26 = 45 T\nMaxi pour 5 essieux : 44 T\nOn retient le plus petit : 44 T", "u": true},
+  {"q": "Porteur isolé à 3 essieux : PTAC 26 T, PV 10 T.\nQuelle est sa charge utile ?", "r": ["10 T", "16 T", "19 T", "26 T"], "b": 1, "e": "PMA d'un véhicule isolé = PTAC = 26 T\nCU = PMA − PV = 26 − 10 = 16 T", "u": true},
+  {"q": "Véhicule articulé : PMA 41,5 T, PV du tracteur 7,5 T, PV de la semi-remorque 7,5 T.\nQuelle est la charge utile ?", "r": ["26,5 T", "34 T", "36,5 T", "29 T"], "b": 0, "e": "CU = PMA − PV tracteur − PV semi-remorque\nCU = 41,5 − 7,5 − 7,5 = 26,5 T", "u": true}
+];
+const POINTS = 2, LETTRES = ["A","B","C","D"];
+let ordre = [], i = 0, score = 0;
+const zone = document.getElementById("zone");
+
+function melange(t) { for (let k = t.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [t[k], t[j]] = [t[j], t[k]]; } return t; }
+
+function demarrer() {
+  ordre = melange(QUESTIONS.map((q, k) => {
+    const idx = melange([0, 1, 2, 3]);
+    return { q: q.q, e: q.e, u: q.u, r: idx.map(n => q.r[n]), b: idx.indexOf(q.b) };
+  }));
+  i = 0; score = 0; afficher();
+}
+
+function afficher() {
+  const Q = ordre[i], n = ordre.length;
+  zone.innerHTML = `
+    <div class="progres"><span>Question ${i + 1} / ${n}</span><span>${score} / ${n * POINTS} points</span></div>
+    <div class="barre"><div style="width:${(i / n) * 100}%"></div></div>
+    <p class="question"></p>
+    <div class="choix"></div>
+    <div class="retour"><div class="titre"></div><div class="exp"></div></div>
+    <div class="actions"><button class="btn" id="suivant" hidden>${i + 1 < n ? "Question suivante" : "Voir mon résultat"}</button></div>`;
+  zone.querySelector(".question").textContent = Q.q;
+  const choix = zone.querySelector(".choix");
+  Q.r.forEach((txt, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="l">${LETTRES[k]}.</span><span></span>`;
+    b.lastChild.textContent = txt;
+    b.onclick = () => repondre(k);
+    choix.appendChild(b);
+  });
+}
+
+function repondre(k) {
+  const Q = ordre[i], btns = zone.querySelectorAll(".choix button"), ret = zone.querySelector(".retour");
+  btns.forEach(b => b.disabled = true);
+  btns[Q.b].classList.add("ok");
+  if (k === Q.b) {
+    score += POINTS;
+    ret.className = "retour okk";
+  } else {
+    btns[k].classList.add("ko");
+    ret.className = "retour ko";
+  }
+  const faux = (k !== Q.b);
+  ret.querySelector(".titre").textContent = faux ? "Mauvaise réponse" : "";
+  ret.querySelector(".exp").textContent = Q.e;
+  if (faux || Q.u) ret.style.display = "block";
+  zone.querySelector(".progres span:last-child").textContent = `${score} / ${ordre.length * POINTS} points`;
+  const s = document.getElementById("suivant");
+  s.hidden = false;
+  s.onclick = () => { i++; i < ordre.length ? afficher() : resultat(); };
+}
+
+function resultat() {
+  const total = ordre.length * POINTS, pct = score / total;
+  const msg = pct >= 0.8 ? "Très bon résultat, vous maîtrisez les poids et le calcul de la charge utile."
+            : pct >= 0.5 ? "Résultat correct. Relisez le cours sur les points où vous vous êtes trompé."
+            : "Résultat insuffisant. Reprenez le cours avant de recommencer.";
+  zone.innerHTML = `
+    <div class="barre"><div style="width:100%"></div></div>
+    <div class="resultat">
+      <div class="score">${score}</div><div class="sur">sur ${total} points</div>
+      <div class="msg">${msg}</div>
+      <button class="btn" id="recommencer">Recommencer le QCM</button>
+    </div>`;
+  document.getElementById("recommencer").onclick = demarrer;
+}
+
+demarrer();
+</script>
+</body>
+</html>
